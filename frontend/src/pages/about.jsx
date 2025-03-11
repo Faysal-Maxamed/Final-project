@@ -11,8 +11,8 @@ const About = () => {
     const [showMore, setShowMore] = useState(false);
     
     const doctors = [
-        { name: "Dr. Sarah Johnson", specialty: "Cardiologist", image: doctor1 },
-        { name: "Dr. James Smith", specialty: "Neurologist", image: doctor2 },
+        { name: "Dr. faysal mohamed ", specialty: "Cardiologist", image: doctor1 },
+        { name: "Dr. mohamed amiin ", specialty: "Neurologist", image: doctor2 },
         { name: "Dr. Olivia Brown", specialty: "Pediatrician", image: doctor3 },
     ];
 
