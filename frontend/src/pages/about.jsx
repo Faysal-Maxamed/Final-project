@@ -13,7 +13,7 @@ const About = () => {
     const doctors = [
         { name: "Dr. faysal mohamed ", specialty: "Cardiologist", image: doctor1 },
         { name: "Dr. mohamed amiin ", specialty: "Neurologist", image: doctor2 },
-        { name: "karaama mohamed", specialty: "Pediatrician", image: doctor3 },
+        { name: "Dr. karaama mohamed", specialty: "Pediatrician", image: doctor3 },
     ];
 
     return (
