@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import React from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -7,19 +7,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("patient"); // Default role
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (localStorage.getItem("isAuthenticated") === "true") {
-      const storedRole = localStorage.getItem("role");
-      if (storedRole === "patient") {
-        navigate("/", { replace: true }); // Redirect to the home page for patients
-      } else if (storedRole === "admin") {
-        navigate("/dashboard", { replace: true }); // Redirect to admin dashboard
-      }
-    }
-  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,21 +15,17 @@ const Login = () => {
       const res = await axios.post("http://localhost:5000/api/auth/login", {
         email,
         password,
-        role,
       });
 
       if (res.data.token) {
-        // Store token and authentication status
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("role", role); // Save the user's role
-
         alert("Login Successful!");
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("role", res.data.role);
 
-        // Redirect based on the user's role
-        if (role === "patient") {
+        // Redirect based on user role
+        if (res.data.role === "patient") {
           navigate("/", { replace: true }); // Home page for patient
-        } else if (role === "admin") {
+        } else if (res.data.role === "admin") {
           navigate("/dashboard", { replace: true }); // Admin dashboard page
         }
       } else {
@@ -86,22 +70,6 @@ const Login = () => {
             />
           </div>
 
-          {/* Role Select */}
-          <div>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="w-full p-4 border border-teal-300 bg-transparent rounded-md text-teal-800 focus:ring-2 focus:ring-teal-500"
-            >
-              <option value="patient" className="text-teal-800">
-                Patient
-              </option>
-              <option value="admin" className="text-teal-800">
-                Admin
-              </option>
-            </select>
-          </div>
-
           {/* Login Button */}
           <button
             type="submit"
@@ -116,7 +84,7 @@ const Login = () => {
             onClick={() => navigate("/register", { replace: true })}
             className="text-teal-600 hover:text-teal-700 text-sm"
           >
-            Don't have an account? Register here
+            Don't have an account? Register heresdd
           </button>
         </div>
       </div>
