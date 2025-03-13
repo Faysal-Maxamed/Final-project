@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import Header from '../components/header';
 const History = () => {
   const [patientHistory, setPatientHistory] = useState([]);
 
@@ -27,7 +27,10 @@ const History = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+    <div className="min-h-screen">
+      <Header />
+      <div className="max-w-6xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+      
       <h2 className="text-2xl font-bold text-center text-teal-600 mb-6">
         Patient History
       </h2>
@@ -77,6 +80,7 @@ const History = () => {
           </tbody>
         </table>
       )}
+    </div>
     </div>
   );
 };

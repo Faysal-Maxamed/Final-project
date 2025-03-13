@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { predictReadmission } from "../api";
-
+import Header from '../components/header';
 const PredictorForm = () => {
   const [formData, setFormData] = useState({
     age: "",
@@ -39,7 +39,10 @@ const PredictorForm = () => {
   };
 
   return (
+    <div>
+       <Header />
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+     
       <div className="w-full max-w-lg bg-white shadow-md rounded-lg p-8">
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">
           Readmission Predictor
@@ -95,6 +98,7 @@ const PredictorForm = () => {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 };
