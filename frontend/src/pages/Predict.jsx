@@ -20,6 +20,7 @@ const PredictorForm = () => {
   const [result, setResult] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [rating, setRating] = useState(""); // New state for rating
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -44,6 +45,35 @@ const PredictorForm = () => {
         body: JSON.stringify(historyEntry),
       });
     }
+  };
+
+  const handleRatingClick = (emoji) => {
+    setRating(emoji);
+  };
+
+  const handleFeedbackSubmit = async () => {
+    if (!feedback || !rating) {
+      alert("Please provide both feedback and a rating.");
+      return;
+    }
+
+    const feedbackData = {
+      feedback,
+      rating,
+      timestamp: new Date(),
+    };
+
+    // Send feedback to the backend
+    await fetch("http://localhost:5000/api/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(feedbackData),
+    });
+
+    // Clear feedback and rating after submission
+    setFeedback("");
+    setRating("");
+    alert("Feedback submitted successfully!");
   };
 
   const chartData = {
@@ -129,10 +159,15 @@ const PredictorForm = () => {
               <h4 className="font-medium text-gray-700">Rate our Prediction</h4>
               <div className="flex justify-center space-x-2">
                 {['😡 Very Bad', '😞 Bad', '😐 Neutral', '😊 Good', '😀 Excellent'].map((emoji, index) => (
-                  <button key={index} className="text-2xl p-2">{emoji}</button>
+                  <button
+                    key={index}
+                    className="text-2xl p-2 shadow-lg hover:shadow-xl hover:bg-gray-100 transition-all duration-200 ease-in-out round-xl"
+                    onClick={() => handleRatingClick(emoji)}
+                  >
+                    {emoji}
+                  </button>
                 ))}
               </div>
-
             </div>
 
             {/* Feedback Input */}
@@ -145,7 +180,10 @@ const PredictorForm = () => {
                 className="w-full mt-2 p-2 border rounded-md focus:ring focus:ring-blue-200"
                 placeholder="Write your feedback here..."
               />
-              <button className="mt-2 w-full py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition">
+              <button
+                onClick={handleFeedbackSubmit}
+                className="mt-2 w-full py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition"
+              >
                 Submit Feedback
               </button>
             </div>

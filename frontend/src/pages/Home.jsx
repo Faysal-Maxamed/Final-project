@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { FaHospitalUser, FaCheckCircle, FaHandsHelping, FaHeartbeat, FaStethoscope } from "react-icons/fa";
-import doctor3 from "../assets/doctor4.jpg"; // Sawirka doctor
+import { FaHospitalUser, FaCheckCircle, FaHandsHelping, FaHeartbeat, FaStethoscope ,FaRegLightbulb,FaClipboardList} from "react-icons/fa";
+import doctor3 from "../assets/doctor4.jpg"; 
 import Header from "../components/header";
 
 const Homepage = () => {
@@ -59,22 +59,31 @@ const Homepage = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="bg-gray-100 py-24 text-center px-12">
-        <h2 className="text-5xl font-bold text-gray-900 mb-12">How It Works</h2>
-        <div className="grid md:grid-cols-3 gap-12">
-          {[
-            { icon: <FaCheckCircle className="text-purple-500 text-6xl" />, step: "Data Collection", desc: "We collect patient medical records." },
-            { icon: <FaCheckCircle className="text-blue-600 text-6xl" />, step: "Data Processing", desc: "AI cleans and prepares the data." },
-            { icon: <FaCheckCircle className="text-green-500 text-6xl" />, step: "Prediction Model", desc: "Our algorithm predicts readmission risks." }
-          ].map((item, index) => (
-            <div key={index} className="bg-white shadow-lg p-10 max-w-sm rounded-xl transition hover:scale-105 hover:bg-gray-50">
-              <div className="mb-4">{item.icon}</div>
-              <h3 className="text-3xl font-semibold flex items-center gap-4 text-gray-800">{item.step}</h3>
-              <p className="text-gray-600 mt-4 text-xl">{item.desc}</p>
-            </div>
-          ))}
+      <section className="bg-gray-100 py-16">
+      <div className="max-w-5xl mx-auto text-center">
+        <h2 className="text-4xl font-bold text-gray-800 mb-8">How It Works</h2>
+        <div className="grid md:grid-cols-3 gap-8 px-6">
+          {/* Step 1 */}
+          <div className="bg-white p-6 shadow-lg rounded-lg text-center">
+            <FaRegLightbulb className="text-blue-500 text-5xl mx-auto mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Step 1: Idea</h3>
+            <p className="text-gray-600">Think of what you need and how it fits your goals.</p>
+          </div>
+          {/* Step 2 */}
+          <div className="bg-white p-6 shadow-lg rounded-lg text-center">
+            <FaClipboardList className="text-green-500 text-5xl mx-auto mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Step 2: Plan</h3>
+            <p className="text-gray-600">Organize your process and set clear milestones.</p>
+          </div>
+          {/* Step 3 */}
+          <div className="bg-white p-6 shadow-lg rounded-lg text-center">
+            <FaCheckCircle className="text-red-500 text-5xl mx-auto mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Step 3: Execute</h3>
+            <p className="text-gray-600">Take action and achieve your desired results.</p>
+          </div>
         </div>
-      </section>
+      </div>
+    </section>
 
       {/* Testimonial Section */}
 <section className="py-24 text-center px-12 bg-gray-50">
