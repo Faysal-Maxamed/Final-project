@@ -30,8 +30,8 @@ const transport =nodemailer.createTransport({
 const mailOptions ={
   from : "mohaamiin15@gmail.com",
   to : "moeabtidoon02@gmail.com",
-  subject: "Practicing nodemailer",
-  text: "haye amiin"
+  subject: "from contact messages",
+  text: "we got your message "
 }
 
 transport.sendMail(mailOptions,(error,info)=>{
@@ -46,5 +46,3 @@ mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => app.listen(5000, () => console.log("Server running on port 5000")))
   .catch((err) => console.error(err));
-
-
