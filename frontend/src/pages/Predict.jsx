@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { predictReadmission } from "../api";
 import Header from '../components/header';
-import { Pie } from 'react-chartjs-2'; // To display the pie chart
+import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
-// Register the required chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PredictorForm = () => {
@@ -16,11 +15,11 @@ const PredictorForm = () => {
     num_procedures: "",
     days_in_hospital: "",
     comorbidity_score: "",
-    patient_notes: "", // Add patient notes field
   });
 
   const [result, setResult] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [feedback, setFeedback] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,7 +29,7 @@ const PredictorForm = () => {
     e.preventDefault();
     const result = await predictReadmission(formData);
     setResult(result);
-    setShowModal(true);  // Show the modal after prediction
+    setShowModal(true);
 
     if (!result.error) {
       const historyEntry = {
@@ -47,7 +46,6 @@ const PredictorForm = () => {
     }
   };
 
-  // Pie chart data with optional chaining
   const chartData = {
     labels: ["Readmitted", "Not Readmitted"],
     datasets: [
@@ -72,21 +70,19 @@ const PredictorForm = () => {
           </h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             {Object.keys(formData).map((field) => (
-              field !== "patient_notes" && (  // Avoid rendering textarea for patient_notes
-                <div key={field}>
-                  <label className="block text-sm font-medium text-gray-700">
-                    {field.replace("_", " ").toUpperCase()}
-                  </label>
-                  <input
-                    type="number"
-                    name={field}
-                    value={formData[field]}
-                    onChange={handleChange}
-                    required
-                    className="w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-200"
-                  />
-                </div>
-              )
+              <div key={field}>
+                <label className="block text-sm font-medium text-gray-700">
+                  {field.replace("_", " ").toUpperCase()}
+                </label>
+                <input
+                  type={field === "gender" ? "text" : "number"}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  required
+                  className="w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-200"
+                />
+              </div>
             ))}
             <button
               type="submit"
@@ -98,39 +94,63 @@ const PredictorForm = () => {
         </div>
       </div>
 
-     {/* Modal for showing result */}
+      {/* Modal for showing result */}
       {showModal && result && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center">
-          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-lg h-auto"> {/* Set width and height to match form */}
+          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-lg">
             <h3 className="text-lg font-semibold text-center text-gray-800">
               Prediction Result
             </h3>
-            <div className="flex justify-center mt-4">
-              <Pie data={chartData} />
+
+            {/* Pie Chart with Probability in Center */}
+            <div className="flex justify-center mt-4 relative">
+              <div className="w-48 h-48">
+                <Pie data={chartData} options={{
+                  plugins: {
+                    tooltip: { enabled: false },
+                    legend: { display: true },
+                  }
+                }} />
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center text-lg font-bold text-gray-800">
+                {(result?.probability * 100).toFixed(2)}%
+              </div>
             </div>
+
             <p className="mt-4 text-center">
               Readmission:{" "}
               <span className="font-medium">
                 {result?.readmission === 1 ? "Yes" : "No"}
               </span>
             </p>
-            <p className="text-center">
-              Probability:{" "}
-              <span className="font-medium">
-                {(result?.probability * 100).toFixed(2)}%
-              </span>
-            </p>
 
-            {/* Emoji Rating */}
+            {/* Rating System with Percentage Emojis */}
             <div className="mt-4 text-center">
               <h4 className="font-medium text-gray-700">Rate our Prediction</h4>
               <div className="flex justify-center space-x-2">
-                {['😀', '😊', '😐', '😞', '😡'].map((emoji, index) => (
-                  <button key={index} className="text-2xl">{emoji}</button>
+                {['😡 Very Bad', '😞 Bad', '😐 Neutral', '😊 Good', '😀 Excellent'].map((emoji, index) => (
+                  <button key={index} className="text-2xl p-2">{emoji}</button>
                 ))}
               </div>
+
             </div>
 
+            {/* Feedback Input */}
+            <div className="mt-4">
+              <h4 className="font-medium text-gray-700 text-center">Your Feedback:</h4>
+              <input
+                type="text"
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+                className="w-full mt-2 p-2 border rounded-md focus:ring focus:ring-blue-200"
+                placeholder="Write your feedback here..."
+              />
+              <button className="mt-2 w-full py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition">
+                Submit Feedback
+              </button>
+            </div>
+
+            {/* Close Button */}
             <div className="mt-4 text-center">
               <button
                 onClick={() => setShowModal(false)}
@@ -138,19 +158,6 @@ const PredictorForm = () => {
               >
                 Close
               </button>
-            </div>
-
-            {/* Textarea for Patient Notes (editable field added below Close button) */}
-            <div className="mt-4">
-              <h4 className="font-medium text-gray-700 text-center">Your Notes:</h4>
-              <textarea
-                className="w-full mt-2 p-2 border rounded-md focus:ring focus:ring-blue-200"
-                name="patient_notes"
-                value={formData.patient_notes} // Allow user input for notes
-                onChange={handleChange} // Update formData when the user types
-                rows="4"
-                placeholder="Write your comments here..."
-              />
             </div>
           </div>
         </div>
