@@ -19,36 +19,32 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/patient", patientRoutes);
 
 // Nodemailer Transporter Configuration
-const transporter = nodemailer.createTransport({
-  service: "gmail",
+const transport =nodemailer.createTransport({
+  service: 'gmail',
   auth: {
-    user: "mohaamiin15@gmail.com", // Your Gmail email
-    pass: "qyom hnyv tasd lwcda", // App Password (not your actual password)
-  },
-});
-
-// API Endpoint to Handle Contact Form Submission
-app.post("/send-email", async (req, res) => {
-  const { name, email, phone, message } = req.body;
-
-  const mailOptions = {
-    from: email,
-    to: process.env.RECEIVER_EMAIL, // The email that will receive the messages
-    subject: `New Contact Form Submission from ${name}`,
-    text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nMessage: ${message}`,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    res.json({ success: true, message: "Email sent successfully!" });
-  } catch (error) {
-    console.error("Error sending email:", error);
-    res.status(500).json({ success: false, message: "Error sending email" });
+     user : "mohaamiin15@gmail.com",
+     pass: "qyom hnyv tasd lwcd"
   }
-});
+})
 
+const mailOptions ={
+  from : "mohaamiin15@gmail.com",
+  to : "moeabtidoon02@gmail.com",
+  subject: "Practicing nodemailer",
+  text: "haye amiin"
+}
+
+transport.sendMail(mailOptions,(error,info)=>{
+  if(error){
+     console.log(error)
+  }else{
+     console.log("Email sent :" + info.response)
+}
+})
 // Connect to MongoDB and Start the Server
 mongoose
   .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => app.listen(5000, () => console.log("Server running on port 5000")))
   .catch((err) => console.error(err));
+
+
