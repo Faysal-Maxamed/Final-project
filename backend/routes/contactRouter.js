@@ -44,8 +44,8 @@ router.post("/", async (req, res) => {
     await newContact.save();
 
     const mailOptions = {
-      from: "mohaamiin15@gmail.com", // Use the same email as auth
-      to: "mohaamiin15@gmail.com",
+        from: process.env.EMAIL_USER,
+        to: "mohaamiin15@gmail.com",
       subject: "New Contact Form Submission",
       text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nMessage: ${message}`,
       html: `
