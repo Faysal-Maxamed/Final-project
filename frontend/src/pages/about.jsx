@@ -1,6 +1,6 @@
 import React from "react";
 import { FaTwitter, FaFacebook, FaLinkedin } from "react-icons/fa";
-import doctorAbout from "../assets/doctor5.jpg";
+import doctorAbout from "../assets/aboutimg.png";
 import member1 from "../assets/doctor5.jpg"; 
 import member2 from "../assets/doctor5.jpg"; 
 import member3 from "../assets/doctor5.jpg"; 
