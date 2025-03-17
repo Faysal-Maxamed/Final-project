@@ -26,6 +26,7 @@ const History = () => {
     }
   };
 
+
   return (
     <div className="min-h-screen">
       <Header />
