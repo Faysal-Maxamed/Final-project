@@ -6,7 +6,7 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("patient"); // Default role is "patient"
+  const [role, setRole] = useState("patient"); // Default role
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -28,24 +28,51 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h2>Register</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleRegister}>
-        <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required />
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="patient">Patient</option>
-          <option value="admin">Admin</option>
-        </select>
-        <button type="submit">Register</button>
-      </form>
-
-      {/* Login link for registered users */}
-      <p>
-        Already have an account? <Link to="/login">Login here</Link>
-      </p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+        <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+        <form onSubmit={handleRegister} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded"
+          >
+            <option value="patient">Patient</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button type="submit" className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
+            Register
+          </button>
+        </form>
+        <p className="mt-4 text-center text-sm">
+          Already have an account? <Link to="/login" className="text-blue-500">Login here</Link>
+        </p>
+      </div>
     </div>
   );
 };

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope, FaTwitter, FaFacebookF, FaLinkedin, FaSun, FaMoon } from "react-icons/fa";
 
 const Header = () => {
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("theme") === "dark"
-  );
+  const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (darkMode) {
@@ -19,6 +18,12 @@ const Header = () => {
       localStorage.setItem("theme", "light");
     }
   }, [darkMode]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Clear the token
+    alert("Logged out successfully!");
+    navigate("/login"); // Redirect to login page
+  };
 
   return (
     <header className="transition-all duration-300">
@@ -49,51 +54,53 @@ const Header = () => {
           <nav>
             <ul className="flex space-x-6 transition-all">
               <li>
-                <Link 
-                  to="/" 
-                  className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}
-                >
+                <Link to="/" className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}>
                   Home
                 </Link>
               </li>
               <li>
-                <Link 
-                  to="/about" 
-                  className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}
-                >
+                <Link to="/about" className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}>
                   About
                 </Link>
               </li>
               <li>
-                <Link 
-                  to="/PredictorForm" 
-                  className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}
-                >
+                <Link to="/PredictorForm" className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}>
                   Predict
                 </Link>
               </li>
               <li>
-                <Link 
-                  to="/history" 
-                  className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}
-                >
+                <Link to="/history" className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}>
                   History
                 </Link>
               </li>
               <li>
-                <Link 
-                  to="/contact" 
-                  className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}
-                >
+                <Link to="/contact" className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}>
                   Contact
                 </Link>
               </li>
             </ul>
           </nav>
-          {/* Light/Dark Mode Toggle Icon */}
-          <button onClick={() => setDarkMode(!darkMode)}>
-            {darkMode ? <FaMoon className="text-yellow-400 text-xl" /> : <FaSun className="text-black text-xl" />}
-          </button>
+
+          {/* Light/Dark Mode Toggle */}
+          <div className="flex items-center space-x-4">
+            <button onClick={() => setDarkMode(!darkMode)}>
+              {darkMode ? <FaMoon className="text-yellow-400 text-xl" /> : <FaSun className="text-black text-xl" />}
+            </button>
+
+            {/* Logout/Login Button */}
+            {localStorage.getItem("token") ? (
+              <button 
+                onClick={handleLogout} 
+                className="bg-red-500 px-3 py-2 rounded hover:bg-red-600 transition-all"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link to="/login" className="bg-blue-500 px-3 py-2 rounded hover:bg-blue-600 transition-all">
+                Login
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </header>
