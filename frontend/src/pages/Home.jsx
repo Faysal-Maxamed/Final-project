@@ -86,7 +86,7 @@ const Homepage = () => {
             { icon: <FaHeartbeat className="text-red-500 text-6xl" />, title: "Outcome Focused", desc: "Helping hospitals prevent unnecessary readmissions." },
             { icon: <FaStethoscope className="text-green-500 text-6xl" />, title: "Mission-Oriented", desc: "Providing actionable insights for better care." }
           ].map((item, index) => (
-            <div key={index} className={`bg-white shadow-lg p-10 max-w-sm rounded-xl transition hover:scale-105 hover:bg-blue-50`}>
+            <div key={index} className={`bg-white shadow-lg p-10 max-w-sm rounded-xl transition hover:scale-105 ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-blue-50'}`}>
               <div className="mb-4">{item.icon}</div>
               <h3 className="text-3xl font-semibold text-gray-800">{item.title}</h3>
               <p className="text-gray-600 mt-4 text-xl">{item.desc}</p>
@@ -96,7 +96,7 @@ const Homepage = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className={`bg-gray-100 py-24 text-center px-12`}>
+      <section className={`bg-gray-100 py-24 text-center px-12 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
         <h2 className={`text-5xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'} mb-12`}>How It Works</h2>
         <div className="grid md:grid-cols-3 gap-12">
           {[
@@ -104,7 +104,7 @@ const Homepage = () => {
             { icon: <FaCheckCircle className="text-blue-600 text-6xl" />, step: "Data Processing", desc: "AI cleans and prepares the data." },
             { icon: <FaCheckCircle className="text-green-500 text-6xl" />, step: "Prediction Model", desc: "Our algorithm predicts readmission risks." }
           ].map((item, index) => (
-            <div key={index} className={`bg-white shadow-lg p-10 max-w-sm rounded-xl transition hover:scale-105 hover:bg-gray-50`}>
+            <div key={index} className={`bg-white shadow-lg p-10 max-w-sm rounded-xl transition hover:scale-105 ${darkMode ? 'bg-gray-700' : 'bg-white'}`}>
               <div className="mb-4">{item.icon}</div>
               <h3 className="text-3xl font-semibold flex items-center gap-4 text-gray-800">{item.step}</h3>
               <p className="text-gray-600 mt-4 text-xl">{item.desc}</p>
@@ -132,7 +132,7 @@ const Homepage = () => {
         </div>
       </section>
 
-      <Footer />
+      <Footer darkMode={darkMode} />
     </div>
   );
 };
