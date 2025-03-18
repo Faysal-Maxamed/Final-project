@@ -1,21 +1,51 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEnvelope, FaTwitter, FaFacebookF, FaLinkedin, FaSun, FaMoon } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaTwitter,
+  FaFacebookF,
+  FaLinkedin,
+  FaSun,
+  FaMoon,
+} from "react-icons/fa";
 
-const Header = () => {
-  const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
+const Header = ({ darkMode, setDarkMode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Body Background Color Switch for Dark Mode
     if (darkMode) {
-      document.documentElement.classList.add("dark");
       document.body.classList.add("bg-gray-900", "text-white");
       localStorage.setItem("theme", "dark");
     } else {
-      document.documentElement.classList.remove("dark");
       document.body.classList.remove("bg-gray-900", "text-white");
-      document.body.classList.add("bg-white", "text-gray-900");
       localStorage.setItem("theme", "light");
+    }
+
+    // Update header and navigation colors
+    const header = document.querySelector("header");
+    const footer = document.querySelector("footer");
+    const aboutSection = document.querySelector(".about-section");
+
+    if (header) {
+      header.classList.toggle("bg-gray-900", darkMode);
+      header.classList.toggle("text-white", darkMode);
+      header.classList.toggle("bg-white", !darkMode);
+      header.classList.toggle("text-gray-900", !darkMode);
+    }
+
+    if (footer) {
+      footer.classList.toggle("bg-gray-900", darkMode);
+      footer.classList.toggle("text-white", darkMode);
+      footer.classList.toggle("bg-white", !darkMode);
+      footer.classList.toggle("text-gray-900", !darkMode);
+    }
+
+    if (aboutSection) {
+      aboutSection.classList.toggle("bg-gray-900", darkMode);
+      aboutSection.classList.toggle("text-white", darkMode);
+      aboutSection.classList.toggle("bg-white", !darkMode);
+      aboutSection.classList.toggle("text-gray-900", !darkMode);
     }
   }, [darkMode]);
 
@@ -26,77 +56,70 @@ const Header = () => {
   };
 
   return (
-    <header className="transition-all duration-300">
+    <header className={`transition-all duration-300 ${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}>
       {/* Upper Bar */}
-      <div className="bg-blue-700 text-white py-2 px-4 flex justify-between items-center text-sm">
+      <div className={`py-2 px-4 flex justify-between items-center text-sm ${darkMode ? "bg-gray-800 text-white" : "bg-blue-700 text-white"}`}>
         <div className="flex items-center space-x-4">
           <FaEnvelope className="text-white" />
           <span>info@gmail.com</span>
           <span>+252 614 388 477</span>
         </div>
         <div className="flex space-x-3">
-          <FaTwitter className="cursor-pointer" />
-          <FaFacebookF className="cursor-pointer" />
-          <FaLinkedin className="cursor-pointer" />
+          <FaTwitter className="cursor-pointer hover:text-gray-300 transition" />
+          <FaFacebookF className="cursor-pointer hover:text-gray-300 transition" />
+          <FaLinkedin className="cursor-pointer hover:text-gray-300 transition" />
         </div>
       </div>
 
       {/* Main Navigation */}
-      <div className={`shadow-md py-3 px-4 transition-all duration-300 
-        ${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}
-      `}>
+      <div className={`shadow-md py-3 px-4 transition-all duration-300 ${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}>
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className={`text-2xl font-bold transition-all 
-            ${darkMode ? "text-yellow-400" : "text-blue-700"}
-          `}>
+          <h1 className={`text-2xl font-bold transition-all ${darkMode ? "text-yellow-400" : "text-blue-700"}`}>
             HRP <span className="text-yellow-500">MANAGEMENT</span>
           </h1>
+
+          {/* Navigation Links */}
           <nav>
-            <ul className="flex space-x-6 transition-all">
-              <li>
-                <Link to="/" className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}>
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}>
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link to="/PredictorForm" className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}>
-                  Predict
-                </Link>
-              </li>
-              <li>
-                <Link to="/history" className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}>
-                  History
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className={`hover:${darkMode ? "text-yellow-400" : "text-blue-500"}`}>
-                  Contact
-                </Link>
-              </li>
+            <ul className="flex space-x-6">
+              {[{ name: "Home", path: "/" }, { name: "About", path: "/about" }, { name: "Predict", path: "/PredictorForm" }, { name: "History", path: "/history" }, { name: "Contact", path: "/contact" }].map(
+                (link, index) => (
+                  <li key={index}>
+                    <Link
+                      to={link.path}
+                      className={`hover:text-yellow-400 transition ${darkMode ? "text-white" : "text-gray-900"}`}
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                )
+              )}
             </ul>
           </nav>
 
-          {/* Light/Dark Mode Toggle */}
+          {/* Right Side: Dark Mode Toggle & Logout/Login */}
           <div className="flex items-center space-x-4">
+            {/* Dark Mode Toggle */}
             <button onClick={() => setDarkMode(!darkMode)}>
-              {darkMode ? <FaMoon className="text-yellow-400 text-xl" /> : <FaSun className="text-black text-xl" />}
+              {darkMode ? (
+                <FaMoon className="text-yellow-400 text-xl" />
+              ) : (
+                <FaSun className="text-black text-xl" />
+              )}
             </button>
 
             {/* Logout/Login Button */}
             {localStorage.getItem("token") ? (
-              <button 
-                onClick={handleLogout} 
+              <button
+                onClick={handleLogout}
                 className="bg-red-500 px-3 py-2 rounded hover:bg-red-600 transition-all"
               >
                 Logout
               </button>
             ) : (
-              <Link to="/login" className="bg-blue-500 px-3 py-2 rounded hover:bg-blue-600 transition-all">
+              <Link
+                to="/login"
+                className="bg-blue-500 px-3 py-2 rounded hover:bg-blue-600 transition-all"
+              >
                 Login
               </Link>
             )}
