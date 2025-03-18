@@ -6,6 +6,7 @@ import member2 from "../assets/doctor5.jpg";
 import member3 from "../assets/doctor5.jpg";
 import member4 from "../assets/doctor5.jpg";
 import Header from "../components/Header";
+import Footer from "../components/Footer"; // ✅ Import Footer
 
 const About = () => {
   const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
@@ -19,6 +20,7 @@ const About = () => {
     <div className={`${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}>
       <Header darkMode={darkMode} setDarkMode={setDarkMode} />
       <div className="w-full min-h-screen font-sans">
+        
         {/* About Us Section */}
         <section className="relative flex flex-col md:flex-row-reverse md:items-center justify-between py-20 px-16 gap-6 rounded-lg shadow-md">
           <div className="max-w-2xl space-y-6 text-left">
@@ -42,8 +44,7 @@ const About = () => {
         <section className="py-24 text-center px-12">
           <h2 className="text-5xl font-bold mb-8">Our Mission & Vision</h2>
           <div className="mt-8 flex flex-wrap justify-center gap-10">
-            {[
-              { title: "Our Mission", desc: "Providing better healthcare through predictive technology." },
+            {[{ title: "Our Mission", desc: "Providing better healthcare through predictive technology." },
               { title: "Our Vision", desc: "Driving healthcare innovation for a smarter hospital system." }
             ].map((item, index) => (
               <div
@@ -61,8 +62,7 @@ const About = () => {
         <section className="py-24 text-center px-12">
           <h2 className="text-5xl font-bold mb-8">Our Team Members</h2>
           <div className="flex flex-wrap justify-center gap-10">
-            {[
-              { name: "Mohamed Bashir", image: member1 },
+            {[{ name: "Mohamed Bashir", image: member1 },
               { name: "Ayaan Hassan", image: member2 },
               { name: "Abdi Ahmed", image: member3 },
               { name: "Fatima Noor", image: member4 }
@@ -87,10 +87,8 @@ const About = () => {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="bg-gray-800 text-white text-center p-8 text-2xl">
-          <p>&copy; 2025 HRP MANAGEMENT. All rights reserved.</p>
-        </footer>
+        {/* Footer Component */}
+        <Footer />  {/* ✅ Calling the Footer here */}
       </div>
     </div>
   );
