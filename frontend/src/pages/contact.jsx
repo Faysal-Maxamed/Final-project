@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../components/Header";
 
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -46,11 +47,47 @@ const Contact = () => {
       <main>
         <section className="py-10 bg-cover bg-center" style={{ backgroundImage: "url('../assets/contact.png')" }}>
           <div className="container mx-auto px-4">
+            
             <div className="bg-white shadow-md rounded-lg flex overflow-hidden">
               <div className="bg-white p-6 flex-1 border-r border-gray-200">
-                <h2 className="text-blue-600 text-lg font-semibold mb-4">Get in touch</h2>
-                <p className="text-gray-600 mb-6">We'd love to hear from you! Whether you have questions, feedback, or need support, feel free to reach out.</p>
-              </div>
+              <h2 className="text-xl font-bold text-blue-600">Get In Touch</h2>
+            <p className="text-gray-700 text-sm mt-2">
+              We'd love to hear from you! Whether you have questions, feedback, or need support, feel free to reach out.
+            </p>
+            
+            <h3 className="font-semibold mt-4">Call Us</h3>
+            <p className="text-gray-800">+252 614 388 477</p>
+            <p className="text-gray-800">+252 616 111 920</p>
+            <h3 className="font-semibold mt-4">Follow Our Social Media</h3>
+            <div className="social-icons">
+                    <a href="#" aria-label="Twitter" className="social-icon twitter">𝕏</a>
+                    <a href="#" aria-label="Facebook" className="social-icon facebook">f</a>
+                    <a href="#" aria-label="LinkedIn" className="social-icon linkedin">in</a>
+                    <style jsx>{`
+                      .social-icons {
+                        display: flex;
+                        gap: 10px;
+                        margin-top: 10px;
+                      }
+                      .social-icon {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 35px;
+                        height: 35px;
+                        background: #1a73e8;
+                        color: white;
+                        border-radius: 50%;
+                        text-decoration: none;
+                        font-weight: bold;
+                        font-size: 14px;
+                      }
+                      .social-icon:hover {
+                        background: #1557b0;
+                      }
+                    `}</style>
+                  </div>
+          </div>
               <div className="bg-gray-100 p-6 flex-1">
                 <h2 className="text-blue-600 text-lg font-semibold mb-4">Send Us a Message</h2>
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
