@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import doctor1 from "../assets/doc1.png";
-import doctor2 from "../assets/doc2.png";
-import doctor3 from "../assets/doc3.png";
+import doctor1 from "../assets/img1.jpg";
+import doctor2 from "../assets/image2.jpg";
+import doctor3 from "../assets/wiiq.jpg";
 import doctor4 from "../assets/doctor4.jpg"; // Additional doctor image
 import { FaHospitalUser, FaCheckCircle, FaHandsHelping, FaHeartbeat, FaStethoscope } from "react-icons/fa";
 import Header from "../components/Header";
