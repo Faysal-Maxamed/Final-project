@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { predictReadmission } from "../api";
-import Header from '../components/Header';
+import Header from '../components/header';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 

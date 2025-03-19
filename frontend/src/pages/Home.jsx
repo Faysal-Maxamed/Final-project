@@ -3,10 +3,10 @@ import { motion } from "framer-motion";
 import doctor1 from "../assets/doc1.png";
 import doctor2 from "../assets/doc2.png";
 import doctor3 from "../assets/doc3.png";
-import doctor4 from "../assets/doctor4.jpg"; // Additional doctor image
 import { FaHospitalUser, FaCheckCircle, FaHandsHelping, FaHeartbeat, FaStethoscope } from "react-icons/fa";
-import Header from "../components/Header";
+import Header from "../components/header";
 import Footer from "../components/Footer";
+import FeedbackSection from "../components/feedbacksection";
 
 const images = [doctor1, doctor2, doctor3];
 
@@ -114,24 +114,7 @@ const Homepage = () => {
       </section>
 
       {/* Testimonial Section */}
-      <section className={`py-24 text-center px-12 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-        <h2 className={`text-5xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>What Patients Say?</h2>
-        <div className="mt-12 max-w-3xl mx-auto bg-white shadow-lg p-12 rounded-xl flex flex-col md:flex-row items-center gap-8 transition hover:scale-105 hover:bg-blue-50">
-          <img
-            src="https://randomuser.me/api/portraits/men/32.jpg"
-            alt="Patient"
-            className="w-28 h-28 rounded-full border-4 border-blue-600 shadow-lg object-cover"
-          />
-          <div className="text-left">
-            <p className={`text-gray-600 italic text-2xl leading-relaxed ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              "HRP Management has significantly improved our hospital’s ability to predict and prevent readmissions. Their AI-driven insights have made patient care more effective and proactive."
-            </p>
-            <h3 className="mt-6 font-bold text-3xl text-gray-900">Pheyzal Mohamed</h3>
-            <p className="text-blue-600 text-xl font-medium">Recovered Patient</p>
-          </div>
-        </div>
-      </section>
-
+      <FeedbackSection/>
       <Footer darkMode={darkMode} />
     </div>
   );

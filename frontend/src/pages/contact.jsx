@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Header from "../components/Header";
+import Header from "../components/header";
 import contactBg from "../assets/contact.png"; // Import the image
 
 const Contact = () => {

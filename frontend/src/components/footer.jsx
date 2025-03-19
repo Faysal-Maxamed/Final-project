@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { FaTwitter, FaFacebookF, FaLinkedinIn } from "react-icons/fa";
 
 const Footer = () => {
-  const [email, setEmail] = useState(""); // Store email
-  const [message, setMessage] = useState(""); // Success/Error message
+  const [email, setEmail] = useState(""); 
+  const [message, setMessage] = useState("");
 
   const handleSubscribe = async () => {
     if (!email || !email.includes("@")) {
@@ -39,21 +39,22 @@ const Footer = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Logo & Social Links */}
             <div>
-              <h2 className="text-3xl font-bold text-white mb-4 hover:scale-105 transition-transform">
-                HRP <span className="text-cyan-300">MANAGEMENT</span>
-              </h2>
-              <div className="flex space-x-4">
+            <h1 className={`text-2xl font-bold transition-all text-blue-700`}>
+            HRP <span className="text-yellow-500">MANAGEMENT</span>
+          </h1>
+              <div className="flex ">
                 <a
-                  href="#"
+                
+                  href="#"F
                   aria-label="Twitter"
-                  className="text-gray-300 hover:text-cyan-300 transition-transform transform hover:scale-125"
+                  className="text-gray-300 hover:text-cyan-300 transition-transform transform hover:scale-125 mr-4"
                 >
                   <FaTwitter size={20} />
                 </a>
                 <a
                   href="#"
                   aria-label="Facebook"
-                  className="text-gray-300 hover:text-cyan-300 transition-transform transform hover:scale-125"
+                  className="text-gray-300 hover:text-cyan-300 transition-transform transform hover:scale-125 mr-4"
                 >
                   <FaFacebookF size={20} />
                 </a>
@@ -69,7 +70,7 @@ const Footer = () => {
 
             {/* Footer Links */}
             <div>
-              <h4 className="text-lg font-semibold text-cyan-300 mb-3">
+              <h4 className="text-lg font-semibold text-blue-700 mb-3">
                 Company
               </h4>
               <ul>
@@ -109,7 +110,7 @@ const Footer = () => {
             </div>
 
             <div>
-              <h4 className="text-lg font-semibold text-cyan-300 mb-3">
+              <h4 className="text-lg font-semibold text-blue-700 mb-3">
                 Resources
               </h4>
               <ul>
@@ -150,7 +151,7 @@ const Footer = () => {
 
             {/* Subscribe Section */}
             <div>
-              <h4 className="text-lg font-semibold text-cyan-300 mb-3">
+              <h4 className="text-lg font-semibold text-blue-700 mb-3">
                 Subscribe
               </h4>
               <p className="text-gray-300 mb-4">
@@ -177,7 +178,7 @@ const Footer = () => {
         </div>
 
         {/* Footer Bottom Wave */}
-        <div className="footer-wave bg-teal-500 h-10"></div>
+        <div className="footer-wave bg-blue-700 h-10"></div>
       </div>
     </footer>
   );

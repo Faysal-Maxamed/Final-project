@@ -50,15 +50,15 @@ const Header = ({ darkMode, setDarkMode }) => {
   }, [darkMode]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Clear the token
+    localStorage.removeItem("token"); 
     alert("Logged out successfully!");
-    navigate("/login"); // Redirect to login page
+    navigate("/login"); 
   };
 
   return (
     <header className={`transition-all duration-300 ${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}>
       {/* Upper Bar */}
-      <div className={`py-2 px-4 flex justify-between items-center text-sm ${darkMode ? "bg-gray-800 text-white" : "bg-blue-700 text-white"}`}>
+      <div className={`py-2 px-4 flex justify-between items-center text-sm ${darkMode ? "bg-blue-700  text-white" : "bg-blue-700 text-white"}`}>
         <div className="flex items-center space-x-4">
           <FaEnvelope className="text-white" />
           <span>info@gmail.com</span>
@@ -74,7 +74,7 @@ const Header = ({ darkMode, setDarkMode }) => {
       {/* Main Navigation */}
       <div className={`shadow-md py-3 px-4 transition-all duration-300 ${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}>
         <div className="container mx-auto flex justify-between items-center">
-          <h1 className={`text-2xl font-bold transition-all ${darkMode ? "text-yellow-400" : "text-blue-700"}`}>
+          <h1 className={`text-2xl font-bold transition-all text-blue-700`}>
             HRP <span className="text-yellow-500">MANAGEMENT</span>
           </h1>
 
