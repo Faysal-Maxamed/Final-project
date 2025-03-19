@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { FaTwitter, FaFacebook, FaLinkedin } from "react-icons/fa";
-import doctorAbout from "../assets/aboutimg.png";
-import member1 from "../assets/doctor5.jpg";
-import member2 from "../assets/doctor5.jpg";
-import member3 from "../assets/doctor5.jpg";
+import doctorAbout from "../assets/doctor4.jpg";
+import member1 from "../assets/wiiq.jpg";
+
 import member4 from "../assets/doctor5.jpg";
+import boqol from "../assets/image2.jpg";
+import karama from "../assets/img1.jpg";
 import Header from "../components/Header";
 import Footer from "../components/Footer"; // ✅ Import Footer
 
@@ -28,7 +29,7 @@ const About = () => {
               About <span className={`${darkMode ? "text-white" : "text-gray-900"}`}>Us</span>
             </h1>
             <p className="text-2xl leading-relaxed">
-              At <span className="font-bold text-blue-500">HRP MANAGEMENT</span>, we specialize in hospital readmission prediction using AI-driven machine learning models.
+              At <span className="font-bold text-blue-500">HRP MANAGEMENT</span>, we specialize in hospital readmission prediction using AI-driven machine learning models. Our advanced algorithms analyze patient data to identify patterns and risk factors, enabling healthcare providers to implement proactive measures. By leveraging predictive analytics, we aim to reduce unnecessary readmissions, improve patient outcomes, and enhance the overall efficiency of healthcare systems. Our commitment to innovation and data-driven solutions empowers hospitals to deliver better care and optimize their resources effectively.
             </p>
           </div>
           <div className="relative">
@@ -42,49 +43,44 @@ const About = () => {
 
         {/* Mission & Vision Section */}
         <section className="py-24 text-center px-12">
-          <h2 className="text-5xl font-bold mb-8">Our Mission & Vision</h2>
-          <div className="mt-8 flex flex-wrap justify-center gap-10">
-            {[{ title: "Our Mission", desc: "Providing better healthcare through predictive technology." },
-              { title: "Our Vision", desc: "Driving healthcare innovation for a smarter hospital system." }
-            ].map((item, index) => (
-              <div
-                key={index}
-                className={`${darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"} shadow-lg p-10 max-w-sm rounded-xl transition hover:scale-105 transform hover:shadow-2xl`}
-              >
-                <h3 className="text-3xl font-semibold">{item.title}</h3>
-                <p className="mt-4 text-xl">{item.desc}</p>
-              </div>
-            ))}
-          </div>
+            <h2 className="text-5xl font-bold mb-8">Our Mission & Vision</h2>
+            <div className="mt-8 flex flex-wrap justify-center gap-10">
+                <div className={`${darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"} shadow-lg p-10 max-w-sm rounded-xl transition hover:scale-105 transform hover:shadow-2xl`}>
+                    <h3 className="text-3xl font-semibold">Our Mission</h3>
+                    <p className="mt-4 text-xl">
+                        Providing better healthcare through predictive technology.
+                    </p>
+                </div>
+                <div className={`${darkMode ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"} shadow-lg p-10 max-w-sm rounded-xl transition hover:scale-105 transform hover:shadow-2xl`}>
+                    <h3 className="text-3xl font-semibold">Our Vision</h3>
+                    <p className="mt-4 text-xl">
+                        Driving healthcare innovation for a smarter hospital system.
+                    </p>
+                </div>
+            </div>
         </section>
 
         {/* Team Section */}
-        <section className="py-24 text-center px-12">
-          <h2 className="text-5xl font-bold mb-8">Our Team Members</h2>
-          <div className="flex flex-wrap justify-center gap-10">
-            {[{ name: "Mohamed Bashir", image: member1 },
-              { name: "Ayaan Hassan", image: member2 },
-              { name: "Abdi Ahmed", image: member3 },
-              { name: "Fatima Noor", image: member4 }
-            ].map((member, index) => (
-              <div
-                key={index}
-                className={`${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"} shadow-lg p-6 max-w-xs rounded-xl transition hover:scale-105 transform hover:shadow-2xl`}
-              >
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-36 h-36 rounded-full mx-auto shadow-md hover:scale-110 transition duration-300"
-                />
-                <h3 className="mt-6 font-bold text-2xl">{member.name}</h3>
-                <div className="flex justify-center gap-4 mt-4 text-blue-500 text-2xl">
-                  <FaTwitter className="cursor-pointer hover:text-blue-400 transition hover:scale-110" />
-                  <FaFacebook className="cursor-pointer hover:text-blue-400 transition hover:scale-110" />
-                  <FaLinkedin className="cursor-pointer hover:text-blue-400 transition hover:scale-110" />
-                </div>
-              </div>
-            ))}
-          </div>
+        <section className="container mx-auto py-24 text-center px-8">
+            <h2 className="text-5xl font-bold mb-12 text-gray-900 dark:text-white">Our Team Members</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                {[
+                    { name: "FEYSAL MOHAMED DAHIR", image: member1 },
+                    { name: "MOHAMED BASHI ADAM", image: karama },
+                    { name: "MOHAMED ABDALLE WARSAME ", image: boqol },
+                    { name: "MOHAMED ABDIKADIR MOHAMUD", image: member4 }
+                ].map((member, index) => (
+                    <div key={index} className="bg-white dark:bg-gray-800 shadow-lg p-6 rounded-xl transition transform hover:scale-105 hover:shadow-2xl">
+                        <img src={member.image} alt={member.name} className="w-40 h-40 rounded-full mx-auto shadow-md mb-4 hover:scale-110 transition duration-300" />
+                        <h3 className="mt-4 font-bold text-2xl text-gray-900 dark:text-white">{member.name}</h3>
+                        <div className="flex justify-center gap-4 mt-4 text-blue-500 text-2xl">
+                            <FaTwitter className="cursor-pointer hover:text-blue-400 transition hover:scale-110" />
+                            <FaFacebook className="cursor-pointer hover:text-blue-400 transition hover:scale-110" />
+                            <FaLinkedin className="cursor-pointer hover:text-blue-400 transition hover:scale-110" />
+                        </div>
+                    </div>
+                ))}
+            </div>
         </section>
 
         {/* Footer Component */}

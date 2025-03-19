@@ -1,8 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
-import About from "./pages/About";  // Ensure correct casing
-import Contact from "./pages/Contact"; 
+// import About from "./pages/About";  // Ensure correct casing
+import About from "./pages/about";
+// import Contact from "./pages/Contact"; 
+import Contact from "./pages/contact";
 import PredictorForm from "./pages/Predict";
 import History from "./pages/History";
 import Login from "./pages/Login";
