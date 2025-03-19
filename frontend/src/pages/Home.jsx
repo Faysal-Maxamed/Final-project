@@ -42,19 +42,19 @@ const Homepage = () => {
   return (
     <div className={`w-full min-h-screen font-sans ${darkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
       <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-      
+
       {/* Hero Section */}
       <header className={`flex flex-col md:flex-row items-center justify-between py-20 px-16 gap-12 ${darkMode ? 'bg-gray-800' : 'bg-teal-100'}`}>
         <div className="max-w-2xl space-y-8 text-left">
-          <h1 className="text-6xl font-extrabold text-gray-900 leading-tight flex items-center gap-3">
-            <FaHospitalUser className="text-blue-600 text-7xl" />
+          <h1 className="text-6xl font-extrabold text-blue-700 leading-tight flex items-center gap-3">
             Take Care of Your Health
           </h1>
+
           <p className={`text-2xl ${darkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
             {showFullText ? fullText : shortText}
           </p>
           <button
-            className="px-8 py-4 text-2xl bg-blue-700 text-white rounded-full shadow-md hover:bg-blue-800 transition duration-300"
+            className="px-8 py-4 text-2xl bg-blue-700 text-white rounded-full shadow-md hover:bg-yellow-500 transition duration-300"
             onClick={() => setShowFullText(!showFullText)}
           >
             {showFullText ? "Show Less" : "Learn More"}
@@ -115,7 +115,7 @@ const Homepage = () => {
       </section>
 
       {/* Testimonial Section */}
-      <FeedbackSection/>
+      <FeedbackSection />
       <Footer darkMode={darkMode} />
     </div>
   );

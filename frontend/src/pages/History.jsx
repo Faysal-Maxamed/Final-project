@@ -40,7 +40,7 @@ const History = () => {
         ) : (
           <table className="w-full border-collapse border">
             <thead>
-              <tr className={`${darkMode ? 'bg-teal-800' : 'bg-teal-600'} text-white`}>
+              <tr className={`${darkMode ? 'bg-blue-700' : 'bg-blue-700'} text-white`}>
                 <th className="p-2 border">Date</th>
                 <th className="p-2 border">Age</th>
                 <th className="p-2 border">Gender</th>
