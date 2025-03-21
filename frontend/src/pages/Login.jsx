@@ -19,8 +19,16 @@ const Login = () => {
       });
 
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("role", response.data.role); // Store role for later use
+
       alert("Login successful");
-      navigate("/"); // Redirect to home or dashboard
+
+      // Redirect based on role
+      if (response.data.role === "patient") {
+        navigate("/");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
     }
