@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
 import Header from "../components/header";
 
 const History = () => {
@@ -27,6 +28,19 @@ const History = () => {
     }
   };
 
+  const exportToExcel = () => {
+    if (patientHistory.length === 0) {
+      alert("No data available to export.");
+      return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(patientHistory);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Patient History");
+
+    XLSX.writeFile(workbook, "Patient_History.xlsx");
+  };
+
   return (
     <div className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} min-h-screen`}>
       <Header darkMode={darkMode} setDarkMode={setDarkMode} />
@@ -34,6 +48,15 @@ const History = () => {
         <h2 className="text-2xl font-bold text-center mb-6">
           Patient History
         </h2>
+
+        <div className="flex justify-end mb-4">
+          <button 
+            onClick={exportToExcel} 
+            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+          >
+            Export to Excel
+          </button>
+        </div>
 
         {patientHistory.length === 0 ? (
           <p className="text-center">No history available.</p>
