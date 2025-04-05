@@ -9,7 +9,9 @@ const History = () => {
     const fetchHistory = async () => {
       const response = await fetch("http://localhost:5000/api/patient/history");
       const data = await response.json();
-      setPatientHistory(data);
+      // Remove __v before setting state
+      const filteredData = data.map(({ __v, ...rest }) => rest);
+      setPatientHistory(filteredData);
     };
     fetchHistory();
   }, []);
@@ -33,7 +35,10 @@ const History = () => {
       return;
     }
 
-    const worksheet = XLSX.utils.json_to_sheet(patientHistory);
+    // Remove _id and __v before exporting
+    const cleanedData = patientHistory.map(({ _id, __v, ...rest }) => rest);
+
+    const worksheet = XLSX.utils.json_to_sheet(cleanedData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Patient History");
 
