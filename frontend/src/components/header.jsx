@@ -81,7 +81,7 @@ const Header = ({ darkMode, setDarkMode }) => {
           {/* Navigation Links */}
           <nav>
             <ul className="flex space-x-6">
-              {[{ name: "Home", path: "/" }, { name: "About", path: "/about" }, { name: "Predict", path: "/PredictorForm" }, { name: "History", path: "/history" }, { name: "Contact", path: "/contact" }].map(
+              {[{ name: "Home", path: "/" }, { name: "About", path: "/about" }, { name: "Predict", path: "/PredictorForm" }, {  path: "/history" }, { name: "Contact", path: "/contact" }].map(
                 (link, index) => (
                   <li key={index}>
                     <Link

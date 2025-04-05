@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
-import Header from "../components/header";
 
 const History = () => {
   const [patientHistory, setPatientHistory] = useState([]);
@@ -14,6 +13,19 @@ const History = () => {
     };
     fetchHistory();
   }, []);
+
+  const handleDelete = async (id) => {
+    const response = await fetch(`http://localhost:5000/api/patient/history/${id}`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      setPatientHistory(patientHistory.filter((patient) => patient._id !== id));
+    } else {
+      const data = await response.json();
+      alert(data.error || "Error deleting the record");
+    }
+  };
 
   const exportToExcel = () => {
     if (patientHistory.length === 0) {
@@ -30,7 +42,6 @@ const History = () => {
 
   return (
     <div className={`${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} min-h-screen`}>
-      <Header darkMode={darkMode} setDarkMode={setDarkMode} />
       <div className="max-w-6xl mx-auto mt-10 p-6 shadow-lg rounded-lg">
         <h2 className="text-2xl font-bold text-center mb-6">
           Patient History
@@ -61,6 +72,7 @@ const History = () => {
                 <th className="p-2 border">Comorbidity</th>
                 <th className="p-2 border">Readmission</th>
                 <th className="p-2 border">Probability</th>
+                <th className="p-2 border">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -76,6 +88,14 @@ const History = () => {
                   <td className="p-2 border">{patient.comorbidity_score}</td>
                   <td className="p-2 border">{patient.readmission}</td>
                   <td className="p-2 border">{patient.probability}</td>
+                  <td className="p-2 border">
+                    <button
+                      onClick={() => handleDelete(patient._id)}
+                      className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

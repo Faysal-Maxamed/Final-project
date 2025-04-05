@@ -6,13 +6,15 @@ import {
   FaUserShield, 
   FaUsers, 
   FaStethoscope, 
-  FaCog 
+  FaCog,
+  FaHistory 
 } from "react-icons/fa";
 import axios from "axios";
 import DashboardSection from "../components/DashboardSection";
 import RegisterAdmin from "../components/RegisterAdmin";
 import UsersList from "../components/UsersList";
 import ViewPatients from "../components/ViewPatients";
+import History from "./History";
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
@@ -83,6 +85,12 @@ const Dashboard = () => {
             <FaStethoscope /> Reports
           </li>
           <li 
+            onClick={() => setActiveSection("history")} 
+            className="cursor-pointer flex items-center gap-2 p-2 hover:bg-blue-600 rounded-md"
+          >
+            <FaHistory /> History
+          </li>
+          <li 
             onClick={() => setActiveSection("settings")} 
             className="cursor-pointer flex items-center gap-2 p-2 hover:bg-blue-600 rounded-md"
           >
@@ -106,6 +114,7 @@ const Dashboard = () => {
         {activeSection === "admin-register" && <RegisterAdmin />}
         {activeSection === "users" && <UsersList users={users} handleDelete={handleDelete} />}
         {activeSection === "view-patients" && <ViewPatients />}
+        {activeSection === "history" && <History />}
       </main>
     </div>
   );
