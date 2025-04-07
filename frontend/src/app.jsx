@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import About from "./pages/about";
 import Contact from "./pages/contact";
 import PredictorForm from "./pages/Predict";
-import History from "./pages/History";
+// import History from "./pages/History";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard"; // Import Dashboard

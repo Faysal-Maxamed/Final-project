@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { predictReadmission } from "../api";
-import Header from '../components/header';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import Header from "../components/header";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PredictorForm = () => {
   const [formData, setFormData] = useState({
     age: "",
-    gender: "",
-    primary_diagnosis: "",
-    discharge_to: "",
+    gender: "",             // No default value
+    primary_diagnosis: "",  // No default value
+    discharge_to: "",       // No default value
     num_procedures: "",
     days_in_hospital: "",
     comorbidity_score: "",
@@ -23,13 +23,34 @@ const PredictorForm = () => {
   const [rating, setRating] = useState("");
   const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
 
+  const primaryDiagnoses = [
+    "COPD",               // 0
+    "Diabetes",           // 1
+    "Heart disease",      // 2
+    "Hypertension",       // 3
+    "Kidney disease"      // 4
+  ];
+
+  const dischargeOptions = [
+    "Home",                             // 0
+    "Home health care",                 // 1
+    "Rehabilitation facility",          // 2
+    "Skilled nursing facility"           // 3
+  ];
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await predictReadmission(formData);
+
+    const preparedData = {
+      ...formData,
+      gender: formData.gender === "Male" ? 1 : 0,
+    };
+
+    const result = await predictReadmission(preparedData);
     setResult(result);
     setShowModal(true);
 
@@ -46,6 +67,17 @@ const PredictorForm = () => {
         body: JSON.stringify(historyEntry),
       });
     }
+
+    // Reset form data after submission
+    setFormData({
+      age: "",
+      gender: "",
+      primary_diagnosis: "",
+      discharge_to: "",
+      num_procedures: "",
+      days_in_hospital: "",
+      comorbidity_score: "",
+    });
   };
 
   const handleRatingClick = (emoji) => {
@@ -80,8 +112,12 @@ const PredictorForm = () => {
     datasets: [
       {
         data: [
-          result?.readmission === 1 ? result?.probability * 100 : 100 - result?.probability * 100,
-          result?.readmission === 0 ? result?.probability * 100 : 100 - result?.probability * 100
+          result?.readmission === 1
+            ? result?.probability * 100
+            : 100 - result?.probability * 100,
+          result?.readmission === 0
+            ? result?.probability * 100
+            : 100 - result?.probability * 100,
         ],
         backgroundColor: ["#FF6384", "#36A2EB"],
         hoverBackgroundColor: ["#FF4384", "#2A91D3"],
@@ -103,7 +139,7 @@ const PredictorForm = () => {
     <div>
       <Header darkMode={darkMode} setDarkMode={setDarkMode} />
       <div className={`min-h-screen flex items-center justify-center p-6 ${darkMode ? "bg-gray-900" : "bg-gray-100"}`}>
-        <div className={`w-full max-w-lg bg-white shadow-md rounded-lg p-8 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className={`w-full max-w-lg shadow-md rounded-lg p-8 ${darkMode ? "bg-gray-800" : "bg-white"}`}>
           <h2 className={`text-2xl font-bold mb-6 text-center ${darkMode ? "text-white" : "text-gray-700"}`}>
             Readmission Predictor
           </h2>
@@ -113,14 +149,58 @@ const PredictorForm = () => {
                 <label className={`block text-sm font-medium ${darkMode ? "text-white" : "text-gray-700"}`}>
                   {field.replace("_", " ").toUpperCase()}
                 </label>
-                <input
-                  type={field === "gender" ? "text" : "number"}
-                  name={field}
-                  value={formData[field]}
-                  onChange={handleChange}
-                  required
-                  className={`w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-200 ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
-                />
+                {field === "gender" ? (
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    required
+                    className={`w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-200 ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                ) : field === "primary_diagnosis" ? (
+                  <select
+                    name="primary_diagnosis"
+                    value={formData.primary_diagnosis}
+                    onChange={handleChange}
+                    required
+                    className={`w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-200 ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
+                  >
+                    <option value="">Select Diagnosis</option>
+                    {primaryDiagnoses.map((diagnosis, index) => (
+                      <option key={index} value={index}>
+                        {diagnosis}
+                      </option>
+                    ))}
+                  </select>
+                ) : field === "discharge_to" ? (
+                  <select
+                    name="discharge_to"
+                    value={formData.discharge_to}
+                    onChange={handleChange}
+                    required
+                    className={`w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-200 ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
+                  >
+                    <option value="">Select Discharge Option</option>
+                    {dischargeOptions.map((option, index) => (
+                      <option key={index} value={index}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="number"
+                    name={field}
+                    value={formData[field]}
+                    onChange={handleChange}
+                    required
+                    className={`w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-200 ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
+                  />
+                )}
               </div>
             ))}
             <button
@@ -143,12 +223,15 @@ const PredictorForm = () => {
 
             <div className="flex justify-center mt-4 relative">
               <div className="w-48 h-48">
-                <Pie data={chartData} options={{
-                  plugins: {
-                    tooltip: { enabled: false },
-                    legend: { display: true },
-                  }
-                }} />
+                <Pie
+                  data={chartData}
+                  options={{
+                    plugins: {
+                      tooltip: { enabled: false },
+                      legend: { display: true },
+                    },
+                  }}
+                />
               </div>
               <div className="absolute inset-0 flex items-center justify-center text-lg font-bold text-gray-800">
                 {(result?.probability * 100).toFixed(2)}%
@@ -163,9 +246,17 @@ const PredictorForm = () => {
             </p>
 
             <div className="mt-4 text-center">
-              <h4 className={`font-medium ${darkMode ? "text-white" : "text-gray-700"}`}>Rate our Prediction</h4>
+              <h4 className={`font-medium ${darkMode ? "text-white" : "text-gray-700"}`}>
+                Rate our Prediction
+              </h4>
               <div className="flex justify-center space-x-2">
-                {['😡 Very Bad', '😞 Bad', '😐 Neutral', '😊 Good', '😀 Excellent'].map((emoji, index) => (
+                {[
+                  "😡 Very Bad",
+                  "😞 Bad",
+                  "😐 Neutral",
+                  "😊 Good",
+                  "😀 Excellent",
+                ].map((emoji, index) => (
                   <button
                     key={index}
                     className="text-2xl p-2 shadow-lg hover:shadow-xl hover:bg-gray-100 transition-all duration-200 ease-in-out round-xl"
@@ -178,7 +269,9 @@ const PredictorForm = () => {
             </div>
 
             <div className="mt-4">
-              <h4 className={`font-medium ${darkMode ? "text-white" : "text-gray-700"} text-center`}>Your Feedback:</h4>
+              <h4 className={`font-medium ${darkMode ? "text-white" : "text-gray-700"} text-center`}>
+                Your Feedback:
+              </h4>
               <input
                 type="text"
                 value={feedback}
