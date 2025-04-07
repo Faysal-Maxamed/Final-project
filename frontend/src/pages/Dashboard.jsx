@@ -14,6 +14,7 @@ import RegisterAdmin from "../components/RegisterAdmin";
 import UsersList from "../components/UsersList";
 import ViewPatients from "../components/ViewPatients";
 import History from "./History";
+import Advice from "./Advice"
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
@@ -77,10 +78,10 @@ const Dashboard = () => {
               <FaUsers size={18} /> Users
             </div>
             <div
-              onClick={() => setActiveSection("view-patients")}
+              onClick={() => setActiveSection("Advice")}
               className="flex items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-purple-600 hover:text-white hover:scale-105 p-1 rounded-full"
             >
-              <FaStethoscope size={18} /> Reports
+              <FaStethoscope size={18} /> Advice
             </div>
             <div
               onClick={() => setActiveSection("history")}
@@ -111,7 +112,7 @@ const Dashboard = () => {
         {activeSection === "dashboard" && <DashboardSection />}
         {activeSection === "admin-register" && <RegisterAdmin />}
         {activeSection === "users" && <UsersList users={users} handleDelete={handleDelete} />}
-        {activeSection === "view-patients" && <ViewPatients />}
+        {activeSection === "Advice" && <Advice />}
         {activeSection === "history" && <History />}
       </main>
     </div>
