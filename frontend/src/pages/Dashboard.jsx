@@ -51,61 +51,58 @@ const Dashboard = () => {
   return (
     <div className="flex bg-gray-100">
       {/* Fixed Sidebar */}
-      <aside className="w-64 bg-white p-6 border-r fixed top-0 left-0 h-full">
-        <div className="flex flex-col items-center">
-          <img
-            src="https://i.ibb.co/4pDNDk1/avatar.png"
-            alt="Profile"
-            className="w-20 h-20 rounded-full"
-          />
-          <h2 className="text-lg font-bold mt-2">Ken Kalil</h2>
-          <p className="text-gray-500 text-sm">kenk@gmail.com</p>
+      <aside className="w-64 bg-white p-6 border-r fixed top-0 left-0 h-full flex flex-col justify-between">
+        <div>
+          <div className="flex flex-col items-center">
+            <img
+              src="https://i.ibb.co/4pDNDk1/avatar.png"
+              alt="Profile"
+              className="w-20 h-20 rounded-full"
+            />
+            <h2 className="text-lg font-bold mt-2">Ken Kalil</h2>
+            <p className="text-gray-500 text-sm">kenk@gmail.com</p>
+          </div>
+
+          <nav className="mt-6 space-y-4">
+            <div
+              onClick={() => setActiveSection("dashboard")}
+              className="flex items-center gap-1 text-teal-600 font-medium cursor-pointer transition-all duration-300  ease-in-out hover:bg-purple-600 hover:text-white hover:scale-105 p-1 rounded-full"
+            >
+              <FaTachometerAlt size={18} /> Dashboard
+            </div>
+            <div
+              onClick={() => setActiveSection("users")}
+              className="flex items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-purple-600 hover:text-white hover:scale-105 p-1 rounded-full"
+            >
+              <FaUsers size={18} /> Users
+            </div>
+            <div
+              onClick={() => setActiveSection("view-patients")}
+              className="flex items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-purple-600 hover:text-white hover:scale-105 p-1 rounded-full"
+            >
+              <FaStethoscope size={18} /> Reports
+            </div>
+            <div
+              onClick={() => setActiveSection("history")}
+              className="flex items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-purple-600 hover:text-white hover:scale-105 p-1 rounded-full"
+            >
+              <FaHistory size={18} /> History
+            </div>
+            <div
+              onClick={() => setActiveSection("settings")}
+              className="flex items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-purple-600 hover:text-white hover:scale-105 p-1 rounded-full"
+            >
+              <FaCog size={18} /> Settings
+            </div>
+          </nav>
         </div>
 
-        <nav className="mt-6 space-y-4">
-          <div
-            onClick={() => setActiveSection("dashboard")}
-            className="flex items-center gap-2 text-teal-600 font-medium cursor-pointer"
-          >
-            <FaTachometerAlt size={18} /> Dashboard
-          </div>
-          <div
-            onClick={() => setActiveSection("admin-register")}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <FaUserShield size={18} /> Add Admin
-          </div>
-          <div
-            onClick={() => setActiveSection("users")}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <FaUsers size={18} /> Users
-          </div>
-          <div
-            onClick={() => setActiveSection("view-patients")}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <FaStethoscope size={18} /> Reports
-          </div>
-          <div
-            onClick={() => setActiveSection("history")}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <FaHistory size={18} /> History
-          </div>
-          <div
-            onClick={() => setActiveSection("settings")}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <FaCog size={18} /> Settings
-          </div>
-        </nav>
-
+        {/* Enhanced Log Out Button at the bottom */}
         <button
           onClick={handleLogout}
-          className="mt-8 bg-blue-500 hover:bg-blue-600 text-white w-full py-2 rounded shadow"
+          className="mt-8 bg-purple-600 hover:bg-purple-700 text-white w-full py-3 rounded-lg shadow-md hover:shadow-lg transition-all ease-in-out duration-300"
         >
-          <FaSignOutAlt /> Log Out
+          <FaSignOutAlt className="inline-block mr-2" /> Log Out
         </button>
       </aside>
 

@@ -41,7 +41,6 @@ const History = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
       <div className="max-w-7xl mx-auto bg-white shadow-md rounded-lg p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Order History</h2>
@@ -119,7 +118,6 @@ const History = () => {
           </table>
         </div>
       </div>
-    </div>
   );
 };
 
