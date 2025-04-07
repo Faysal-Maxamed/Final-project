@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { 
-  FaUser, 
-  FaSignOutAlt, 
   FaTachometerAlt, 
   FaUserShield, 
   FaUsers, 
   FaStethoscope, 
-  FaCog,
-  FaHistory 
+  FaHistory, 
+  FaCog, 
+  FaSignOutAlt 
 } from "react-icons/fa";
 import axios from "axios";
 import DashboardSection from "../components/DashboardSection";
@@ -50,66 +49,68 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-blue-700 text-white p-6 flex flex-col justify-between h-screen fixed">
-        <div className="flex flex-col items-center mb-6">
-          <div className="w-20 h-20 bg-gray-300 rounded-full mb-2"></div>
-          <h3 className="text-lg font-semibold">Pheyzal Mohamed</h3>
-          <p className="text-sm text-gray-300">pheyzalMohal12@gmail.com</p>
+    <div className="flex bg-gray-100">
+      {/* Fixed Sidebar */}
+      <aside className="w-64 bg-white p-6 border-r fixed top-0 left-0 h-full">
+        <div className="flex flex-col items-center">
+          <img
+            src="https://i.ibb.co/4pDNDk1/avatar.png"
+            alt="Profile"
+            className="w-20 h-20 rounded-full"
+          />
+          <h2 className="text-lg font-bold mt-2">Ken Kalil</h2>
+          <p className="text-gray-500 text-sm">kenk@gmail.com</p>
         </div>
 
-        <ul className="space-y-4">
-          <li 
-            onClick={() => setActiveSection("dashboard")} 
-            className="cursor-pointer flex items-center gap-2 p-2 hover:bg-blue-600 rounded-md"
+        <nav className="mt-6 space-y-4">
+          <div
+            onClick={() => setActiveSection("dashboard")}
+            className="flex items-center gap-2 text-teal-600 font-medium cursor-pointer"
           >
-            <FaTachometerAlt /> Dashboard
-          </li>
-          <li 
-            onClick={() => setActiveSection("admin-register")} 
-            className="cursor-pointer flex items-center gap-2 p-2 hover:bg-blue-600 rounded-md"
+            <FaTachometerAlt size={18} /> Dashboard
+          </div>
+          <div
+            onClick={() => setActiveSection("admin-register")}
+            className="flex items-center gap-2 cursor-pointer"
           >
-            <FaUserShield /> Add Admin
-          </li>
-          <li 
-            onClick={() => setActiveSection("users")} 
-            className="cursor-pointer flex items-center gap-2 p-2 hover:bg-blue-600 rounded-md"
+            <FaUserShield size={18} /> Add Admin
+          </div>
+          <div
+            onClick={() => setActiveSection("users")}
+            className="flex items-center gap-2 cursor-pointer"
           >
-            <FaUsers /> Users
-          </li>
-          <li 
-            onClick={() => setActiveSection("view-patients")} 
-            className="cursor-pointer flex items-center gap-2 p-2 hover:bg-blue-600 rounded-md"
+            <FaUsers size={18} /> Users
+          </div>
+          <div
+            onClick={() => setActiveSection("view-patients")}
+            className="flex items-center gap-2 cursor-pointer"
           >
-            <FaStethoscope /> Reports
-          </li>
-          <li 
-            onClick={() => setActiveSection("history")} 
-            className="cursor-pointer flex items-center gap-2 p-2 hover:bg-blue-600 rounded-md"
+            <FaStethoscope size={18} /> Reports
+          </div>
+          <div
+            onClick={() => setActiveSection("history")}
+            className="flex items-center gap-2 cursor-pointer"
           >
-            <FaHistory /> History
-          </li>
-          <li 
-            onClick={() => setActiveSection("settings")} 
-            className="cursor-pointer flex items-center gap-2 p-2 hover:bg-blue-600 rounded-md"
+            <FaHistory size={18} /> History
+          </div>
+          <div
+            onClick={() => setActiveSection("settings")}
+            className="flex items-center gap-2 cursor-pointer"
           >
-            <FaCog /> Settings
-          </li>
-        </ul>
+            <FaCog size={18} /> Settings
+          </div>
+        </nav>
 
-        {/* Logout Button */}
-        <button 
-          onClick={handleLogout} 
-          className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-md w-full text-white"
+        <button
+          onClick={handleLogout}
+          className="mt-8 bg-blue-500 hover:bg-blue-600 text-white w-full py-2 rounded shadow"
         >
-          <FaSignOutAlt /> Lock Out
+          <FaSignOutAlt /> Log Out
         </button>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-6 ml-64">
-        <h1 className="text-3xl font-bold text-blue-700 mb-12">Welcome Pheyzal!</h1>
+      <main className="flex-1 p-6 ml-64 overflow-auto h-screen">
         {activeSection === "dashboard" && <DashboardSection />}
         {activeSection === "admin-register" && <RegisterAdmin />}
         {activeSection === "users" && <UsersList users={users} handleDelete={handleDelete} />}
