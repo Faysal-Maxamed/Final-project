@@ -1,124 +1,413 @@
-import React from "react";
-import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, BarChart, Bar } from "recharts";
-import { UserCircle2, LayoutDashboard, Dumbbell, BookOpen, DollarSign, Settings, LogOut } from "lucide-react";
+"use client"
+import { useState, useEffect } from "react"
+import React from "react"
+import {
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  BarChart,
+  Bar,
+  ResponsiveContainer,
+  Legend,
+  AreaChart,
+  Area,
+  RadialBarChart,
+  RadialBar,
+} from "recharts"
+import { TrendingUp, Activity, PieChartIcon, BarChartIcon } from "lucide-react"
 
-const COLORS = ["#0088FE", "#FF8042", "#00C49F", "#FFBB28"];
-const diseaseColors = ["#FF6B6B", "#6BCB77", "#4D96FF", "#FFD93D", "#C77DFF"];
+// Modern color palette with gradients
+const COLORS = ["#6366F1", "#F59E0B", "#10B981", "#8B5CF6"]
+const diseaseColors = ["#EF4444", "#10B981", "#3B82F6", "#F59E0B", "#8B5CF6"]
 
 const genderData = [
   { name: "Female", value: 60 },
-  { name: "Male", value: 40 }
-];
+  { name: "Male", value: 40 },
+]
 
-
-const weeklyGoalData = [{ name: "Achieved", value: 95 }, { name: "Remaining", value: 5 }];
+const weeklyGoalData = [
+  { name: "Achieved", value: 95 },
+  { name: "Remaining", value: 5 },
+]
 
 const progressData = [
-  { name: "M", value: 4 },
-  { name: "T", value: 6 },
-  { name: "W", value: 5 },
-  { name: "T", value: 7 },
-  { name: "F", value: 6 },
-  { name: "S", value: 8 },
-  { name: "S", value: 5 },
-];
+  { name: "Mon", value: 4, avg: 3 },
+  { name: "Tue", value: 6, avg: 4 },
+  { name: "Wed", value: 5, avg: 5 },
+  { name: "Thu", value: 7, avg: 6 },
+  { name: "Fri", value: 6, avg: 5 },
+  { name: "Sat", value: 8, avg: 7 },
+  { name: "Sun", value: 5, avg: 4 },
+]
+
 const diseaseData = [
-  { name: "Diabetes", value: 150 },
-  { name: "Heart Disease", value: 200 },
-  { name: "Hypertension", value: 180 },
-  { name: "Kidney Disease", value: 120 },
-  { name: "CORD", value: 100 }
-];
+  { name: "Diabetes", value: 150, fill: "#EF4444" },
+  { name: "Heart Disease", value: 200, fill: "#10B981" },
+  { name: "Hypertension", value: 180, fill: "#3B82F6" },
+  { name: "Kidney Disease", value: 120, fill: "#F59E0B" },
+  { name: "CORD", value: 100, fill: "#8B5CF6" },
+]
+
+const activityData = [
+  { name: "18-24", uv: 31.47, pv: 2400, fill: "#8884d8" },
+  { name: "25-29", uv: 26.69, pv: 4567, fill: "#83a6ed" },
+  { name: "30-34", uv: 15.69, pv: 1398, fill: "#8dd1e1" },
+  { name: "35-39", uv: 8.22, pv: 9800, fill: "#82ca9d" },
+  { name: "40-49", uv: 8.63, pv: 3908, fill: "#a4de6c" },
+  { name: "50+", uv: 2.63, pv: 4800, fill: "#d0ed57" },
+]
+
+// Custom tooltip component for better styling
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-4 border border-gray-200 shadow-xl rounded-lg">
+        <p className="font-medium text-gray-800 mb-1">{`${label || payload[0].name}`}</p>
+        {payload.map((entry, index) => (
+          <p key={`item-${index}`} className="text-sm" style={{ color: entry.color }}>
+            <span className="font-medium">{`${entry.name}: ${entry.value}`}</span>
+          </p>
+        ))}
+      </div>
+    )
+  }
+  return null
+}
 
 const Dashboard = () => {
+  const [mounted, setMounted] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  useEffect(() => {
+    setMounted(true)
+    const interval = setInterval(() => {
+      setActiveIndex((prevIndex) => (prevIndex + 1) % diseaseData.length)
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [])
+
+  if (!mounted) return null
+
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-
-
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
       {/* Main Content */}
-      <main className="flex-1 p-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-cyan-600">PERSONAL PROGRESS</h1>
-          <button className="bg-purple-500 text-white px-4 py-2 rounded">CONTACT SUPPORT</button>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Main Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {[
+            { title: "Total Patients", value: "1,284", change: "+12.5%", color: "from-blue-500 to-indigo-600" },
+            { title: "Readmission Rate", value: "8.9%", change: "-2.3%", color: "from-green-500 to-emerald-600" },
+            {
+              title: "Avg. Stay Duration",
+              value: "4.2 days",
+              change: "-0.8 days",
+              color: "from-amber-500 to-orange-600",
+            },
+            { title: "Satisfaction Score", value: "9.2/10", change: "+0.4", color: "from-purple-500 to-fuchsia-600" },
+          ].map((stat, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100 overflow-hidden relative group"
+            >
+              <div
+                className={`absolute inset-0 bg-gradient-to-r ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+              ></div>
+              <h3 className="text-gray-500 text-sm font-medium mb-1">{stat.title}</h3>
+              <div className="flex items-end justify-between">
+                <div className="text-2xl font-bold text-gray-800">{stat.value}</div>
+                <div
+                  className={`text-sm font-medium ${
+                    stat.change.startsWith("+") ? "text-green-600" : "text-red-600"
+                  } flex items-center`}
+                >
+                  {stat.change}
+                  <svg
+                    className={`w-4 h-4 ml-1 ${stat.change.startsWith("+") ? "rotate-0" : "rotate-180"}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Main Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Disease Admissions Chart */}
+          <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
+                  <BarChartIcon className="w-5 h-5" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">Top 5 Most Readmitted Diseases</h2>
+              </div>
+              <div className="text-sm text-gray-500">Last 30 days</div>
+            </div>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={diseaseData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f0f0f0" />
+                  <XAxis type="number" tick={{ fill: "#6B7280", fontSize: 12 }} axisLine={{ stroke: "#E5E7EB" }} />
+                  <YAxis
+                    dataKey="name"
+                    type="category"
+                    tick={{ fill: "#6B7280", fontSize: 12 }}
+                    axisLine={{ stroke: "#E5E7EB" }}
+                    width={100}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar
+                    dataKey="value"
+                    radius={[0, 4, 4, 0]}
+                    animationDuration={1500}
+                    animationBegin={300}
+                    background={{ fill: "#f3f4f6" }}
+                    label={{ position: "right", fill: "#6B7280", fontSize: 12 }}
+                  >
+                    {diseaseData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.fill}
+                        fillOpacity={index === activeIndex ? 1 : 0.7}
+                        stroke={index === activeIndex ? "#fff" : "none"}
+                        strokeWidth={index === activeIndex ? 1 : 0}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Progress Tracking Chart */}
+          <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-800">Progress Tracking</h2>
+              </div>
+              <div className="flex items-center text-green-500 text-sm font-medium">
+                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fillRule="evenodd"
+                    d="M12 7a1 1 0 10-2 0v3H7a1 1 0 100 2h3v3a1 1 0 102 0v-3h3a1 1 0 100-2h-3V7z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span>12% from last week</span>
+              </div>
+            </div>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={progressData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#6366F1" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorAvg" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                  <XAxis dataKey="name" tick={{ fill: "#6B7280", fontSize: 12 }} axisLine={{ stroke: "#E5E7EB" }} />
+                  <YAxis tick={{ fill: "#6B7280", fontSize: 12 }} axisLine={{ stroke: "#E5E7EB" }} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend
+                    verticalAlign="top"
+                    height={36}
+                    formatter={(value) => (
+                      <span className="text-gray-700">{value === "value" ? "Current" : "Average"}</span>
+                    )}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#6366F1"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#colorValue)"
+                    activeDot={{ r: 8, strokeWidth: 0, fill: "#6366F1" }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="avg"
+                    stroke="#8B5CF6"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#colorAvg)"
+                    activeDot={{ r: 8, strokeWidth: 0, fill: "#8B5CF6" }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* Secondary Charts Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Gender Distribution Chart */}
-          <div className="bg-white p-4 rounded shadow">
-            <h2 className="text-center font-semibold mb-2">Gender Distribution</h2>
-            <PieChart width={250} height={250}>
-              <Pie
-                data={genderData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                label
-              >
-                {genderData.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
+          <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+            <div className="flex items-center mb-6">
+              <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
+                <PieChartIcon className="w-5 h-5" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-800">Gender Distribution</h2>
+            </div>
+            <div className="h-64 flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <defs>
+                    <linearGradient id="genderGradient1" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#6366F1" />
+                      <stop offset="100%" stopColor="#4F46E5" />
+                    </linearGradient>
+                    <linearGradient id="genderGradient2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#F59E0B" />
+                      <stop offset="100%" stopColor="#D97706" />
+                    </linearGradient>
+                  </defs>
+                  <Pie
+                    data={genderData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    innerRadius={60}
+                    paddingAngle={5}
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    labelLine={false}
+                    animationDuration={1000}
+                    animationBegin={200}
+                  >
+                    <Cell fill="url(#genderGradient1)" stroke="#fff" strokeWidth={2} />
+                    <Cell fill="url(#genderGradient2)" stroke="#fff" strokeWidth={2} />
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex justify-center mt-4 space-x-8">
+              {genderData.map((entry, index) => (
+                <div key={`legend-${index}`} className="flex items-center">
+                  <div
+                    className="w-3 h-3 rounded-full mr-2"
+                    style={{ background: index === 0 ? "#6366F1" : "#F59E0B" }}
+                  ></div>
+                  <span className="text-sm text-gray-600">{`${entry.name}: ${entry.value}%`}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Disease Admissions Bar Chart */}
-          <div className="bg-white p-6 rounded shadow col-span-1 md:col-span-2">
-            <h2 className="text-center font-semibold mb-2">Top 5 Most Readmitted Diseases</h2>
-            <BarChart width={550} height={250} data={diseaseData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="value">
-                {diseaseData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={diseaseColors[index % diseaseColors.length]} />
-                ))}
-              </Bar>
-            </BarChart>
+          {/* Activity Ring */}
+          <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+            <div className="flex items-center mb-6">
+              <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
+                <Activity className="w-5 h-5" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-800">Activity Completion</h2>
+            </div>
+            <div className="h-64 flex flex-col items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadialBarChart
+                  cx="50%"
+                  cy="50%"
+                  innerRadius="30%"
+                  outerRadius="100%"
+                  barSize={10}
+                  data={activityData}
+                  startAngle={90}
+                  endAngle={-270}
+                >
+                  <RadialBar
+                    minAngle={15}
+                    background
+                    clockWise
+                    dataKey="uv"
+                    cornerRadius={10}
+                    label={{ position: "insideStart", fill: "#fff", fontSize: 10 }}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                </RadialBarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="text-center mt-2">
+              <div className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                95%
+              </div>
+              <p className="text-gray-500">Weekly Goal Completion</p>
+            </div>
           </div>
-        </div>
 
-
-        {/* Progress Tracking */}
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 ">
-          <div className="bg-white p-6 rounded shadow">
-            <h2 className="font-semibold mb-2">Progress Tracking</h2>
-            <div className="text-3xl font-bold">8.9</div>
-            <p className="text-gray-500 mb-4">BiWeekly Progress</p>
-            <BarChart width={400} height={200} data={progressData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="value" fill="#8884d8" />
-            </BarChart>
-          </div>
-
-          {/* Dummy Ring Chart (reuse Weekly Goal Chart) */}
-          <div className="bg-white p-6 rounded shadow flex flex-col items-center justify-center">
-            <h2 className="font-semibold mb-4">Activity Ring</h2>
-            <PieChart width={250} height={250}>
-              <Pie
-                data={weeklyGoalData}
-                dataKey="value"
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={80}
-              >
-                {weeklyGoalData.map((_, index) => (
-                  <Cell key={`cell-ring-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-            </PieChart>
+          {/* Weekly Goal Chart */}
+          <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+            <div className="flex items-center mb-6">
+              <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
+                <Activity className="w-5 h-5" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-800">Weekly Goals</h2>
+            </div>
+            <div className="h-64 flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <defs>
+                    <linearGradient id="goalGradient" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#6366F1" />
+                      <stop offset="100%" stopColor="#8B5CF6" />
+                    </linearGradient>
+                  </defs>
+                  <Pie
+                    data={weeklyGoalData}
+                    dataKey="value"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={70}
+                    outerRadius={90}
+                    startAngle={90}
+                    endAngle={-270}
+                    animationDuration={1500}
+                    animationBegin={300}
+                    cornerRadius={10}
+                    paddingAngle={5}
+                  >
+                    <Cell fill="url(#goalGradient)" stroke="none" />
+                    <Cell fill="#E5E7EB" stroke="none" />
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex justify-between mt-4 px-4">
+              <div className="text-center">
+                <div className="text-sm font-medium text-gray-500">Completed</div>
+                <div className="text-xl font-bold text-indigo-600">38/40</div>
+              </div>
+              <div className="text-center">
+                <div className="text-sm font-medium text-gray-500">Remaining</div>
+                <div className="text-xl font-bold text-gray-400">2</div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard
