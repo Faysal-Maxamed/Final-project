@@ -46,7 +46,6 @@ router.get("/users", async (req, res) => {
 });
 
 
-// Login (Admin or Patient)
 router.post("/login", async (req, res) => {
   try {
     const { email, password, role } = req.body;
@@ -54,12 +53,19 @@ router.post("/login", async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(400).json({ error: "Invalid credentials" });
     }
-    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.json({ token, user });
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    // ✅ Just return token and role directly
+    res.json({ token, role: user.role });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 
