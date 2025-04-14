@@ -98,7 +98,7 @@ const History = () => {
                             : "text-green-500"
                           }`}
                       >
-                        ● {patient.readmission === "Yes" ? "No" : "Yes"}
+                        ● {patient.readmission === "Yes" ? "Readmited" : "Not Readmited"}
                       </span>
                     </td>
                     <td className="p-2 border">{patient.probability}</td>

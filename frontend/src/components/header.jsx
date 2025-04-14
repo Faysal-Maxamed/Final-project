@@ -81,7 +81,6 @@ const Header = ({ darkMode, setDarkMode }) => {
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
     { name: "Predict", path: "/PredictorForm" },
-    { name: "History", path: "/history" },
     { name: "Contact", path: "/contact" },
   ]
 

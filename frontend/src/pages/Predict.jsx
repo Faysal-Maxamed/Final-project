@@ -42,43 +42,65 @@ const PredictorForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+// Inside your handleSubmit function, update the historyEntry creation:
 
-    const preparedData = {
-      ...formData,
-      gender: formData.gender === "Male" ? 1 : 0,
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const preparedData = {
+    ...formData,
+    gender: formData.gender === "Male" ? 1 : 0,
+  };
+
+  const result = await predictReadmission(preparedData);
+  setResult(result);
+  setShowModal(true);
+
+  if (!result.error) {
+    // Get text values for diagnosis and discharge
+    const diagnosisText = primaryDiagnoses[parseInt(formData.primary_diagnosis)];
+    const dischargeText = dischargeOptions[parseInt(formData.discharge_to)];
+    
+    // Create history entry with all required fields
+    const historyEntry = {
+      age: formData.age,
+      gender: formData.gender, // Keep as "Male" or "Female" for display
+      primary_diagnosis: formData.primary_diagnosis, // Send index, backend will convert
+      discharge_to: formData.discharge_to, // Send index, backend will convert
+      num_procedures: formData.num_procedures, // Will be mapped to procedures
+      days_in_hospital: formData.days_in_hospital,
+      comorbidity_score: formData.comorbidity_score, // Will be mapped to comorbidity
+      readmission: result?.readmission === 1 ? "Yes" : "No",
+      probability: `${(result?.probability * 100).toFixed(2)}%`,
     };
 
-    const result = await predictReadmission(preparedData);
-    setResult(result);
-    setShowModal(true);
-
-    if (!result.error) {
-      const historyEntry = {
-        ...formData,
-        readmission: result?.readmission === 1 ? "Yes" : "No",
-        probability: `${(result?.probability * 100).toFixed(2)}%`,
-      };
-
-      await fetch("http://localhost:5000/api/patient/history", {
+    try {
+      const response = await fetch("http://localhost:5000/api/patient/history", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(historyEntry),
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error saving history:", errorData);
+      }
+    } catch (error) {
+      console.error("Error saving history:", error);
     }
+  }
 
-    // Reset form data after submission
-    setFormData({
-      age: "",
-      gender: "",
-      primary_diagnosis: "",
-      discharge_to: "",
-      num_procedures: "",
-      days_in_hospital: "",
-      comorbidity_score: "",
-    });
-  };
+  // Reset form data after submission
+  setFormData({
+    age: "",
+    gender: "",
+    primary_diagnosis: "",
+    discharge_to: "",
+    num_procedures: "",
+    days_in_hospital: "",
+    comorbidity_score: "",
+  });
+};
 
   const handleRatingClick = (emoji) => {
     setRating(emoji);
