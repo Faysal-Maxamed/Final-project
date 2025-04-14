@@ -24,16 +24,6 @@ import { TrendingUp, Activity, PieChartIcon, BarChartIcon } from "lucide-react"
 const COLORS = ["#6366F1", "#F59E0B", "#10B981", "#8B5CF6"]
 const diseaseColors = ["#EF4444", "#10B981", "#3B82F6", "#F59E0B", "#8B5CF6"]
 
-const genderData = [
-  { name: "Female", value: 60 },
-  { name: "Male", value: 40 },
-]
-
-const weeklyGoalData = [
-  { name: "Achieved", value: 95 },
-  { name: "Remaining", value: 5 },
-]
-
 const progressData = [
   { name: "Mon", value: 4, avg: 3 },
   { name: "Tue", value: 6, avg: 4 },
@@ -44,12 +34,9 @@ const progressData = [
   { name: "Sun", value: 5, avg: 4 },
 ]
 
-const diseaseData = [
-  { name: "Diabetes", value: 150, fill: "#EF4444" },
-  { name: "Heart Disease", value: 200, fill: "#10B981" },
-  { name: "Hypertension", value: 180, fill: "#3B82F6" },
-  { name: "Kidney Disease", value: 120, fill: "#F59E0B" },
-  { name: "CORD", value: 100, fill: "#8B5CF6" },
+const weeklyGoalData = [
+  { name: "Achieved", value: 95 },
+  { name: "Remaining", value: 5 },
 ]
 
 const activityData = [
@@ -81,14 +68,96 @@ const CustomTooltip = ({ active, payload, label }) => {
 const Dashboard = () => {
   const [mounted, setMounted] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
+  const [patientHistory, setPatientHistory] = useState([])
+  const [diseaseData, setDiseaseData] = useState([])
+  const [genderData, setGenderData] = useState([])
+  const [totalUsers, setTotalUsers] = useState(0)
+  const [totalRatings, setTotalRatings] = useState(0)
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch patient history
+        const historyResponse = await fetch("http://localhost:5000/api/patient/history")
+        const historyData = await historyResponse.json()
+        setPatientHistory(historyData)
+
+        // Fetch users count
+        const usersResponse = await fetch("http://localhost:5000/api/auth/users")
+        const usersData = await usersResponse.json()
+        setTotalUsers(usersData.length || 0)
+
+        // Fetch feedback/ratings
+        const feedbackResponse = await fetch("http://localhost:5000/api/feedback")
+        const feedbackData = await feedbackResponse.json()
+        setTotalRatings(feedbackData.length || 0)
+
+        // Process data for charts
+        processDiseaseData(historyData)
+        processGenderData(historyData)
+      } catch (error) {
+        console.error("Error fetching data:", error)
+      }
+    }
+
+    fetchData()
     setMounted(true)
+
     const interval = setInterval(() => {
-      setActiveIndex((prevIndex) => (prevIndex + 1) % diseaseData.length)
+      setActiveIndex((prevIndex) => (prevIndex + 1) % 5) // Assuming 5 diseases max
     }, 3000)
+
     return () => clearInterval(interval)
   }, [])
+
+  // Process disease data for the chart
+  const processDiseaseData = (data) => {
+    const diagnosisCounts = {}
+
+    // Count occurrences of each diagnosis
+    data.forEach((patient) => {
+      const diagnosis = patient.primary_diagnosis
+      if (diagnosis) {
+        diagnosisCounts[diagnosis] = (diagnosisCounts[diagnosis] || 0) + 1
+      }
+    })
+
+    // Convert to array and sort by count (descending)
+    const sortedDiagnoses = Object.entries(diagnosisCounts)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 5) // Get top 5
+
+    // Add colors
+    const formattedData = sortedDiagnoses.map((item, index) => ({
+      ...item,
+      fill: diseaseColors[index % diseaseColors.length],
+    }))
+
+    setDiseaseData(formattedData.length > 0 ? formattedData : [{ name: "No Data", value: 0, fill: "#EF4444" }])
+  }
+
+  // Process gender data for the chart
+  const processGenderData = (data) => {
+    const genderCounts = { Male: 0, Female: 0 }
+
+    // Count occurrences of each gender
+    data.forEach((patient) => {
+      if (patient.gender === "Male" || patient.gender === "Female") {
+        genderCounts[patient.gender]++
+      }
+    })
+
+    // Calculate percentages
+    const total = genderCounts.Male + genderCounts.Female
+    const malePercentage = total > 0 ? Math.round((genderCounts.Male / total) * 100) : 0
+    const femalePercentage = total > 0 ? Math.round((genderCounts.Female / total) * 100) : 0
+
+    setGenderData([
+      { name: "Female", value: femalePercentage },
+      { name: "Male", value: malePercentage },
+    ])
+  }
 
   if (!mounted) return null
 
@@ -96,12 +165,21 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
         {/* Main Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           {[
-            { title: "Total Patients", value: "1,284", change: "+12.5%", color: "from-blue-500 to-indigo-600" },
-            { title: "Readmission Rate", value: "8.9%", change: "-2.3%", color: "from-green-500 to-emerald-600" },
+            {
+              title: "Total Users",
+              value: totalUsers.toString(),
+              change: "+12.5%",
+              color: "from-blue-500 to-indigo-600",
+            },
+            {
+              title: "Readmission Rate",
+              value: totalRatings > 0 ? `${totalRatings}` : "0",
+              change: "-2.3%",
+              color: "from-green-500 to-emerald-600",
+            },
             {
               title: "Avg. Stay Duration",
               value: "4.2 days",
@@ -150,7 +228,7 @@ const Dashboard = () => {
                 <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
                   <BarChartIcon className="w-5 h-5" />
                 </div>
-                <h2 className="text-xl font-bold text-gray-800">Top 5 Most Readmitted Diseases</h2>
+                <h2 className="text-xl font-bold text-gray-800">Top 5 Most Common Diagnoses</h2>
               </div>
               <div className="text-sm text-gray-500">Last 30 days</div>
             </div>
