@@ -37,37 +37,33 @@ const Feedback = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-100 to-teal-100 py-10 px-4">
-            <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <div className="max-h-screen bg-gradient-to-br from-blue-100 to-teal-100 py-10 px-4">
 
-
-                <h2 className="text-xl font-semibold text-gray-700 mb-3">Recent Feedback</h2>
-                <div className="space-y-4 max-h-60 overflow-y-auto">
-                    {feedbacks.length === 0 ? (
-                        <p className="text-gray-500">No feedback yet.</p>
-                    ) : (
-                        feedbacks.map((fb) => (
-                            <div
-                              key={fb._id}
-                              className="bg-white border border-gray-300 rounded-lg p-4 shadow-sm"
-                            >
-                              <div className="flex justify-between items-center mb-2">
-                                <h3 className="text-lg font-semibold text-blue-600">User Feedback</h3>
-                                <span className="text-yellow-500 font-medium">
-                                  ⭐ {fb.rating}/5
-                                </span>
-                              </div>
-                              <p className="text-gray-800">{fb.feedback}</p>
-                              <p className="text-sm text-gray-400 mt-2">
-                                {new Date(fb.timestamp).toLocaleString()}
-                              </p>
+            <h2 className="text-xl font-semibold text-gray-700 mb-3">Recent Feedback</h2>
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+                {feedbacks.length === 0 ? (
+                    <p className="text-gray-500">No feedback yet.</p>
+                ) : (
+                    feedbacks.map((fb) => (
+                        <div
+                            key={fb._id}
+                            className="flex items-start gap-3 bg-white shadow-sm border border-gray-200 rounded-lg p-4"
+                        >
+                            <div className="flex-shrink-0 w-10 h-10 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                                {fb.feedback.charAt(0).toUpperCase()}
                             </div>
-                          ))
-                          
-                    )}
-                </div>
-
+                            <div>
+                                <p className="text-gray-800 mb-1">{fb.feedback}</p>
+                                <p className="text-sm text-gray-500">
+                                    ⭐ {fb.rating} stars &middot; {new Date(fb.timestamp).toLocaleString()}
+                                </p>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
+
+
         </div>
     );
 };
