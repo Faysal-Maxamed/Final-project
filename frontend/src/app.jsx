@@ -5,6 +5,7 @@ import Contact from "./pages/contact"
 import PredictorForm from "./pages/Predict"
 // import History from "./pages/History";
 import Login from "./pages/Login"
+import ForgotPassword from "./pages/forgetpassword"
 import Register from "./pages/Register"
 import Dashboard from "./pages/Dashboard"
 
@@ -49,6 +50,7 @@ function App() {
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgetpassword" element={<ForgotPassword />} />
 
         {/* Protected routes */}
         <Route path="/" element={<ProtectedRoute element={<Home />} />} />
