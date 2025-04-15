@@ -46,7 +46,7 @@ const History = () => {
           <h2 className="text-2xl font-bold">Order History</h2>
           <button
             onClick={exportToExcel}
-            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+            className="flex items-center gap-2 ml-auto bg-gradient-to-r from-blue-600 to-teal-500 hover:shadow-lg text-white px-4 py-1.5 text-sm rounded-md transition-all duration-200"
           >
             Export to Excel
           </button>
@@ -54,7 +54,7 @@ const History = () => {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-700">
+          <table className="w-full text-sm text-left text-gray-700 ">
             <thead className="text-xs text-gray-700 uppercase bg-gray-200">
               <tr>
                 <th className="p-2 border">Date</th>
@@ -105,7 +105,7 @@ const History = () => {
                     <td className="p-2 border text-right">
                       <button
                         onClick={() => handleDelete(patient._id)}
-                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                        className="flex items-center gap-2 ml-auto bg-gradient-to-r from-blue-600 to-teal-500 hover:shadow-lg text-white px-4 py-1.5 text-sm rounded-md transition-all duration-200"
                       >
                         Delete
                       </button>

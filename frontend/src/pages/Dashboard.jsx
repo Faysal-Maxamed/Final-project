@@ -1,13 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { FaTachometerAlt, FaUsers, FaStethoscope, FaHistory, FaCog, FaSignOutAlt } from "react-icons/fa"
+import { FaTachometerAlt, FaUsers, FaStethoscope, FaHistory, FaCog, FaSignOutAlt ,FaComments} from "react-icons/fa"
 import axios from "axios"
 import DashboardSection from "../components/DashboardSection"
 import RegisterAdmin from "../components/RegisterAdmin"
 import UsersList from "../components/UsersList"
 import History from "./History"
 import Advice from "./Advice"
+import Feedback from "../pages/feedback"
 import React from "react"
 const Dashboard = () => {
   const [users, setUsers] = useState([])
@@ -95,6 +96,12 @@ const Dashboard = () => {
               <FaHistory size={18} /> History
             </div>
             <div
+              onClick={() => setActiveSection("Feedback")}
+              className="flex items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-500 hover:text-white hover:scale-105 p-1 rounded-full"
+            >
+              <FaComments size={18} />Patient Feedback
+            </div>
+            <div
               onClick={() => setActiveSection("settings")}
               className="flex items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-500 hover:text-white hover:scale-105 p-1 rounded-full"
             >
@@ -119,6 +126,7 @@ const Dashboard = () => {
         {activeSection === "users" && <UsersList users={users} handleDelete={handleDelete} />}
         {activeSection === "Advice" && <Advice />}
         {activeSection === "history" && <History />}
+        {activeSection === "Feedback" && <Feedback />}
       </main>
     </div>
   )
