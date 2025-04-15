@@ -1,5 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
+import ReadmissionChart from "./ReadmissionChart";
+
 import React from "react"
 import {
   PieChart,
@@ -18,7 +20,7 @@ import {
   RadialBarChart,
   RadialBar,
 } from "recharts"
-import { TrendingUp, Activity, PieChartIcon, BarChartIcon } from "lucide-react"
+import { TrendingUp,  PieChartIcon, BarChartIcon } from "lucide-react"
 
 // Modern color palette with gradients
 const COLORS = ["#6366F1", "#F59E0B", "#10B981", "#8B5CF6"]
@@ -39,14 +41,7 @@ const weeklyGoalData = [
   { name: "Remaining", value: 5 },
 ]
 
-const activityData = [
-  { name: "18-24", uv: 31.47, pv: 2400, fill: "#8884d8" },
-  { name: "25-29", uv: 26.69, pv: 4567, fill: "#83a6ed" },
-  { name: "30-34", uv: 15.69, pv: 1398, fill: "#8dd1e1" },
-  { name: "35-39", uv: 8.22, pv: 9800, fill: "#82ca9d" },
-  { name: "40-49", uv: 8.63, pv: 3908, fill: "#a4de6c" },
-  { name: "50+", uv: 2.63, pv: 4800, fill: "#d0ed57" },
-]
+
 
 // Custom tooltip component for better styling
 const CustomTooltip = ({ active, payload, label }) => {
@@ -73,6 +68,9 @@ const Dashboard = () => {
   const [genderData, setGenderData] = useState([])
   const [totalUsers, setTotalUsers] = useState(0)
   const [totalRatings, setTotalRatings] = useState(0)
+  const [adviceCount, setAdviceCount] = useState(0)
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,17 +79,22 @@ const Dashboard = () => {
         const historyResponse = await fetch("http://localhost:5000/api/patient/history")
         const historyData = await historyResponse.json()
         setPatientHistory(historyData)
-
+  
         // Fetch users count
         const usersResponse = await fetch("http://localhost:5000/api/auth/users")
         const usersData = await usersResponse.json()
         setTotalUsers(usersData.length || 0)
-
+  
         // Fetch feedback/ratings
         const feedbackResponse = await fetch("http://localhost:5000/api/feedback")
         const feedbackData = await feedbackResponse.json()
         setTotalRatings(feedbackData.length || 0)
-
+  
+        // ✅ Fetch advice count
+        const adviceResponse = await fetch("http://localhost:5000/api/advice/all")
+        const adviceData = await adviceResponse.json()
+        setAdviceCount(adviceData.length || 0)
+  
         // Process data for charts
         processDiseaseData(historyData)
         processGenderData(historyData)
@@ -99,17 +102,17 @@ const Dashboard = () => {
         console.error("Error fetching data:", error)
       }
     }
-
+  
     fetchData()
     setMounted(true)
-
+  
     const interval = setInterval(() => {
       setActiveIndex((prevIndex) => (prevIndex + 1) % 5) // Assuming 5 diseases max
     }, 3000)
-
+  
     return () => clearInterval(interval)
   }, [])
-
+  
   // Process disease data for the chart
   const processDiseaseData = (data) => {
     const diagnosisCounts = {}
@@ -175,18 +178,19 @@ const Dashboard = () => {
               color: "from-blue-500 to-indigo-600",
             },
             {
-              title: "Readmission Rate",
+              title: "Patient Rate",
               value: totalRatings > 0 ? `${totalRatings}` : "0",
               change: "-2.3%",
               color: "from-green-500 to-emerald-600",
             },
             {
-              title: "Avg. Stay Duration",
-              value: "4.2 days",
-              change: "-0.8 days",
+              title: "Total Advice ",
+              value: adviceCount > 0 ? `${adviceCount}` : "0",
+              change: "+5%",
               color: "from-amber-500 to-orange-600",
-            },
-            { title: "Satisfaction Score", value: "9.2/10", change: "+0.4", color: "from-purple-500 to-fuchsia-600" },
+            }
+            
+            
           ].map((stat, index) => (
             <div
               key={index}
@@ -199,9 +203,8 @@ const Dashboard = () => {
               <div className="flex items-end justify-between">
                 <div className="text-2xl font-bold text-gray-800">{stat.value}</div>
                 <div
-                  className={`text-sm font-medium ${
-                    stat.change.startsWith("+") ? "text-green-600" : "text-red-600"
-                  } flex items-center`}
+                  className={`text-sm font-medium ${stat.change.startsWith("+") ? "text-green-600" : "text-red-600"
+                    } flex items-center`}
                 >
                   {stat.change}
                   <svg
@@ -337,7 +340,7 @@ const Dashboard = () => {
         </div>
 
         {/* Secondary Charts Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Gender Distribution Chart */}
           <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
             <div className="flex items-center mb-6">
@@ -394,94 +397,8 @@ const Dashboard = () => {
           </div>
 
           {/* Activity Ring */}
-          <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
-            <div className="flex items-center mb-6">
-              <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
-                <Activity className="w-5 h-5" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-800">Activity Completion</h2>
-            </div>
-            <div className="h-64 flex flex-col items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadialBarChart
-                  cx="50%"
-                  cy="50%"
-                  innerRadius="30%"
-                  outerRadius="100%"
-                  barSize={10}
-                  data={activityData}
-                  startAngle={90}
-                  endAngle={-270}
-                >
-                  <RadialBar
-                    minAngle={15}
-                    background
-                    clockWise
-                    dataKey="uv"
-                    cornerRadius={10}
-                    label={{ position: "insideStart", fill: "#fff", fontSize: 10 }}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                </RadialBarChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="text-center mt-2">
-              <div className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                95%
-              </div>
-              <p className="text-gray-500">Weekly Goal Completion</p>
-            </div>
-          </div>
+          <ReadmissionChart />
 
-          {/* Weekly Goal Chart */}
-          <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
-            <div className="flex items-center mb-6">
-              <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
-                <Activity className="w-5 h-5" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-800">Weekly Goals</h2>
-            </div>
-            <div className="h-64 flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <defs>
-                    <linearGradient id="goalGradient" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor="#6366F1" />
-                      <stop offset="100%" stopColor="#8B5CF6" />
-                    </linearGradient>
-                  </defs>
-                  <Pie
-                    data={weeklyGoalData}
-                    dataKey="value"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={70}
-                    outerRadius={90}
-                    startAngle={90}
-                    endAngle={-270}
-                    animationDuration={1500}
-                    animationBegin={300}
-                    cornerRadius={10}
-                    paddingAngle={5}
-                  >
-                    <Cell fill="url(#goalGradient)" stroke="none" />
-                    <Cell fill="#E5E7EB" stroke="none" />
-                  </Pie>
-                  <Tooltip content={<CustomTooltip />} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="flex justify-between mt-4 px-4">
-              <div className="text-center">
-                <div className="text-sm font-medium text-gray-500">Completed</div>
-                <div className="text-xl font-bold text-indigo-600">38/40</div>
-              </div>
-              <div className="text-center">
-                <div className="text-sm font-medium text-gray-500">Remaining</div>
-                <div className="text-xl font-bold text-gray-400">2</div>
-              </div>
-            </div>
-          </div>
         </div>
       </main>
     </div>
