@@ -16,6 +16,21 @@ const Dashboard = () => {
   const [userName, setUserName] = useState("")
   const [userEmail, setUserEmail] = useState("")
 
+  // Component for nav items
+function NavItem({ icon, label, active, onClick }) {
+  return (
+    <button
+      className={`w-full flex items-center gap-2 py-2 px-3 rounded-lg transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-500 hover:text-white hover:scale-105 ${
+        active ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white" : "text-slate-400 hover:text-slate-100"
+      }`}
+      onClick={onClick}
+    >
+      {icon}
+      {label}
+    </button>
+  )
+}
+
   useEffect(() => {
     // Get user information from localStorage
     const storedName = localStorage.getItem("userName")
@@ -61,66 +76,101 @@ const Dashboard = () => {
 
   return (
     <div className="flex bg-gray-100">
-      {/* Fixed Sidebar */}
-      <aside className="w-64 bg-white p-6 border-r fixed top-0 left-0 h-full flex flex-col justify-between">
+     {/* Fixed Sidebar */}
+     <aside className="w-64  backdrop-blur-sm border-r border-slate-700/50 p-6 fixed top-0 left-0 h-full flex flex-col justify-between z-10">
         <div>
           <div className="flex flex-col items-center">
-            <img src="https://i.ibb.co/4pDNDk1/avatar.png" alt="Profile" className="w-20 h-20 rounded-full" />
-            <h2 className="text-lg font-bold mt-2">{userName || "Admin User"}</h2>
-            <p className="text-gray-500 text-sm">{userEmail || "admin@example.com"}</p>
+            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-cyan-500/50 shadow-lg shadow-cyan-500/20">
+              <img src="https://i.ibb.co/4pDNDk1/avatar.png" alt="Profile" className="w-full h-full object-cover" />
+            </div>
+            <h2 className="text-lg font-bold mt-2 text-cyan-400">{userName || "Admin User"}</h2>
+            <p className="text-slate-400 text-sm">{userEmail || "admin@example.com"}</p>
           </div>
 
-          <nav className="mt-6 space-y-4">
-            <div
+          {/* <div className="mt-8 pt-4 border-t border-slate-700/50">
+            <div className="text-xs text-slate-500 mb-2 font-mono">SYSTEM STATUS</div>
+            <div className="space-y-3">
+              <StatusItem label="Core Systems" value={systemStatus} color="cyan" />
+              <StatusItem label="Users" value={userCount > 0 ? 100 : 0} color="green" />
+              <StatusItem label="Network" value={92} color="blue" />
+            </div>
+          </div> */}
+
+          <nav className="mt-6 space-y-2">
+            <NavItem
+              icon={<FaTachometerAlt size={18} />}
+              label="Dashboard"
+              active={activeSection === "dashboard"}
               onClick={() => setActiveSection("dashboard")}
-              className="flex items-center gap-1 text-blue-600 font-medium cursor-pointer transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-500 hover:text-white hover:scale-105 p-1 rounded-full"
-            >
-              <FaTachometerAlt size={18} /> Dashboard
-            </div>
-            <div
+            />
+            <NavItem
+              icon={<FaUsers size={18} />}
+              label="Users"
+              active={activeSection === "users"}
               onClick={() => setActiveSection("users")}
-              className="flex items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-500 hover:text-white hover:scale-105 p-1 rounded-full"
-            >
-              <FaUsers size={18} /> Users
-            </div>
-            <div
+            />
+            <NavItem
+              icon={<FaStethoscope size={18} />}
+              label="Advice"
+              active={activeSection === "Advice"}
               onClick={() => setActiveSection("Advice")}
-              className="flex items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-500 hover:text-white hover:scale-105 p-1 rounded-full"
-            >
-              <FaStethoscope size={18} /> Advice
-            </div>
-            <div
+            />
+            <NavItem
+              icon={<FaHistory size={18} />}
+              label="History"
+              active={activeSection === "history"}
               onClick={() => setActiveSection("history")}
-              className="flex items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-500 hover:text-white hover:scale-105 p-1 rounded-full"
-            >
-              <FaHistory size={18} /> History
-            </div>
-            <div
+            />
+            <NavItem
+              icon={<FaComments size={18} />}
+              label="Patient Feedback"
+              active={activeSection === "Feedback"}
               onClick={() => setActiveSection("Feedback")}
-              className="flex items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-500 hover:text-white hover:scale-105 p-1 rounded-full"
-            >
-              <FaComments size={18} />Patient Feedback
-            </div>
-            <div
-              onClick={() => setActiveSection("settings")}
-              className="flex items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-blue-600 hover:to-teal-500 hover:text-white hover:scale-105 p-1 rounded-full"
-            >
-              <FaCog size={18} /> Settings
-            </div>
+            />
           </nav>
         </div>
 
         {/* Enhanced Log Out Button at the bottom */}
         <button
           onClick={handleLogout}
-          className="mt-8 bg-gradient-to-r from-blue-600 to-teal-500 hover:shadow-lg text-white w-full py-3 rounded-lg shadow-md hover:shadow-lg transition-all ease-in-out duration-300"
+          className="mt-8 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white w-full py-3 rounded-lg shadow-md hover:shadow-lg transition-all ease-in-out duration-300 flex items-center justify-center"
         >
-          <FaSignOutAlt className="inline-block mr-2" /> Log Out
+          <FaSignOutAlt className="mr-2" /> Log Out
         </button>
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 p-6 ml-64 overflow-auto h-screen">
+         {/* Header */}
+         <header
+          className={`flex items-center justify-between py-4 mb-6 ${ "border-b border-slate-200/50"
+          }`}
+        >
+          <div className="flex items-center space-x-2">
+            <FaTachometerAlt className={`h-6 w-6 ${"text-blue-600"}`} />
+            <span
+              className={`text-xl font-bold ${
+                   "bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent"
+              }`}
+            >
+              HPR ADMIN DASHBOARD
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <button
+              className={`relative bg-transparent border-none p-2 rounded-full transition-colors ${
+               "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50"
+              }`}
+            >
+              <span
+                className={`absolute -top-1 -right-1 h-2 w-2 rounded-full animate-pulse ${
+                "bg-blue-500"
+                }`}
+              ></span>
+            </button>
+          </div>
+        </header>
         {activeSection === "dashboard" && <DashboardSection />}
         {activeSection === "admin-register" && <RegisterAdmin />}
         {activeSection === "users" && <UsersList users={users} handleDelete={handleDelete} />}
