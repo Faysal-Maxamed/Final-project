@@ -9,12 +9,10 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const PredictorForm = () => {
   const [formData, setFormData] = useState({
     age: "",
-    gender: "",             // No default value
-    primary_diagnosis: "",  // No default value
-    discharge_to: "",       // No default value
+    gender: "",
+    primary_diagnosis: "",
     num_procedures: "",
     days_in_hospital: "",
-    comorbidity_score: "",
   });
 
   const [result, setResult] = useState(null);
@@ -24,83 +22,63 @@ const PredictorForm = () => {
   const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
 
   const primaryDiagnoses = [
-    "COPD",               // 0
-    "Diabetes",           // 1
-    "Heart disease",      // 2
-    "Hypertension",       // 3
-    "Kidney disease"      // 4
-  ];
-
-  const dischargeOptions = [
-    "Home",                             // 0
-    "Home health care",                 // 1
-    "Rehabilitation facility",          // 2
-    "Skilled nursing facility"           // 3
+    "Depressed Skull Fracture",
+    "Abdominal Injury",
+    "Open Femur Fracture",
+    "Multiple Injury",
+    "Diabetic Foot Gangrene",
+    "Left Hand Fingers Injury",
+    "Right Wrist Injury",
+    "Left Toe Infected Wound",
+    "Soft Tissue Injury Right Ankle Fracture",
+    "Left Ankle Joint"
   ];
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-// Inside your handleSubmit function, update the historyEntry creation:
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  const preparedData = {
-    ...formData,
-    gender: formData.gender === "Male" ? 1 : 0,
-  };
-
-  const result = await predictReadmission(preparedData);
-  setResult(result);
-  setShowModal(true);
-
-  if (!result.error) {
-    // Get text values for diagnosis and discharge
-    const diagnosisText = primaryDiagnoses[parseInt(formData.primary_diagnosis)];
-    const dischargeText = dischargeOptions[parseInt(formData.discharge_to)];
-    
-    // Create history entry with all required fields
-    const historyEntry = {
-      age: formData.age,
-      gender: formData.gender, // Keep as "Male" or "Female" for display
-      primary_diagnosis: formData.primary_diagnosis, // Send index, backend will convert
-      discharge_to: formData.discharge_to, // Send index, backend will convert
-      num_procedures: formData.num_procedures, // Will be mapped to procedures
-      days_in_hospital: formData.days_in_hospital,
-      comorbidity_score: formData.comorbidity_score, // Will be mapped to comorbidity
-      readmission: result?.readmission === 1 ? "Yes" : "No",
-      probability: `${(result?.probability * 100).toFixed(2)}%`,
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const preparedData = {
+      Age: Number(formData.age),
+      Gender: formData.gender === "Male" ? 1 : 0,
+      Primary_Diagnosis: Number(formData.primary_diagnosis),
+      'Number of Procedures': Number(formData.num_procedures),
+      'Days in Hospital': Number(formData.days_in_hospital),
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/patient/history", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(historyEntry),
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error saving history:", errorData);
+      const result = await predictReadmission(preparedData);
+      setResult(result);
+      setShowModal(true);
+
+      if (result && !result.error) {
+        const historyEntry = {
+          ...formData,
+          readmission: result.readmission === 1 ? "Yes" : "No",
+          probability: `${(result.probability * 100).toFixed(2)}%`,
+        };
+
+        await fetch("http://localhost:5000/api/patient/history", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(historyEntry),
+        });
       }
     } catch (error) {
-      console.error("Error saving history:", error);
+      console.error("Error making prediction:", error);
+      alert("Prediction failed. Please try again.");
     }
-  }
 
-  // Reset form data after submission
-  setFormData({
-    age: "",
-    gender: "",
-    primary_diagnosis: "",
-    discharge_to: "",
-    num_procedures: "",
-    days_in_hospital: "",
-    comorbidity_score: "",
-  });
-};
+    setFormData({
+      age: "",
+      gender: "",
+      primary_diagnosis: "",
+      num_procedures: "",
+      days_in_hospital: "",
+    });
+  };
 
   const handleRatingClick = (emoji) => {
     setRating(emoji);
@@ -126,7 +104,7 @@ const handleSubmit = async (e) => {
 
     setFeedback("");
     setRating("");
-    alert("Feedback submitted successfully!");
+    alert("Feedback submitted. Thank you!");
   };
 
   const chartData = {
@@ -165,6 +143,7 @@ const handleSubmit = async (e) => {
           <h2 className={`text-2xl font-bold mb-6 text-center ${darkMode ? "text-white" : "text-gray-700"}`}>
             Readmission Predictor
           </h2>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {Object.keys(formData).map((field) => (
               <div key={field}>
@@ -177,7 +156,7 @@ const handleSubmit = async (e) => {
                     value={formData.gender}
                     onChange={handleChange}
                     required
-                    className={`w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-200 ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
+                    className={`w-full mt-1 p-2 border rounded-md focus:ring ${darkMode ? "bg-gray-700 text-white" : "bg-white text-black"}`}
                   >
                     <option value="">Select Gender</option>
                     <option value="Male">Male</option>
@@ -189,28 +168,11 @@ const handleSubmit = async (e) => {
                     value={formData.primary_diagnosis}
                     onChange={handleChange}
                     required
-                    className={`w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-200 ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
+                    className={`w-full mt-1 p-2 border rounded-md focus:ring ${darkMode ? "bg-gray-700 text-white" : "bg-white text-black"}`}
                   >
                     <option value="">Select Diagnosis</option>
-                    {primaryDiagnoses.map((diagnosis, index) => (
-                      <option key={index} value={index}>
-                        {diagnosis}
-                      </option>
-                    ))}
-                  </select>
-                ) : field === "discharge_to" ? (
-                  <select
-                    name="discharge_to"
-                    value={formData.discharge_to}
-                    onChange={handleChange}
-                    required
-                    className={`w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-200 ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
-                  >
-                    <option value="">Select Discharge Option</option>
-                    {dischargeOptions.map((option, index) => (
-                      <option key={index} value={index}>
-                        {option}
-                      </option>
+                    {primaryDiagnoses.map((diag, i) => (
+                      <option key={i} value={i}>{diag}</option>
                     ))}
                   </select>
                 ) : (
@@ -220,14 +182,15 @@ const handleSubmit = async (e) => {
                     value={formData[field]}
                     onChange={handleChange}
                     required
-                    className={`w-full mt-1 p-2 border rounded-md focus:ring focus:ring-blue-200 ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
+                    className={`w-full mt-1 p-2 border rounded-md focus:ring ${darkMode ? "bg-gray-700 text-white" : "bg-white text-black"}`}
                   />
                 )}
               </div>
             ))}
+
             <button
               type="submit"
-              className={`w-full py-2 px-4 font-semibold rounded-md hover:bg-blue-700 transition ${darkMode ? "bg-blue-600 text-white" : "bg-blue-600 text-white"}`}
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
             >
               Predict
             </button>
@@ -235,55 +198,28 @@ const handleSubmit = async (e) => {
         </div>
       </div>
 
-      {/* Modal for showing result */}
+      {/* Modal */}
       {showModal && result && (
-        <div className={`fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center ${darkMode ? "bg-gray-900" : "bg-gray-100"}`}>
-          <div className={`bg-white rounded-lg p-6 shadow-lg w-full max-w-lg ${darkMode ? "bg-gray-800" : "bg-white"}`}>
-            <h3 className={`text-lg font-semibold text-center ${darkMode ? "text-white" : "text-gray-800"}`}>
-              Prediction Result
-            </h3>
-
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className={`p-6 rounded-lg w-full max-w-lg ${darkMode ? "bg-gray-800 text-white" : "bg-white text-black"}`}>
+            <h2 className="text-xl font-bold mb-4 text-center">Prediction Result</h2>
             <div className="flex justify-center mt-4 relative">
               <div className="w-48 h-48">
-                <Pie
-                  data={chartData}
-                  options={{
-                    plugins: {
-                      tooltip: { enabled: false },
-                      legend: { display: true },
-                    },
-                  }}
-                />
+                <Pie data={chartData} options={{ plugins: { legend: { display: true } } }} />
               </div>
-              <div className="absolute inset-0 flex items-center justify-center text-lg font-bold text-gray-800">
-                {(result?.probability * 100).toFixed(2)}%
+              <div className="absolute inset-0 flex items-center justify-center font-bold text-lg">
+                {(result.probability * 100).toFixed(2)}%
               </div>
             </div>
-
-            <p className={`mt-4 text-center ${darkMode ? "text-white" : "text-gray-700"}`}>
-              Readmission:{" "}
-              <span className="font-medium">
-                {result?.readmission === 1 ? "Yes" : "No"}
-              </span>
+            <p className="text-center mt-4">
+              Readmission: <strong>{result.readmission === 1 ? "Yes" : "No"}</strong>
             </p>
 
             <div className="mt-4 text-center">
-              <h4 className={`font-medium ${darkMode ? "text-white" : "text-gray-700"}`}>
-                Rate our Prediction
-              </h4>
-              <div className="flex justify-center space-x-2">
-                {[
-                  "😡 Very Bad",
-                  "😞 Bad",
-                  "😐 Neutral",
-                  "😊 Good",
-                  "😀 Excellent",
-                ].map((emoji, index) => (
-                  <button
-                    key={index}
-                    className="text-2xl p-2 shadow-lg hover:shadow-xl hover:bg-gray-100 transition-all duration-200 ease-in-out round-xl"
-                    onClick={() => handleRatingClick(emoji)}
-                  >
+              <h4>Rate our Prediction</h4>
+              <div className="flex justify-center space-x-2 mt-2">
+                {["😡", "😞", "😐", "😊", "😀"].map((emoji, i) => (
+                  <button key={i} onClick={() => handleRatingClick(emoji)} className="text-2xl">
                     {emoji}
                   </button>
                 ))}
@@ -291,28 +227,25 @@ const handleSubmit = async (e) => {
             </div>
 
             <div className="mt-4">
-              <h4 className={`font-medium ${darkMode ? "text-white" : "text-gray-700"} text-center`}>
-                Your Feedback:
-              </h4>
-              <input
-                type="text"
+              <textarea
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
-                className={`w-full mt-2 p-2 border rounded-md focus:ring focus:ring-blue-200 ${darkMode ? "bg-gray-700 text-white" : "bg-white text-gray-900"}`}
+                rows="4"
                 placeholder="Write your feedback here..."
+                className="w-full p-2 border rounded-md"
               />
               <button
                 onClick={handleFeedbackSubmit}
-                className={`mt-2 w-full py-2 font-semibold rounded-md hover:bg-green-700 transition ${darkMode ? "bg-green-600 text-white" : "bg-green-600 text-white"}`}
+                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
               >
                 Submit Feedback
               </button>
             </div>
 
-            <div className="mt-4 text-center">
+            <div className="mt-6 text-center">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-600 text-white rounded-md"
+                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
               >
                 Close
               </button>
