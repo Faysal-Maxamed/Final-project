@@ -263,7 +263,7 @@ const handleSubmit = async (e) => {
             <p className={`mt-4 text-center ${darkMode ? "text-white" : "text-gray-700"}`}>
               Readmission:{" "}
               <span className="font-medium">
-                {result?.readmission === 1 ? "Yes" : "No"}
+                {result?.readmission == 1 ? "Yes" : "No"}
               </span>
             </p>
 
