@@ -30,23 +30,16 @@ router.post("/history", async (req, res) => {
       probability
     } = req.body;
 
-    // Map diagnosis and discharge indices to their text values if needed
-    const primaryDiagnoses = ["COPD", "Diabetes", "Heart disease", "Hypertension", "Kidney disease"];
-    const dischargeOptions = ["Home", "Home health care", "Rehabilitation facility", "Skilled nursing facility"];
-    
-    const diagnosisText = isNaN(primary_diagnosis) ? primary_diagnosis : primaryDiagnoses[parseInt(primary_diagnosis)];
-    const dischargeText = isNaN(discharge_to) ? discharge_to : dischargeOptions[parseInt(discharge_to)];
-
-    // Create new history entry
+    // Create new history entry with proper mapping
     const newHistory = new History({
       date: new Date().toISOString().split('T')[0],
-      age,
+      age: age.toString(),
       gender,
-      primary_diagnosis: diagnosisText,
-      discharge_to: dischargeText,
-      procedures: num_procedures, // Map to procedures field
-      days_in_hospital,
-      comorbidity: comorbidity_score, // Map to comorbidity field
+      primary_diagnosis: primary_diagnosis, // Already text from frontend
+      discharge_to: discharge_to || "Home", // Default to Home if not provided
+      procedures: num_procedures.toString(), // Map to procedures field
+      days_in_hospital: days_in_hospital.toString(),
+      comorbidity: comorbidity_score || "0", // Map to comorbidity field
       readmission,
       probability
     });

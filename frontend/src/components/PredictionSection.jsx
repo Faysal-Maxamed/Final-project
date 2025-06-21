@@ -111,17 +111,36 @@ const PredictionSection = () => {
       setAdvice(selectedAdvice);
 
       if (result && !result.error) {
+        // Get the diagnosis text from the index
+        const diagnosisText = primaryDiagnoses[formData.primary_diagnosis];
+        
         const historyEntry = {
-          ...formData,
+          age: formData.age,
+          gender: formData.gender,
+          primary_diagnosis: diagnosisText,
+          discharge_to: "Home", // Default value since not collected in form
+          num_procedures: formData.num_procedures,
+          days_in_hospital: formData.days_in_hospital,
+          comorbidity_score: "0", // Default value since not collected in form
           readmission: result.readmission === 1 ? "Yes" : "No",
           probability: `${(result.probability * 100).toFixed(2)}%`,
         };
 
-        await fetch("http://localhost:5000/api/patient/history", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(historyEntry),
-        });
+        try {
+          const historyResponse = await fetch("http://localhost:5000/api/patient/history", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(historyEntry),
+          });
+
+          if (!historyResponse.ok) {
+            console.error("Failed to save history:", await historyResponse.text());
+          } else {
+            console.log("History saved successfully");
+          }
+        } catch (historyError) {
+          console.error("Error saving history:", historyError);
+        }
       }
     } catch (error) {
       console.error("Error making prediction:", error);

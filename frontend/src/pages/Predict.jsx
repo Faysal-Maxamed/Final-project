@@ -25,6 +25,7 @@ const PredictorForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const primaryDiagnoses = [
     "Depressed Skull Fracture",
@@ -85,20 +86,41 @@ const PredictorForm = () => {
       setShowModal(true);
 
       if (result && !result.error) {
+        // Get the diagnosis text from the index
+        const diagnosisText = primaryDiagnoses[formData.primary_diagnosis];
+        
         const historyEntry = {
-          ...formData,
+          age: formData.age,
+          gender: formData.gender,
+          primary_diagnosis: diagnosisText,
+          discharge_to: "Home", // Default value since not collected in form
+          num_procedures: formData.num_procedures,
+          days_in_hospital: formData.days_in_hospital,
+          comorbidity_score: "0", // Default value since not collected in form
           readmission: result.readmission === 1 ? "Yes" : "No",
           probability: `${(result.probability * 100).toFixed(2)}%`,
         };
 
-        await fetch("http://localhost:5000/api/patient/history", {
-          method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("token")}`
-          },
-          body: JSON.stringify(historyEntry),
-        });
+        try {
+          const historyResponse = await fetch("http://localhost:5000/api/patient/history", {
+            method: "POST",
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify(historyEntry),
+          });
+
+          if (!historyResponse.ok) {
+            console.error("Failed to save history:", await historyResponse.text());
+          } else {
+            console.log("History saved successfully");
+            setSuccessMessage("Prediction saved to history successfully!");
+            setTimeout(() => setSuccessMessage(""), 3000);
+          }
+        } catch (historyError) {
+          console.error("Error saving history:", historyError);
+        }
       }
     } catch (error) {
       console.error("Error making prediction:", error);
@@ -479,6 +501,20 @@ const PredictorForm = () => {
               {error && (
                 <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg border border-red-200">
                   {error}
+                </div>
+              )}
+              
+              {successMessage && (
+                <div className="mt-4 p-3 bg-green-100 text-green-700 rounded-lg border border-green-200">
+                  {successMessage}
+                  <div className="mt-2">
+                    <a 
+                      href="/history" 
+                      className="text-blue-600 hover:text-blue-800 underline font-medium"
+                    >
+                      View Prediction History
+                    </a>
+                  </div>
                 </div>
               )}
               

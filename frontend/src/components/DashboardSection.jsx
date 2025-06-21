@@ -373,10 +373,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Prediction Section */}
-        <div className="mb-8">
-          <PredictionSection />
-        </div>
 
         {/* Secondary Charts Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
