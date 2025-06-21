@@ -1,9 +1,9 @@
-"use client"
-
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react"
+
+
 import React from "react"
 const Login = () => {
   const [email, setEmail] = useState("")

@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import ReadmissionChart from "./ReadmissionChart";
+import PredictionSection from "./PredictionSection";
 
 import React from "react"
 import {
@@ -20,7 +21,7 @@ import {
   RadialBarChart,
   RadialBar,
 } from "recharts"
-import { TrendingUp,  PieChartIcon, BarChartIcon } from "lucide-react"
+import { TrendingUp, PieChartIcon, BarChartIcon, Users, MessageSquare, BookOpen, Loader } from "lucide-react"
 
 // Modern color palette with gradients
 const COLORS = ["#6366F1", "#F59E0B", "#10B981", "#8B5CF6"]
@@ -40,8 +41,6 @@ const weeklyGoalData = [
   { name: "Achieved", value: 95 },
   { name: "Remaining", value: 5 },
 ]
-
-
 
 // Custom tooltip component for better styling
 const CustomTooltip = ({ active, payload, label }) => {
@@ -69,11 +68,11 @@ const Dashboard = () => {
   const [totalUsers, setTotalUsers] = useState(0)
   const [totalRatings, setTotalRatings] = useState(0)
   const [adviceCount, setAdviceCount] = useState(0)
-
-
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true)
       try {
         // Fetch patient history
         const historyResponse = await fetch("http://localhost:5000/api/patient/history")
@@ -100,6 +99,8 @@ const Dashboard = () => {
         processGenderData(historyData)
       } catch (error) {
         console.error("Error fetching data:", error)
+      } finally {
+        setIsLoading(false)
       }
     }
   
@@ -165,67 +166,100 @@ const Dashboard = () => {
   if (!mounted) return null
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen bg-gray-50">
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Healthcare Dashboard</h1>
+          <p className="text-gray-500">Monitor patient statistics and healthcare metrics</p>
+        </div>
+        
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center h-[60vh]">
+            <Loader size={48} className="text-indigo-600 animate-spin mb-4" />
+            <p className="text-gray-600 font-medium">Loading dashboard data...</p>
+          </div>
+        ) : (
+        <>
         {/* Main Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          {[
-            {
-              title: "Total Users",
-              value: totalUsers.toString(),
-              change: "+12.5%",
-              color: "from-blue-500 to-indigo-600",
-            },
-            {
-              title: "Patient Rate",
-              value: totalRatings > 0 ? `${totalRatings}` : "0",
-              change: "-2.3%",
-              color: "from-green-500 to-emerald-600",
-            },
-            {
-              title: "Total Advice ",
-              value: adviceCount > 0 ? `${adviceCount}` : "0",
-              change: "+5%",
-              color: "from-amber-500 to-orange-600",
-            }
-            
-            
-          ].map((stat, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100 overflow-hidden relative group"
-            >
-              <div
-                className={`absolute inset-0 bg-gradient-to-r ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
-              ></div>
-              <h3 className="text-gray-500 text-sm font-medium mb-1">{stat.title}</h3>
-              <div className="flex items-end justify-between">
-                <div className="text-2xl font-bold text-gray-800">{stat.value}</div>
-                <div
-                  className={`text-sm font-medium ${stat.change.startsWith("+") ? "text-green-600" : "text-red-600"
-                    } flex items-center`}
-                >
-                  {stat.change}
-                  <svg
-                    className={`w-4 h-4 ml-1 ${stat.change.startsWith("+") ? "rotate-0" : "rotate-180"}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                  </svg>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {/* Total Users Card */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+            <div className="flex p-6">
+              <div className="mr-4">
+                <div className="p-3 bg-blue-500 bg-opacity-10 rounded-xl">
+                  <Users size={24} className="text-blue-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-gray-500 font-medium mb-1">Total Users</h3>
+                <div className="flex items-end gap-2">
+                  <div className="text-3xl font-bold text-gray-800">{totalUsers}</div>
+                  <div className="text-sm font-medium text-green-600 flex items-center pb-1">
+                    +12.5%
+                    <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
-          ))}
+            <div className="h-2 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
+          </div>
+          
+          {/* Patient Rate Card */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+            <div className="flex p-6">
+              <div className="mr-4">
+                <div className="p-3 bg-green-500 bg-opacity-10 rounded-xl">
+                  <MessageSquare size={24} className="text-green-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-gray-500 font-medium mb-1">Patient Rate</h3>
+                <div className="flex items-end gap-2">
+                  <div className="text-3xl font-bold text-gray-800">{totalRatings > 0 ? totalRatings : "0"}</div>
+                  <div className="text-sm font-medium text-red-600 flex items-center pb-1">
+                    -2.3%
+                    <svg className="w-3 h-3 ml-1 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="h-2 bg-gradient-to-r from-green-400 to-emerald-500"></div>
+          </div>
+          
+          {/* Total Advice Card */}
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+            <div className="flex p-6">
+              <div className="mr-4">
+                <div className="p-3 bg-amber-500 bg-opacity-10 rounded-xl">
+                  <BookOpen size={24} className="text-amber-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-gray-500 font-medium mb-1">Total Advice</h3>
+                <div className="flex items-end gap-2">
+                  <div className="text-3xl font-bold text-gray-800">{adviceCount > 0 ? adviceCount : "0"}</div>
+                  <div className="text-sm font-medium text-green-600 flex items-center pb-1">
+                    +5%
+                    <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="h-2 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+          </div>
         </div>
 
         {/* Main Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Disease Admissions Chart */}
-          <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+          <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
@@ -233,7 +267,7 @@ const Dashboard = () => {
                 </div>
                 <h2 className="text-xl font-bold text-gray-800">Top 5 Most Common Diagnoses</h2>
               </div>
-              <div className="text-sm text-gray-500">Last 30 days</div>
+              <div className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-medium">Last 30 days</div>
             </div>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
@@ -250,10 +284,10 @@ const Dashboard = () => {
                   <Tooltip content={<CustomTooltip />} />
                   <Bar
                     dataKey="value"
-                    radius={[0, 4, 4, 0]}
+                    radius={[0, 8, 8, 0]}
                     animationDuration={1500}
                     animationBegin={300}
-                    background={{ fill: "#f3f4f6" }}
+                    background={{ fill: "#f3f4f6", radius: [0, 8, 8, 0] }}
                     label={{ position: "right", fill: "#6B7280", fontSize: 12 }}
                   >
                     {diseaseData.map((entry, index) => (
@@ -272,7 +306,7 @@ const Dashboard = () => {
           </div>
 
           {/* Progress Tracking Chart */}
-          <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+          <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
@@ -280,8 +314,8 @@ const Dashboard = () => {
                 </div>
                 <h2 className="text-xl font-bold text-gray-800">Progress Tracking</h2>
               </div>
-              <div className="flex items-center text-green-500 text-sm font-medium">
-                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+              <div className="flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium">
+                <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M12 7a1 1 0 10-2 0v3H7a1 1 0 100 2h3v3a1 1 0 102 0v-3h3a1 1 0 100-2h-3V7z"
@@ -339,10 +373,15 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Prediction Section */}
+        <div className="mb-8">
+          <PredictionSection />
+        </div>
+
         {/* Secondary Charts Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Gender Distribution Chart */}
-          <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+          <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
             <div className="flex items-center mb-6">
               <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
                 <PieChartIcon className="w-5 h-5" />
@@ -396,10 +435,11 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Activity Ring */}
+          {/* Readmission Chart */}
           <ReadmissionChart />
-
         </div>
+        </>
+        )}
       </main>
     </div>
   )

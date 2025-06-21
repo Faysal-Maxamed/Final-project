@@ -21,15 +21,19 @@ def predict():
         data = request.json
         df = pd.DataFrame([data])
 
+        # Encode categorical features
         for col in label_encoders:
             if col in df.columns:
                 df[col] = label_encoders[col].transform(df[col])
 
-        numeric_columns = ['age', 'num_procedures', 'days_in_hospital', 'comorbidity_score']
+        # Scale numeric features
+        numeric_columns = ['Age', 'Number of Procedures', 'Days in Hospital']
         df[numeric_columns] = scaler.transform(df[numeric_columns])
 
+        # Align DataFrame with model's feature order
         df = df.reindex(columns=model.feature_names_in_, fill_value=0)
 
+        # Make predictions
         prediction = model.predict(df)[0]
         probability = model.predict_proba(df)[:, 1][0]
 

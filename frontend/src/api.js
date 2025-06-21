@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:5000/predict";  // Change if needed
+const API_URL = "http://127.0.0.1:5000/predict";  // This is the Flask app endpoint
 
 export const predictReadmission = async (data) => {
     try {
@@ -8,6 +8,6 @@ export const predictReadmission = async (data) => {
         return response.data;
     } catch (error) {
         console.error("Error making prediction:", error);
-        return null;
+        throw error; // Propagate the error to be handled by the component
     }
 };
