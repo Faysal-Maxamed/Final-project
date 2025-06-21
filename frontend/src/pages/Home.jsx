@@ -187,7 +187,7 @@ const Homepage = () => {
                     <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-indigo-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
                   </span>
-                  AI-Powered Healthcare Solutions
+                  HPR-Powered Healthcare Solutions
                 </p>
               </motion.div>
               
@@ -727,14 +727,14 @@ const Homepage = () => {
                           <div className="flex items-center">
                             <div className="h-12 w-12 rounded-full overflow-hidden mr-4 border-2 border-blue-500">
                               <img
-                                src={testimonial.image || "https://via.placeholder.com/150"}
+                                src={testimonial.image || "https://www.google.com/imgres?q=profile&imgurl=https%3A%2F%2Fwww.shutterstock.com%2Fimage-vector%2Fuser-profile-icon-vector-avatar-600nw-2220431045.jpg&imgrefurl=https%3A%2F%2Fwww.shutterstock.com%2Fsearch%2Fblank-profile-picture&docid=6PF0lYIppkG5DM&tbnid=hhKhvYUwtV0WwM&vet=12ahUKEwiwvIzmioOOAxVrzgIHHUBKES0QM3oECBoQAA..i&w=600&h=600&hcb=2&ved=2ahUKEwiwvIzmioOOAxVrzgIHHUBKES0QM3oECBoQAA"}
                                 alt={testimonial.name || "User"}
                                 className="h-full w-full object-cover"
                               />
                             </div>
                             <div>
                               <h4 className={`font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
-                                {testimonial.name || "Anonymous User"}
+                                {testimonial.name || "Patient Name"}
                               </h4>
                               <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
                                 {testimonial.role || "Patient"}
