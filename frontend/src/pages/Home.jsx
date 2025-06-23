@@ -134,7 +134,7 @@ const Homepage = () => {
 
       {/* Enhanced Hero Section */}
       <section
-        className={`relative overflow-hidden py-20 md:py-32 px-4 sm:px-6 lg:px-8 ${
+        className={`relative overflow-hidden py-20 md:py-16 px-4 sm:px-6 lg:px-8 ${
           darkMode 
             ? "bg-gradient-to-br from-gray-900 via-blue-900/20 to-gray-900" 
             : "bg-gradient-to-br from-blue-50 via-white to-indigo-50"
