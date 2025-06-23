@@ -1,3 +1,4 @@
+
 const express = require("express");
 const router = express.Router();
 const Feedback = require("../models/Feedback");
@@ -11,13 +12,14 @@ router.post("/", async (req, res) => {
     if (!feedback || typeof feedback !== "string") {
       return res.status(400).json({ error: "Feedback must be a valid string!" });
     }
-    if (!rating || isNaN(rating) || rating < 1 || rating > 5) {
-      return res.status(400).json({ error: "Rating must be a number between 1 and 5!" });
+    const allowedRatings = ["😡", "😞", "😐", "😊", "😀"];
+    if (!rating || typeof rating !== "string" || !allowedRatings.includes(rating)) {
+      return res.status(400).json({ error: "Rating must be one of the allowed emoji values!" });
     }
-
+    
     const newFeedback = new Feedback({
       feedback,
-      rating: Number(rating),
+      rating, // Save as string (emoji)
       timestamp: timestamp || new Date(),
     });
 

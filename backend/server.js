@@ -28,9 +28,9 @@ app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
 app.use("/api/auth", authRoutes); // Routes for authentication (login, register, etc.)
 app.use("/api/admin", adminRoutes); // Routes for admin-related actions
 app.use("/api/patient", patientRoutes); // Routes for patient-related actions
-app.use("/api/feedback", feedbackRoutes); // Routes for feedback management
 app.use("/api/contact", contactRouter); // Routes for contact form handling
 app.use("/api/advice", adviceRoutes); // Routes for advice CRUD operations
+app.use("/api/feedback", feedbackRoutes); // Routes for feedback CRUD operations
 
 app.listen(5000, () => {
     console.log("Server running on port 5000")

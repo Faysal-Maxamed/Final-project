@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Home from "./pages/Home"
 import About from "./pages/about"
 import Contact from "./pages/contact"
-import PredictorForm from "./pages/Predict"
+import PredictorForm from "./components/PredictionSection"
 // import History from "./pages/History";
 import Login from "./pages/Login"
 import ForgotPassword from "./pages/forgetpassword"

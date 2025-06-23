@@ -16,7 +16,6 @@ import {
   FaTimes,
   FaSync
 } from "react-icons/fa";
-import Header from "../components/header";
 
 const History = () => {
   const [patientHistory, setPatientHistory] = useState([]);
@@ -141,7 +140,6 @@ const History = () => {
   if (isLoading) {
     return (
       <div className={`min-h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}>
-        <Header darkMode={darkMode} setDarkMode={setDarkMode} />
         <div className="flex items-center justify-center min-h-screen">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
         </div>
@@ -151,8 +149,6 @@ const History = () => {
 
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}>
-      <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-      
       <div className="container mx-auto px-4 py-8">
         <motion.div
           initial="hidden"
@@ -196,70 +192,6 @@ const History = () => {
                   Export Excel
                 </button>
               </div>
-            </div>
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-              <motion.div
-                variants={fadeIn}
-                className={`p-4 rounded-xl ${darkMode ? "bg-gray-700" : "bg-blue-50"}`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>Total Predictions</p>
-                    <p className="text-2xl font-bold text-blue-500">{patientHistory.length}</p>
-                  </div>
-                  <FaChartLine className="text-2xl text-blue-500" />
-                </div>
-              </motion.div>
-
-              <motion.div
-                variants={fadeIn}
-                className={`p-4 rounded-xl ${darkMode ? "bg-gray-700" : "bg-red-50"}`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>High Risk</p>
-                    <p className="text-2xl font-bold text-red-500">
-                      {patientHistory.filter(p => p.readmission === "Yes").length}
-                    </p>
-                  </div>
-                  <FaExclamationTriangle className="text-2xl text-red-500" />
-                </div>
-              </motion.div>
-
-              <motion.div
-                variants={fadeIn}
-                className={`p-4 rounded-xl ${darkMode ? "bg-gray-700" : "bg-green-50"}`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>Low Risk</p>
-                    <p className="text-2xl font-bold text-green-500">
-                      {patientHistory.filter(p => p.readmission === "No").length}
-                    </p>
-                  </div>
-                  <FaCheckCircle className="text-2xl text-green-500" />
-                </div>
-              </motion.div>
-
-              <motion.div
-                variants={fadeIn}
-                className={`p-4 rounded-xl ${darkMode ? "bg-gray-700" : "bg-purple-50"}`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-600"}`}>Avg Probability</p>
-                    <p className="text-2xl font-bold text-purple-500">
-                      {patientHistory.length > 0 
-                        ? (patientHistory.reduce((acc, p) => acc + parseFloat(p.probability), 0) / patientHistory.length).toFixed(1) + "%"
-                        : "0%"
-                      }
-                    </p>
-                  </div>
-                  <FaHospital className="text-2xl text-purple-500" />
-                </div>
-              </motion.div>
             </div>
           </div>
 

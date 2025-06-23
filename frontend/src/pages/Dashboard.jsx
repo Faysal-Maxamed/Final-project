@@ -130,20 +130,20 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
+    <div className="flex bg-[#e7ecfc] min-h-screen">
       {/* Modern Sidebar with Glass Effect */}
       <aside 
-        className={`${sidebarCollapsed ? 'w-24' : 'w-80'} bg-[#111827] bg-opacity-95 backdrop-blur-lg text-white fixed top-0 left-0 h-full flex flex-col justify-between z-10 transition-all duration-300 ease-in-out shadow-2xl border-r border-white/5`}
+        className={`${sidebarCollapsed ? 'w-24' : 'w-80'} bg-white/70 backdrop-blur-lg border-r border-white/40 shadow-xl text-gray-800 fixed top-0 left-0 h-full flex flex-col justify-between z-10 transition-all duration-300 ease-in-out rounded-tr-2xl rounded-br-2xl`}
       >
         {/* Sidebar Header with Logo */}
         <div>
-          <div className="flex items-center justify-between px-6 py-6 border-b border-white/10">
+          <div className="flex items-center justify-between px-6 py-6 border-b border-white/20">
             {!sidebarCollapsed && (
               <div className="flex items-center">
                 <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mr-3 shadow-lg shadow-blue-500/20">
                   <FaHeartbeat className="text-white text-lg" />
                 </div>
-                <h1 className="text-xl font-bold text-white">Health<span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Care</span></h1>
+                <h1 className="text-xl font-bold text-gray-800">Health<span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Care</span></h1>
               </div>
             )}
             {sidebarCollapsed && (
@@ -153,7 +153,7 @@ const Dashboard = () => {
             )}
             <button 
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="p-2 rounded-full hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+              className="p-2 rounded-full hover:bg-white/20 transition-colors text-gray-400 hover:text-gray-800"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 {sidebarCollapsed ? (
@@ -166,7 +166,7 @@ const Dashboard = () => {
           </div>
 
           {/* User Profile with Animated Border */}
-          <div className={`${sidebarCollapsed ? 'justify-center' : 'px-6'} flex items-center py-6 border-b border-white/10`}>
+          <div className={`${sidebarCollapsed ? 'justify-center' : 'px-6'} flex items-center py-6 border-b border-white/20`}>
             <div className={`${sidebarCollapsed ? 'w-14 h-14' : 'w-16 h-16'} rounded-full relative group`}>
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-spin-slow opacity-70"></div>
               <div className="absolute inset-[2px] rounded-full overflow-hidden">
@@ -175,8 +175,8 @@ const Dashboard = () => {
             </div>
             {!sidebarCollapsed && (
               <div className="ml-4">
-                <h2 className="text-lg font-bold text-white">{userName || "Admin User"}</h2>
-                <div className="flex items-center text-blue-300 text-xs">
+                <h2 className="text-lg font-bold text-gray-800">{userName || "Admin User"}</h2>
+                <div className="flex items-center text-blue-400 text-xs">
                   <span className="mr-2">{userEmail || "admin@example.com"}</span>
                   <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
                 </div>
@@ -201,27 +201,26 @@ const Dashboard = () => {
                 />
               ))}
             </div>
-            
             {/* Stats Section */}
             {!sidebarCollapsed && (
               <div className="mt-8 px-2">
                 <div className="text-xs text-gray-400 uppercase tracking-wider mb-4">System Status</div>
-                <div className="bg-white/5 rounded-xl p-4 backdrop-blur-sm">
+                <div className="bg-white/30 rounded-xl p-4 backdrop-blur-sm border border-white/30">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="text-xs text-gray-300">System Health</div>
+                    <div className="text-xs text-gray-500">System Health</div>
                     <div className="text-xs text-green-400">Excellent</div>
                   </div>
-                  <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden mb-4">
+                  <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mb-4">
                     <div className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full" style={{ width: '95%' }}></div>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <div className="h-2 w-2 rounded-full bg-green-400 mr-2"></div>
-                      <span className="text-xs text-gray-300">Online</span>
+                      <span className="text-xs text-gray-500">Online</span>
                     </div>
                     <div className="flex items-center">
                       <FaRegStar className="text-yellow-400 text-xs mr-1" />
-                      <span className="text-xs text-gray-300">95%</span>
+                      <span className="text-xs text-gray-500">95%</span>
                     </div>
                   </div>
                 </div>
@@ -239,9 +238,8 @@ const Dashboard = () => {
             <FaSignOutAlt className={sidebarCollapsed ? '' : 'mr-2'} />
             {!sidebarCollapsed && <span>Log Out</span>}
           </button>
-          
           {!sidebarCollapsed && (
-            <div className="text-center mt-4 text-xs text-gray-500">
+            <div className="text-center mt-4 text-xs text-gray-400">
               Healthcare Admin v1.2.0
             </div>
           )}
@@ -251,7 +249,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className={`flex-1 ${sidebarCollapsed ? 'ml-24' : 'ml-80'} transition-all duration-300 ease-in-out`}>
         {/* Header */}
-        <header className="bg-white shadow-sm p-4 flex items-center justify-between sticky top-0 z-10">
+        <header className="bg-white/70 backdrop-blur-lg shadow-md p-4 flex items-center justify-between sticky top-0 z-10 rounded-b-2xl border-b border-white/40">
           <div className="flex items-center space-x-3">
             <div className="p-2.5 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-600 rounded-lg shadow-sm">
               {activeSection === "dashboard" && <FaChartLine />}
@@ -268,7 +266,6 @@ const Dashboard = () => {
               {activeSection === "Feedback" && "Patient Feedback"}
             </h1>
           </div>
-
           <div className="flex items-center space-x-4">
             <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors group">
               <FaBell className="text-gray-500 group-hover:text-gray-700" />
@@ -283,7 +280,6 @@ const Dashboard = () => {
             </div>
           </div>
         </header>
-
         {/* Page Content - Centered with Fade Animation */}
         <div className="p-6 flex justify-center">
           <div className={`w-full max-w-7xl transition-opacity duration-300 ease-in-out ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>

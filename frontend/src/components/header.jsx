@@ -84,164 +84,85 @@ const Header = ({ darkMode, setDarkMode }) => {
 
   return (
     <header
-      className={` w-full z-50 transition-all duration-300 ${
-        scrolled ? "shadow-lg" : ""
-      } ${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}
+      className={`sticky top-0 z-50 w-full transition-all duration-300 backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 shadow-lg ${
+        scrolled ? "shadow-2xl" : ""
+      }`}
     >
-      {/* Upper Bar */}
-      <div
-        className={`py-2 px-4 md:px-8 flex justify-between items-center text-sm ${
-          darkMode
-            ? "bg-gradient-to-r from-blue-800 to-blue-600 text-white"
-            : "bg-gradient-to-r from-blue-700 to-blue-500 text-white"
-        }`}
-      >
-        <div className="flex items-center space-x-6">
-          <div className="flex items-center space-x-2">
-            <FaEnvelope className="text-white opacity-80" />
-            <span className="hidden sm:inline">info@gmail.com</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <FaPhone className="text-white opacity-80 transform rotate-90" />
-            <span className="hidden sm:inline">+252 614 388 477</span>
-          </div>
-        </div>
-        <div className="flex space-x-4">
-          <a
-            href="#"
-            className="w-6 h-6 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-all duration-200"
-          >
-            <FaTwitter className="text-white text-xs" />
-          </a>
-          <a
-            href="#"
-            className="w-6 h-6 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-all duration-200"
-          >
-            <FaFacebookF className="text-white text-xs" />
-          </a>
-          <a
-            href="#"
-            className="w-6 h-6 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-all duration-200"
-          >
-            <FaLinkedin className="text-white text-xs" />
-          </a>
-        </div>
-      </div>
-
-      {/* Main Navigation */}
-      <div
-        className={`py-4 px-4 md:px-8 transition-all duration-300 ${
-          darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"
-        } ${scrolled ? "py-3" : "py-4"}`}
-      >
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold transition-all">
-            <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">HRP</span>{" "}
-            <span className="bg-gradient-to-r from-yellow-500 to-yellow-400 bg-clip-text text-transparent">
-              MANAGEMENT
+      <div className="max-w-7xl mx-auto px-4 sm:px-8">
+        <div className="flex justify-between items-center py-3 md:py-4">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2">
+            <span className="text-2xl font-extrabold bg-gradient-to-r from-indigo-500 to-emerald-400 bg-clip-text text-transparent tracking-tight drop-shadow-lg">
+              HRP
             </span>
-          </h1>
-
-          {/* Mobile Menu Button */}
-          <button className="md:hidden flex items-center" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            <svg
-              className={`w-6 h-6 ${darkMode ? "text-white" : "text-gray-900"}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
-              />
-            </svg>
-          </button>
+            <span className="hidden sm:inline text-lg font-bold text-gray-700 dark:text-gray-200 tracking-wide">Management</span>
+          </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:block">
-            <ul className="flex space-x-8">
-              {navLinks.map((link, index) => (
-                <li key={index}>
-                  <Link
-                    to={link.path}
-                    className={`relative font-medium hover:text-blue-600 transition-colors duration-200 py-2 ${
-                      darkMode ? "text-gray-100 hover:text-blue-400" : "text-gray-800"
-                    } after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 hover:after:w-full after:transition-all after:duration-300`}
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          <nav className="hidden md:flex items-center gap-8">
+            {navLinks.map((link, index) => (
+              <Link
+                key={index}
+                to={link.path}
+                className="relative font-semibold text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-emerald-400 transition-colors duration-200 px-2 py-1 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gradient-to-r after:from-indigo-500 after:to-emerald-400 hover:after:w-full after:transition-all after:duration-300"
+              >
+                {link.name}
+              </Link>
+            ))}
           </nav>
 
-          {/* Right Side: Dark Mode Toggle & Logout/Login */}
-          <div className="hidden md:flex items-center space-x-6">
+          {/* Right Side: Dark Mode Toggle & User Menu */}
+          <div className="flex items-center gap-4">
             {/* Dark Mode Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className={`relative w-10 h-5 rounded-full transition-colors duration-300 focus:outline-none ${
-                darkMode ? "bg-blue-700" : "bg-gray-300"
-              }`}
+              className={`w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-800/60 shadow hover:scale-105 transition-all focus:outline-none`}
               aria-label="Toggle dark mode"
             >
-              <span
-                className={`absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white transition-transform duration-300 transform ${
-                  darkMode ? "translate-x-5" : "translate-x-0"
-                } flex items-center justify-center`}
-              >
-                {darkMode ? (
-                  <FaMoon className="text-blue-700 text-[8px]" />
-                ) : (
-                  <FaSun className="text-yellow-500 text-[8px]" />
-                )}
-              </span>
+              {darkMode ? (
+                <FaMoon className="text-indigo-400 text-xl" />
+              ) : (
+                <FaSun className="text-yellow-400 text-xl" />
+              )}
             </button>
 
             {/* User Menu */}
             <div className="relative">
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center space-x-1 focus:outline-none"
+                className="flex items-center gap-1 focus:outline-none px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition"
               >
-                <FaUserCircle className={`text-xl ${darkMode ? "text-gray-300" : "text-gray-700"}`} />
+                <FaUserCircle className="text-2xl text-gray-500 dark:text-gray-300" />
                 <FaChevronDown
                   className={`text-xs transition-transform duration-200 ${
                     userMenuOpen ? "rotate-180" : ""
-                  } ${darkMode ? "text-gray-300" : "text-gray-700"}`}
+                  } text-gray-500 dark:text-gray-300`}
                 />
               </button>
 
               {/* Dropdown Menu */}
               {userMenuOpen && (
                 <div
-                  className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 z-10 ${
-                    darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
-                  } border ${darkMode ? "border-gray-700" : "border-gray-200"}`}
+                  className="absolute right-0 mt-2 w-48 rounded-xl shadow-2xl py-2 z-10 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 animate-fade-in"
                 >
                   {localStorage.getItem("token") ? (
                     <>
                       <Link
                         to="/profile"
-                        className={`block px-4 py-2 text-sm ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
                       >
                         Profile
                       </Link>
                       <Link
                         to="/settings"
-                        className={`block px-4 py-2 text-sm ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
                       >
                         Settings
                       </Link>
-                      <div className={`border-t ${darkMode ? "border-gray-700" : "border-gray-200"} my-1`}></div>
+                      <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                       <button
                         onClick={handleLogout}
-                        className={`block w-full text-left px-4 py-2 text-sm text-red-600 ${
-                          darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
-                        }`}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
                       >
                         Logout
                       </button>
@@ -249,7 +170,7 @@ const Header = ({ darkMode, setDarkMode }) => {
                   ) : (
                     <Link
                       to="/login"
-                      className={`block px-4 py-2 text-sm ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
                     >
                       Login
                     </Link>
@@ -257,6 +178,27 @@ const Header = ({ darkMode, setDarkMode }) => {
                 </div>
               )}
             </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-800/60 shadow ml-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              <svg
+                className="w-6 h-6 text-gray-700 dark:text-gray-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -265,69 +207,51 @@ const Header = ({ darkMode, setDarkMode }) => {
       <div
         className={`md:hidden transition-all duration-300 overflow-hidden ${
           mobileMenuOpen ? "max-h-96" : "max-h-0"
-        } ${darkMode ? "bg-gray-800" : "bg-gray-50"}`}
+        } bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border-b border-gray-100 dark:border-gray-800`}
       >
-        <nav className="px-4 py-2">
-          <ul className="space-y-2">
-            {navLinks.map((link, index) => (
-              <li key={index}>
-                <Link
-                  to={link.path}
-                  className={`block py-2 px-4 rounded ${
-                    darkMode ? "text-white hover:bg-gray-700" : "text-gray-900 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              </li>
-            ))}
-            <li className="border-t border-gray-700 pt-2 mt-2">
-              <div className="flex items-center justify-between px-4 py-2">
-                <span className={darkMode ? "text-gray-300" : "text-gray-700"}>Dark Mode</span>
-                <button
-                  onClick={() => setDarkMode(!darkMode)}
-                  className={`relative w-10 h-5 rounded-full transition-colors duration-300 focus:outline-none ${
-                    darkMode ? "bg-blue-700" : "bg-gray-300"
-                  }`}
-                >
-                  <span
-                    className={`absolute left-0.5 top-0.5 w-4 h-4 rounded-full bg-white transition-transform duration-300 transform ${
-                      darkMode ? "translate-x-5" : "translate-x-0"
-                    } flex items-center justify-center`}
-                  >
-                    {darkMode ? (
-                      <FaMoon className="text-blue-700 text-[8px]" />
-                    ) : (
-                      <FaSun className="text-yellow-500 text-[8px]" />
-                    )}
-                  </span>
-                </button>
-              </div>
-            </li>
-            <li>
-              {localStorage.getItem("token") ? (
-                <button
-                  onClick={handleLogout}
-                  className={`w-full text-left block py-2 px-4 rounded ${
-                    darkMode ? "bg-red-900 text-white hover:bg-red-800" : "bg-red-500 text-white hover:bg-red-600"
-                  }`}
-                >
-                  Logout
-                </button>
-              ) : (
-                <Link
-                  to="/login"
-                  className={`block py-2 px-4 rounded ${
-                    darkMode ? "bg-blue-900 text-white hover:bg-blue-800" : "bg-blue-500 text-white hover:bg-blue-600"
-                  }`}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Login
-                </Link>
-              )}
-            </li>
-          </ul>
+        <nav className="px-4 py-2 flex flex-col gap-2">
+          {navLinks.map((link, index) => (
+            <Link
+              key={index}
+              to={link.path}
+              className="block py-2 px-4 rounded font-semibold text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-800 transition"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {link.name}
+            </Link>
+          ))}
+          <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+          <div className="flex items-center justify-between px-4 py-2">
+            <span className="text-gray-500 dark:text-gray-300">Dark Mode</span>
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className={`w-10 h-5 rounded-full transition-colors duration-300 focus:outline-none border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-800/60 flex items-center`}
+            >
+              <span
+                className={`inline-block w-4 h-4 rounded-full bg-indigo-500 dark:bg-emerald-400 transition-transform duration-300 transform ${
+                  darkMode ? "translate-x-5" : "translate-x-0"
+                }`}
+              ></span>
+            </button>
+          </div>
+          <div className="flex flex-col gap-2 mt-2">
+            {localStorage.getItem("token") ? (
+              <button
+                onClick={handleLogout}
+                className="w-full text-left block py-2 px-4 rounded bg-red-500 text-white hover:bg-red-600"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="block py-2 px-4 rounded bg-indigo-500 text-white hover:bg-indigo-600"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Login
+              </Link>
+            )}
+          </div>
         </nav>
       </div>
     </header>

@@ -181,85 +181,47 @@ const Dashboard = () => {
           </div>
         ) : (
         <>
-        {/* Main Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Main Grid: Stats + Calendar */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           {/* Total Users Card */}
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-            <div className="flex p-6">
-              <div className="mr-4">
-                <div className="p-3 bg-blue-500 bg-opacity-10 rounded-xl">
-                  <Users size={24} className="text-blue-600" />
-                </div>
+          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6 flex flex-col justify-between">
+            <div>
+              <div className="p-3 bg-blue-500/10 rounded-xl w-fit mb-3">
+                <Users size={24} className="text-blue-600" />
               </div>
-              <div>
-                <h3 className="text-gray-500 font-medium mb-1">Total Users</h3>
-                <div className="flex items-end gap-2">
-                  <div className="text-3xl font-bold text-gray-800">{totalUsers}</div>
-                  <div className="text-sm font-medium text-green-600 flex items-center pb-1">
-                    +12.5%
-                    <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
+              <h3 className="text-gray-500 font-medium mb-1">Total Users</h3>
+              <div className="text-3xl font-bold text-gray-800">{totalUsers}</div>
             </div>
-            <div className="h-2 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
+            <div className="h-1 mt-4 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"></div>
           </div>
-          
           {/* Patient Rate Card */}
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-            <div className="flex p-6">
-              <div className="mr-4">
-                <div className="p-3 bg-green-500 bg-opacity-10 rounded-xl">
-                  <MessageSquare size={24} className="text-green-600" />
-                </div>
+          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6 flex flex-col justify-between">
+            <div>
+              <div className="p-3 bg-green-500/10 rounded-xl w-fit mb-3">
+                <MessageSquare size={24} className="text-green-600" />
               </div>
-              <div>
-                <h3 className="text-gray-500 font-medium mb-1">Patient Rate</h3>
-                <div className="flex items-end gap-2">
-                  <div className="text-3xl font-bold text-gray-800">{totalRatings > 0 ? totalRatings : "0"}</div>
-                  <div className="text-sm font-medium text-red-600 flex items-center pb-1">
-                    -2.3%
-                    <svg className="w-3 h-3 ml-1 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
+              <h3 className="text-gray-500 font-medium mb-1">Patient Rate</h3>
+              <div className="text-3xl font-bold text-gray-800">{totalRatings > 0 ? totalRatings : "0"}</div>
             </div>
-            <div className="h-2 bg-gradient-to-r from-green-400 to-emerald-500"></div>
+            <div className="h-1 mt-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full"></div>
           </div>
-          
           {/* Total Advice Card */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
-            <div className="flex p-6">
-              <div className="mr-4">
-                <div className="p-3 bg-amber-500 bg-opacity-10 rounded-xl">
-                  <BookOpen size={24} className="text-amber-600" />
-                </div>
+          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6 flex flex-col justify-between">
+            <div>
+              <div className="p-3 bg-amber-500/10 rounded-xl w-fit mb-3">
+                <BookOpen size={24} className="text-amber-600" />
               </div>
-              <div>
-                <h3 className="text-gray-500 font-medium mb-1">Total Advice</h3>
-                <div className="flex items-end gap-2">
-                  <div className="text-3xl font-bold text-gray-800">{adviceCount > 0 ? adviceCount : "0"}</div>
-                  <div className="text-sm font-medium text-green-600 flex items-center pb-1">
-                    +5%
-                    <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
+              <h3 className="text-gray-500 font-medium mb-1">Total Advice</h3>
+              <div className="text-3xl font-bold text-gray-800">{adviceCount > 0 ? adviceCount : "0"}</div>
             </div>
-            <div className="h-2 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+            <div className="h-1 mt-4 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full"></div>
           </div>
         </div>
 
         {/* Main Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Disease Admissions Chart */}
-          <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
@@ -306,7 +268,7 @@ const Dashboard = () => {
           </div>
 
           {/* Progress Tracking Chart */}
-          <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
@@ -377,7 +339,7 @@ const Dashboard = () => {
         {/* Secondary Charts Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Gender Distribution Chart */}
-          <div className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6">
             <div className="flex items-center mb-6">
               <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
                 <PieChartIcon className="w-5 h-5" />
@@ -432,7 +394,9 @@ const Dashboard = () => {
           </div>
 
           {/* Readmission Chart */}
-          <ReadmissionChart />
+          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6">
+            <ReadmissionChart />
+          </div>
         </div>
         </>
         )}

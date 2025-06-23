@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 
 const feedbackSchema = new mongoose.Schema({
@@ -7,7 +8,7 @@ const feedbackSchema = new mongoose.Schema({
     trim: true, // Removes extra spaces
   },
   rating: {
-    type: Number, // Ensure it's a number
+    type: String, // Ensure it's a number
     required: [true, "Rating is required"],
     min: 1, // Minimum rating value
     max: 5, // Maximum rating value
