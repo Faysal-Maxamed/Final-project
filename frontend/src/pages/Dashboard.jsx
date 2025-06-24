@@ -7,7 +7,6 @@ import DashboardSection from "../components/DashboardSection"
 import RegisterAdmin from "../components/RegisterAdmin"
 import UsersList from "../components/UsersList"
 import History from "./History"
-import Advice from "./Advice"
 import Feedback from "../pages/feedback"
 import React from "react"
 
@@ -27,7 +26,6 @@ const Dashboard = () => {
   const navItems = [
     { icon: <FaTachometerAlt />, label: "Dashboard", section: "dashboard" },
     { icon: <FaUsers />, label: "Users", section: "users" },
-    { icon: <FaStethoscope />, label: "Advice", section: "Advice" },
     { icon: <FaHistory />, label: "History", section: "history" },
     { icon: <FaComments />, label: "Feedback", section: "Feedback" },
   ]
@@ -228,7 +226,6 @@ const Dashboard = () => {
             {activeSection === "dashboard" && <DashboardSection theme={theme} />}
             {activeSection === "admin-register" && <RegisterAdmin theme={theme} />}
             {activeSection === "users" && <UsersList users={users} handleDelete={handleDelete} theme={theme} />}
-            {activeSection === "Advice" && <Advice theme={theme} />}
             {activeSection === "history" && <History theme={theme} />}
             {activeSection === "Feedback" && <Feedback theme={theme} />}
           </div>
