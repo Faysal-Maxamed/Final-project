@@ -178,9 +178,9 @@ const Dashboard = () => {
         <div>
           <div className="flex flex-col items-center mb-8">
             <img
-              src={userAvatar}
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgzCPZeVAjxjYRr3U4EDJmFwrUW45HpPF5G8tHsLAvGYHkuJyWhwczl6tHctWHLdIBFYo&usqp=CAU"
               alt="User Avatar"
-              className="w-14 h-14 rounded-full mb-2 object-cover"
+              className="w-32 h-32 rounded-full mb-2 object-cover"
             />
             <div className="font-semibold text-gray-900 dark:text-white">{userName || "User"}</div>
             <div className="text-xs text-gray-400 dark:text-gray-300">{userEmail || "user@email.com"}</div>
@@ -208,38 +208,8 @@ const Dashboard = () => {
       </aside>
       {/* Main Content */}
       <main className="flex-1 ml-64 bg-[#f6f8fb] dark:bg-gray-900 transition-colors min-h-screen">
-        {/* Header */}
-        <header className="bg-white/70 dark:bg-gray-800/80 backdrop-blur-lg shadow-md p-4 flex items-center justify-between sticky top-0 z-10 rounded-b-2xl border-b border-white/40 dark:border-gray-700 transition-colors">
-          <div className="flex items-center space-x-3">
-            <div className="p-2.5 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-600 rounded-lg shadow-sm">
-              {activeSection === "dashboard" && <FaChartLine />}
-              {activeSection === "users" && <FaUsers />}
-              {activeSection === "Advice" && <FaStethoscope />}
-              {activeSection === "history" && <FaHistory />}
-              {activeSection === "Feedback" && <FaComments />}
-            </div>
-            <h1 className="text-xl font-bold text-gray-800 dark:text-white">
-              {activeSection === "dashboard" && "Dashboard Overview"}
-              {activeSection === "users" && "User Management"}
-              {activeSection === "Advice" && "Health Advice"}
-              {activeSection === "history" && "Patient History"}
-              {activeSection === "Feedback" && "Patient Feedback"}
-            </h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group">
-              <FaBell className="text-gray-500 group-hover:text-gray-700 dark:text-gray-300 dark:group-hover:text-white" />
-              {notificationCount > 0 && (
-                <span className="absolute top-0 right-0 h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center rounded-full border-2 border-white">
-                  {notificationCount}
-                </span>
-              )}
-            </button>
-            <div className="h-9 w-9 rounded-full overflow-hidden ring-2 ring-blue-500/20 hover:ring-blue-500/50 transition-all duration-300">
-              <img src="https://i.ibb.co/4pDNDk1/avatar.png" alt="Profile" className="w-full h-full object-cover" />
-            </div>
-          </div>
-        </header>
+
+    
         {/* Page Content - Centered with Fade Animation */}
         <div className="p-6 flex justify-center">
           <div className={`w-full max-w-7xl transition-opacity duration-300 ease-in-out ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
