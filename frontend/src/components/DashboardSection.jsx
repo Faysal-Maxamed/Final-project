@@ -232,25 +232,92 @@ const Dashboard = () => {
     <div className="w-full max-w-7xl mx-auto">
    
        {/* Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat, idx) => (
-          <div key={stat.label} className="flex flex-col items-center justify-center text-center bg-gradient-to-br from-black via-blue-900 via-purple-800 to-gray-900 text-white rounded-2xl shadow p-6">
-            <div className="text-xs mb-1">{stat.label}</div>
-            <div className="flex items-baseline justify-center">
-              <span className="text-2xl font-bold mr-2">{idx === 0 ? userCount : idx === 1 ? feedbackCount : idx === 2 ? adviceCount : stat.value}</span>
-              <span className={`text-xs font-semibold flex items-center gap-1 ${stat.changeType === 'up' ? 'text-green-200' : 'text-red-200'}`}>{stat.changeType === 'up' ? <FaArrowUp /> : <FaArrowDown />}{stat.change}</span>
-            </div>
-            <div className="text-xs mb-2">{stat.subLabel}</div>
-            {/* Mini bar chart for last card */}
-            {stat.bars && (
-              <div className="mt-2 flex items-end h-6 space-x-1 justify-center">
-                {stat.bars.map((h, i) => (
-                  <div key={i} className={`w-1.5 rounded bg-blue-200 ${i === 4 ? 'bg-blue-300' : ''}`} style={{ height: `${h * 2}px` }}></div>
-                ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+        {[
+          {
+            color: 'border-orange-400',
+            stat: userCount,
+            label: 'Users',
+            icon: (
+              <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            ),
+            bottom: 'bg-orange-100 text-orange-600',
+            percent: '% change',
+          },
+          {
+            color: 'border-green-400',
+            stat: feedbackCount,
+            label: 'Patient Feedback',
+            icon: (
+              <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
+            ),
+            bottom: 'bg-green-100 text-green-600',
+            percent: '% change',
+          },
+          {
+            color: 'border-blue-400',
+            stat: adviceCount,
+            label: 'Total patient Advice',
+            icon: (
+              <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            ),
+            bottom: 'bg-blue-100 text-blue-600',
+            percent: '% change',
+          },
+        ].map((card) => (
+          <div key={card.label} className={`relative flex flex-col justify-between bg-white rounded-xl shadow border-l-8 ${card.color} p-5 min-h-[120px]`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className={`text-2xl font-bold ${card.bottom.split(' ')[1]}`}>{card.stat}</div>
+                <div className="text-gray-500 text-xs mt-1">{card.label}</div>
               </div>
-            )}
+              <div className="ml-2">{card.icon}</div>
+            </div>
+            <div className={`absolute left-0 bottom-0 w-full h-7 rounded-b-xl flex items-center px-4 text-xs font-semibold ${card.bottom}`}>{card.percent}</div>
           </div>
         ))}
+      </div>
+       {/* Diagnosis Chart Section t */}
+       <div className="bg-white text-black rounded-sm shadow-xl p-6 mb-8 flex flex-col items-center justify-center text-center">
+        <div className="flex items-center justify-between mb-4 w-full">
+          <div className="font-semibold">Diagnosis Performance</div>
+          <div className="flex gap-2">
+            {timeFilters.map(f => (
+              <button
+                key={f.value}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${diagnosisFilter === f.value ? 'bg-white text-blue-600' : 'bg-blue-400 text-white hover:bg-white hover:text-blue-600'}`}
+                onClick={() => setDiagnosisFilter(f.value)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="h-72 w-full flex items-center justify-center">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={diagnosisData} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+              <XAxis
+                dataKey="name"
+                tick={{ fill: "#000", fontSize: 14, fontWeight: 600 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                tick={{ fill: "#888", fontSize: 13, fontWeight: 500 }}
+                axisLine={false}
+                tickLine={false}
+                allowDecimals={false}
+              />
+              <Tooltip content={<DiagnosisTooltip />} cursor={{ fill: '#fff', fillOpacity: 0.1 }} />
+              <Bar dataKey="value" radius={[8, 8, 0, 0]} label={{ position: 'top', fill: '#111', fontWeight: 700, fontSize: 14 }}>
+                {diagnosisData.map((entry, idx) => (
+                  <Cell key={entry.name} fill={entry.fill} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
       {/* Modern 3-Card Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -328,91 +395,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      {/* Diagnosis Chart Section t */}
-      <div className="bg-gradient-to-br from-black via-blue-900 via-purple-800 to-gray-900 text-white rounded-2xl shadow-xl p-6 mb-8 flex flex-col items-center justify-center text-center">
-        <div className="flex items-center justify-between mb-4 w-full">
-          <div className="font-semibold">Diagnosis Performance</div>
-          <div className="flex gap-2">
-            {timeFilters.map(f => (
-              <button
-                key={f.value}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${diagnosisFilter === f.value ? 'bg-white text-blue-600' : 'bg-blue-400 text-white hover:bg-white hover:text-blue-600'}`}
-                onClick={() => setDiagnosisFilter(f.value)}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="h-72 w-full flex items-center justify-center">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={diagnosisData} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#fff" />
-              <XAxis
-                dataKey="name"
-                tick={{ fill: "#fff", fontSize: 14, fontWeight: 600 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fill: "#fff", fontSize: 13, fontWeight: 500 }}
-                axisLine={false}
-                tickLine={false}
-                allowDecimals={false}
-              />
-              <Tooltip content={<DiagnosisTooltip />} cursor={{ stroke: '#fff', strokeWidth: 0.2, fill: '#fff', fillOpacity: 0.1 }} />
-              <Line
-                type="monotone"
-                dataKey="value"
-                stroke="#fff"
-                strokeWidth={4}
-                dot={{ r: 6, fill: '#fff', stroke: '#fff', strokeWidth: 2 }}
-                activeDot={{ r: 8, fill: '#F59E0B', stroke: '#fff', strokeWidth: 2 }}
-                animationDuration={1200}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
      
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Guide Performance Line Chart & Guide List */}
-        <div className="lg:col-span-2 flex flex-col gap-8">
-          {/* Guide List Table */}
-          <div className="bg-gradient-to-br from-black via-blue-900 via-purple-800 to-gray-900 text-white rounded-2xl shadow p-6 flex flex-col items-center justify-center text-center">
-            <div className="font-semibold mb-4">Recent Patients</div>
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-white text-xs">
-                  <th className="text-left py-2">Name</th>
-                  <th className="text-left py-2">Age</th>
-                  <th className="text-left py-2">Gender</th>
-                  <th className="text-left py-2">Diagnosis</th>
-                  <th className="text-left py-2">Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {patientHistory.slice(0, 3).map((p, idx) => (
-                  <tr key={idx} className="border-t border-blue-200">
-                    <td className="py-2 font-semibold text-white">{p.name || "-"}</td>
-                    <td className="py-2">{p.age}</td>
-                    <td className="py-2">{p.gender}</td>
-                    <td className="py-2">{p.primary_diagnosis}</td>
-                    <td className="py-2 text-blue-100">{p.date ? new Date(p.date).toLocaleDateString() : "-"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        {/* Right Side: Donut Chart Card & Team */}
-        <div className="flex flex-col gap-8">
-          {/* Donut Chart Card */}
-
-
-        </div>
-      </div>
     </div>
   )
 }
