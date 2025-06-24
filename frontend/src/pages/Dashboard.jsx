@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { FaTachometerAlt, FaUsers, FaStethoscope, FaHistory, FaSignOutAlt, FaComments, FaBell, FaChartLine, FaHeartbeat, FaRegStar } from "react-icons/fa"
+import { FaTachometerAlt, FaUsers, FaStethoscope, FaHistory, FaSignOutAlt, FaComments, FaBell, FaChartLine, FaHeartbeat, FaRegStar, FaChartBar, FaCube, FaRegEnvelope, FaSun, FaMoon } from "react-icons/fa"
 import axios from "axios"
 import DashboardSection from "../components/DashboardSection"
 import RegisterAdmin from "../components/RegisterAdmin"
@@ -20,6 +20,8 @@ const Dashboard = () => {
   const [notificationCount, setNotificationCount] = useState(3)
   const [hoverIndex, setHoverIndex] = useState(null)
   const [fadeIn, setFadeIn] = useState(true)
+  const [theme, setTheme] = useState("light")
+  const [userAvatar, setUserAvatar] = useState("")
 
   // Navigation items data
   const navItems = [
@@ -27,7 +29,7 @@ const Dashboard = () => {
     { icon: <FaUsers />, label: "Users", section: "users" },
     { icon: <FaStethoscope />, label: "Advice", section: "Advice" },
     { icon: <FaHistory />, label: "History", section: "history" },
-    { icon: <FaComments />, label: "Feedback", section: "Feedback" }
+    { icon: <FaComments />, label: "Feedback", section: "Feedback" },
   ]
 
   // Handle section change with animation
@@ -90,6 +92,8 @@ const Dashboard = () => {
     // Get user information from localStorage
     const storedName = localStorage.getItem("userName")
     const storedEmail = localStorage.getItem("userEmail")
+    const storedAvatar = localStorage.getItem("userAvatar")
+    const storedTheme = localStorage.getItem("theme")
 
     if (storedName) {
       setUserName(storedName)
@@ -97,6 +101,32 @@ const Dashboard = () => {
 
     if (storedEmail) {
       setUserEmail(storedEmail)
+    }
+
+    if (storedAvatar) {
+      setUserAvatar(storedAvatar)
+    } else if (storedName) {
+      // Generate avatar using initials if no avatar is stored
+      const initials = storedName
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+      setUserAvatar(
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(storedName)}&background=4f8cff&color=fff&size=128&rounded=true&bold=true&length=2`
+      )
+    } else {
+      // Default placeholder
+      setUserAvatar("https://ui-avatars.com/api/?name=User&background=4f8cff&color=fff&size=128&rounded=true&bold=true&length=2")
+    }
+
+    // Set theme from localStorage or default to light
+    if (storedTheme === "dark") {
+      setTheme("dark")
+      document.documentElement.classList.add("dark")
+    } else {
+      setTheme("light")
+      document.documentElement.classList.remove("dark")
     }
 
     const fetchUsers = async () => {
@@ -129,127 +159,57 @@ const Dashboard = () => {
     window.location.href = "/login"
   }
 
+  // Theme toggle handler
+  const handleThemeChange = (newTheme) => {
+    setTheme(newTheme)
+    localStorage.setItem("theme", newTheme)
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark")
+    } else {
+      document.documentElement.classList.remove("dark")
+    }
+  }
+
   return (
-    <div className="flex bg-[#e7ecfc] min-h-screen">
-      {/* Modern Sidebar with Glass Effect */}
-      <aside 
-        className={`${sidebarCollapsed ? 'w-24' : 'w-80'} bg-white/70 backdrop-blur-lg border-r border-white/40 shadow-xl text-gray-800 fixed top-0 left-0 h-full flex flex-col justify-between z-10 transition-all duration-300 ease-in-out rounded-tr-2xl rounded-br-2xl`}
-      >
-        {/* Sidebar Header with Logo */}
+    <div className={`flex min-h-screen bg-[#f6f8fb] dark:bg-gray-900`}>
+      {/* Sidebar */}
+      <aside className="fixed left-0 top-0 w-64 h-screen bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 flex flex-col justify-between py-6 px-4 shadow-sm z-20 transition-colors">
+        {/* User Info */}
         <div>
-          <div className="flex items-center justify-between px-6 py-6 border-b border-white/20">
-            {!sidebarCollapsed && (
-              <div className="flex items-center">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mr-3 shadow-lg shadow-blue-500/20">
-                  <FaHeartbeat className="text-white text-lg" />
-                </div>
-                <h1 className="text-xl font-bold text-gray-800">Health<span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Care</span></h1>
-              </div>
-            )}
-            {sidebarCollapsed && (
-              <div className="h-10 w-10 mx-auto rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <FaHeartbeat className="text-white text-lg" />
-              </div>
-            )}
-            <button 
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="p-2 rounded-full hover:bg-white/20 transition-colors text-gray-400 hover:text-gray-800"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                {sidebarCollapsed ? (
-                  <path d="M13 17l5-5-5-5M6 17l5-5-5-5" />
-                ) : (
-                  <path d="M11 17l-5-5 5-5M18 17l-5-5 5-5" />
-                )}
-              </svg>
-            </button>
+          <div className="flex flex-col items-center mb-8">
+            <img
+              src={userAvatar}
+              alt="User Avatar"
+              className="w-14 h-14 rounded-full mb-2 object-cover"
+            />
+            <div className="font-semibold text-gray-900 dark:text-white">{userName || "User"}</div>
+            <div className="text-xs text-gray-400 dark:text-gray-300">{userEmail || "user@email.com"}</div>
           </div>
-
-          {/* User Profile with Animated Border */}
-          <div className={`${sidebarCollapsed ? 'justify-center' : 'px-6'} flex items-center py-6 border-b border-white/20`}>
-            <div className={`${sidebarCollapsed ? 'w-14 h-14' : 'w-16 h-16'} rounded-full relative group`}>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-spin-slow opacity-70"></div>
-              <div className="absolute inset-[2px] rounded-full overflow-hidden">
-                <img src="https://i.ibb.co/4pDNDk1/avatar.png" alt="Profile" className="w-full h-full object-cover" />
-              </div>
-            </div>
-            {!sidebarCollapsed && (
-              <div className="ml-4">
-                <h2 className="text-lg font-bold text-gray-800">{userName || "Admin User"}</h2>
-                <div className="flex items-center text-blue-400 text-xs">
-                  <span className="mr-2">{userEmail || "admin@example.com"}</span>
-                  <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Navigation Menu */}
-          <div className="px-4 py-6">
-            <div className={`text-xs text-gray-400 uppercase tracking-wider mb-4 ${sidebarCollapsed ? 'text-center' : 'px-2'}`}>
-              {!sidebarCollapsed && "Main Menu"}
-            </div>
-            <div className="space-y-2">
-              {navItems.map((item, index) => (
-                <NavItem
-                  key={index}
-                  icon={item.icon}
-                  label={item.label}
-                  active={activeSection === item.section}
-                  section={item.section}
-                  index={index}
-                />
-              ))}
-            </div>
-            {/* Stats Section */}
-            {!sidebarCollapsed && (
-              <div className="mt-8 px-2">
-                <div className="text-xs text-gray-400 uppercase tracking-wider mb-4">System Status</div>
-                <div className="bg-white/30 rounded-xl p-4 backdrop-blur-sm border border-white/30">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="text-xs text-gray-500">System Health</div>
-                    <div className="text-xs text-green-400">Excellent</div>
-                  </div>
-                  <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mb-4">
-                    <div className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full" style={{ width: '95%' }}></div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="h-2 w-2 rounded-full bg-green-400 mr-2"></div>
-                      <span className="text-xs text-gray-500">Online</span>
-                    </div>
-                    <div className="flex items-center">
-                      <FaRegStar className="text-yellow-400 text-xs mr-1" />
-                      <span className="text-xs text-gray-500">95%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Navigation */}
+          <nav className="flex flex-col gap-2">
+            {navItems.map((item, idx) => (
+              <button
+                key={item.label}
+                className={`flex items-center gap-3 px-4 py-2 rounded-lg text-base font-medium transition
+                  ${activeSection === item.section
+                    ? "bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 text-white"
+                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"}
+                `}
+                onClick={() => handleSectionChange(item.section)}
+              >
+                <span className="text-lg">{item.icon}</span>
+                {item.label}
+              </button>
+            ))}
+          </nav>
         </div>
-
-        {/* Sidebar Footer */}
-        <div className="p-4">
-          <button
-            onClick={handleLogout}
-            className={`w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-medium shadow-lg shadow-red-500/20 transition-all duration-300 flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-center gap-3'} hover:scale-[1.02] active:scale-[0.98]`}
-          >
-            <FaSignOutAlt className={sidebarCollapsed ? '' : 'mr-2'} />
-            {!sidebarCollapsed && <span>Log Out</span>}
-          </button>
-          {!sidebarCollapsed && (
-            <div className="text-center mt-4 text-xs text-gray-400">
-              Healthcare Admin v1.2.0
-            </div>
-          )}
-        </div>
+        {/* Light/Dark Toggle */}
+        <h1>Version 1.0.0</h1>
       </aside>
-
       {/* Main Content */}
-      <main className={`flex-1 ${sidebarCollapsed ? 'ml-24' : 'ml-80'} transition-all duration-300 ease-in-out`}>
+      <main className="flex-1 ml-64 bg-[#f6f8fb] dark:bg-gray-900 transition-colors min-h-screen">
         {/* Header */}
-        <header className="bg-white/70 backdrop-blur-lg shadow-md p-4 flex items-center justify-between sticky top-0 z-10 rounded-b-2xl border-b border-white/40">
+        <header className="bg-white/70 dark:bg-gray-800/80 backdrop-blur-lg shadow-md p-4 flex items-center justify-between sticky top-0 z-10 rounded-b-2xl border-b border-white/40 dark:border-gray-700 transition-colors">
           <div className="flex items-center space-x-3">
             <div className="p-2.5 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-600 rounded-lg shadow-sm">
               {activeSection === "dashboard" && <FaChartLine />}
@@ -258,7 +218,7 @@ const Dashboard = () => {
               {activeSection === "history" && <FaHistory />}
               {activeSection === "Feedback" && <FaComments />}
             </div>
-            <h1 className="text-xl font-bold text-gray-800">
+            <h1 className="text-xl font-bold text-gray-800 dark:text-white">
               {activeSection === "dashboard" && "Dashboard Overview"}
               {activeSection === "users" && "User Management"}
               {activeSection === "Advice" && "Health Advice"}
@@ -267,8 +227,8 @@ const Dashboard = () => {
             </h1>
           </div>
           <div className="flex items-center space-x-4">
-            <button className="relative p-2 rounded-full hover:bg-gray-100 transition-colors group">
-              <FaBell className="text-gray-500 group-hover:text-gray-700" />
+            <button className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group">
+              <FaBell className="text-gray-500 group-hover:text-gray-700 dark:text-gray-300 dark:group-hover:text-white" />
               {notificationCount > 0 && (
                 <span className="absolute top-0 right-0 h-5 w-5 bg-red-500 text-white text-xs flex items-center justify-center rounded-full border-2 border-white">
                   {notificationCount}
@@ -283,12 +243,12 @@ const Dashboard = () => {
         {/* Page Content - Centered with Fade Animation */}
         <div className="p-6 flex justify-center">
           <div className={`w-full max-w-7xl transition-opacity duration-300 ease-in-out ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-            {activeSection === "dashboard" && <DashboardSection />}
-            {activeSection === "admin-register" && <RegisterAdmin />}
-            {activeSection === "users" && <UsersList users={users} handleDelete={handleDelete} />}
-            {activeSection === "Advice" && <Advice />}
-            {activeSection === "history" && <History />}
-            {activeSection === "Feedback" && <Feedback />}
+            {activeSection === "dashboard" && <DashboardSection theme={theme} />}
+            {activeSection === "admin-register" && <RegisterAdmin theme={theme} />}
+            {activeSection === "users" && <UsersList users={users} handleDelete={handleDelete} theme={theme} />}
+            {activeSection === "Advice" && <Advice theme={theme} />}
+            {activeSection === "history" && <History theme={theme} />}
+            {activeSection === "Feedback" && <Feedback theme={theme} />}
           </div>
         </div>
       </main>

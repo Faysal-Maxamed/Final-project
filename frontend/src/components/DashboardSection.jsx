@@ -20,27 +20,18 @@ import {
   Area,
   RadialBarChart,
   RadialBar,
+  LineChart,
+  Line,
 } from "recharts"
-import { TrendingUp, PieChartIcon, BarChartIcon, Users, MessageSquare, BookOpen, Loader } from "lucide-react"
+
+
+
+import { FaArrowUp, FaArrowDown, FaUserCircle } from "react-icons/fa";
 
 // Modern color palette with gradients
 const COLORS = ["#6366F1", "#F59E0B", "#10B981", "#8B5CF6"]
 const diseaseColors = ["#EF4444", "#10B981", "#3B82F6", "#F59E0B", "#8B5CF6"]
 
-const progressData = [
-  { name: "Mon", value: 4, avg: 3 },
-  { name: "Tue", value: 6, avg: 4 },
-  { name: "Wed", value: 5, avg: 5 },
-  { name: "Thu", value: 7, avg: 6 },
-  { name: "Fri", value: 6, avg: 5 },
-  { name: "Sat", value: 8, avg: 7 },
-  { name: "Sun", value: 5, avg: 4 },
-]
-
-const weeklyGoalData = [
-  { name: "Achieved", value: 95 },
-  { name: "Remaining", value: 5 },
-]
 
 // Custom tooltip component for better styling
 const CustomTooltip = ({ active, payload, label }) => {
@@ -59,16 +50,110 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null
 }
 
+// Custom modern tooltip for the diagnosis line chart
+const DiagnosisTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white rounded-xl shadow-lg px-4 py-2 border border-gray-100">
+        <div className="font-semibold text-gray-800 mb-1">{label}</div>
+        <div className="text-blue-600 font-bold text-lg">{payload[0].value}</div>
+        <div className="text-xs text-gray-400">cases</div>
+      </div>
+    );
+  }
+  return null;
+};
+
+// Mock data
+const stats = [
+  { label: "Users",  },
+  { label: "Pattient Feedback",  },
+  { label: "Total patient Advice", },
+]
+
+
+
+
+
+const timeFilters = [
+  { label: "Today", value: "today" },
+  { label: "Last Week", value: "week" },
+  { label: "Last 30 Days", value: "month" },
+]
+
+const genderColors = ["#6366F1", "#F59E0B"];
+const readmissionColors = ["#10B981", "#EF4444"];
+const ageGroupColors = ["#6366F1", "#F59E0B", "#10B981", "#EF4444"];
+
+function getDateRange(filter) {
+  const now = new Date();
+  if (filter === "today") {
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return { start, end: now };
+  } else if (filter === "week") {
+    const start = new Date(now);
+    start.setDate(now.getDate() - 7);
+    return { start, end: now };
+  } else if (filter === "month") {
+    const start = new Date(now);
+    start.setDate(now.getDate() - 30);
+    return { start, end: now };
+  }
+  return { start: new Date(0), end: now };
+}
+
+function getGenderData(history) {
+  let male = 0, female = 0;
+  history.forEach(p => {
+    if (p.gender === "Male") male++;
+    else if (p.gender === "Female") female++;
+  });
+  return [
+    { name: "Male", value: male, fill: genderColors[0] },
+    { name: "Female", value: female, fill: genderColors[1] },
+  ];
+}
+
+function getReadmissionData(history) {
+  let yes = 0, no = 0;
+  history.forEach(p => {
+    if (p.readmission === "Yes") yes++;
+    else if (p.readmission === "No") no++;
+  });
+  return [
+    { name: "Readmission", value: yes, fill: readmissionColors[1] },
+    { name: "No Readmission", value: no, fill: readmissionColors[0] },
+  ];
+}
+
+function getAgeGroupData(history) {
+  const groups = [0, 0, 0, 0];
+  history.forEach(p => {
+    const age = Number(p.age);
+    if (age <= 18) groups[0]++;
+    else if (age <= 35) groups[1]++;
+    else if (age <= 60) groups[2]++;
+    else groups[3]++;
+  });
+  return [
+    { name: "0-18", value: groups[0], fill: ageGroupColors[0] },
+    { name: "19-35", value: groups[1], fill: ageGroupColors[1] },
+    { name: "36-60", value: groups[2], fill: ageGroupColors[2] },
+    { name: "60+", value: groups[3], fill: ageGroupColors[3] },
+  ];
+}
+
 const Dashboard = () => {
   const [mounted, setMounted] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [patientHistory, setPatientHistory] = useState([])
-  const [diseaseData, setDiseaseData] = useState([])
-  const [genderData, setGenderData] = useState([])
-  const [totalUsers, setTotalUsers] = useState(0)
-  const [totalRatings, setTotalRatings] = useState(0)
   const [adviceCount, setAdviceCount] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
+  const [userCount, setUserCount] = useState(0)
+  const [feedbackCount, setFeedbackCount] = useState(0)
+  const [diagnosisData, setDiagnosisData] = useState([]);
+  const [diagnosisHistory, setDiagnosisHistory] = useState([]);
+  const [diagnosisFilter, setDiagnosisFilter] = useState("today");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,25 +163,28 @@ const Dashboard = () => {
         const historyResponse = await fetch("http://localhost:5000/api/patient/history")
         const historyData = await historyResponse.json()
         setPatientHistory(historyData)
-  
-        // Fetch users count
-        const usersResponse = await fetch("http://localhost:5000/api/auth/users")
-        const usersData = await usersResponse.json()
-        setTotalUsers(usersData.length || 0)
-  
-        // Fetch feedback/ratings
-        const feedbackResponse = await fetch("http://localhost:5000/api/feedback")
-        const feedbackData = await feedbackResponse.json()
-        setTotalRatings(feedbackData.length || 0)
-  
-        // ✅ Fetch advice count
-        const adviceResponse = await fetch("http://localhost:5000/api/advice/all")
-        const adviceData = await adviceResponse.json()
-        setAdviceCount(adviceData.length || 0)
-  
-        // Process data for charts
-        processDiseaseData(historyData)
-        processGenderData(historyData)
+
+        // Fetch user count for the first card
+        fetch("http://localhost:5000/api/auth/users")
+          .then(res => res.json())
+          .then(data => setUserCount(Array.isArray(data) ? data.length : 0))
+          .catch(() => setUserCount(0))
+        // Fetch feedback count for the second card
+        fetch("http://localhost:5000/api/feedback")
+          .then(res => res.json())
+          .then(data => setFeedbackCount(Array.isArray(data) ? data.length : 0))
+          .catch(() => setFeedbackCount(0))
+        // Fetch advice count for the third card
+        fetch("http://localhost:5000/api/advice/all")
+          .then(res => res.json())
+          .then(data => setAdviceCount(Array.isArray(data) ? data.length : 0))
+          .catch(() => setAdviceCount(0))
+
+        // Fetch patient history for diagnosis chart
+        fetch("http://localhost:5000/api/patient/history")
+          .then(res => res.json())
+          .then(data => setDiagnosisHistory(Array.isArray(data) ? data : []))
+          .catch(() => setDiagnosisHistory([]));
       } catch (error) {
         console.error("Error fetching data:", error)
       } finally {
@@ -114,293 +202,217 @@ const Dashboard = () => {
     return () => clearInterval(interval)
   }, [])
   
-  // Process disease data for the chart
-  const processDiseaseData = (data) => {
-    const diagnosisCounts = {}
-
-    // Count occurrences of each diagnosis
-    data.forEach((patient) => {
-      const diagnosis = patient.primary_diagnosis
-      if (diagnosis) {
-        diagnosisCounts[diagnosis] = (diagnosisCounts[diagnosis] || 0) + 1
+  useEffect(() => {
+    // Filter and count diagnoses for the selected period
+    const { start, end } = getDateRange(diagnosisFilter);
+    const filtered = diagnosisHistory.filter(item => {
+      const d = new Date(item.date);
+      return d >= start && d <= end;
+    });
+    const counts = {};
+    filtered.forEach(item => {
+      if (item.primary_diagnosis) {
+        counts[item.primary_diagnosis] = (counts[item.primary_diagnosis] || 0) + 1;
       }
-    })
-
-    // Convert to array and sort by count (descending)
-    const sortedDiagnoses = Object.entries(diagnosisCounts)
-      .map(([name, value]) => ({ name, value }))
+    });
+    const chartData = Object.entries(counts)
+      .map(([name, value], idx) => ({ name, value, fill: diseaseColors[idx % diseaseColors.length] }))
       .sort((a, b) => b.value - a.value)
-      .slice(0, 5) // Get top 5
+      .slice(0, 5);
+    setDiagnosisData(chartData.length > 0 ? chartData : [{ name: "No Data", value: 0, fill: "#EF4444" }]);
+  }, [diagnosisHistory, diagnosisFilter]);
 
-    // Add colors
-    const formattedData = sortedDiagnoses.map((item, index) => ({
-      ...item,
-      fill: diseaseColors[index % diseaseColors.length],
-    }))
-
-    setDiseaseData(formattedData.length > 0 ? formattedData : [{ name: "No Data", value: 0, fill: "#EF4444" }])
-  }
-
-  // Process gender data for the chart
-  const processGenderData = (data) => {
-    const genderCounts = { Male: 0, Female: 0 }
-
-    // Count occurrences of each gender
-    data.forEach((patient) => {
-      if (patient.gender === "Male" || patient.gender === "Female") {
-        genderCounts[patient.gender]++
-      }
-    })
-
-    // Calculate percentages
-    const total = genderCounts.Male + genderCounts.Female
-    const malePercentage = total > 0 ? Math.round((genderCounts.Male / total) * 100) : 0
-    const femalePercentage = total > 0 ? Math.round((genderCounts.Female / total) * 100) : 0
-
-    setGenderData([
-      { name: "Female", value: femalePercentage },
-      { name: "Male", value: malePercentage },
-    ])
-  }
+  const genderData = getGenderData(patientHistory);
+  const readmissionData = getReadmissionData(patientHistory);
+  const ageGroupData = getAgeGroupData(patientHistory);
 
   if (!mounted) return null
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Healthcare Dashboard</h1>
-          <p className="text-gray-500">Monitor patient statistics and healthcare metrics</p>
-        </div>
-        
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center h-[60vh]">
-            <Loader size={48} className="text-indigo-600 animate-spin mb-4" />
-            <p className="text-gray-600 font-medium">Loading dashboard data...</p>
+    <div className="w-full max-w-7xl mx-auto">
+   
+       {/* Stats Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+        {stats.map((stat, idx) => (
+          <div key={stat.label} className="flex flex-col items-center justify-center text-center bg-gradient-to-br from-black via-blue-900 via-purple-800 to-gray-900 text-white rounded-2xl shadow p-6">
+            <div className="text-xs mb-1">{stat.label}</div>
+            <div className="flex items-baseline justify-center">
+              <span className="text-2xl font-bold mr-2">{idx === 0 ? userCount : idx === 1 ? feedbackCount : idx === 2 ? adviceCount : stat.value}</span>
+              <span className={`text-xs font-semibold flex items-center gap-1 ${stat.changeType === 'up' ? 'text-green-200' : 'text-red-200'}`}>{stat.changeType === 'up' ? <FaArrowUp /> : <FaArrowDown />}{stat.change}</span>
+            </div>
+            <div className="text-xs mb-2">{stat.subLabel}</div>
+            {/* Mini bar chart for last card */}
+            {stat.bars && (
+              <div className="mt-2 flex items-end h-6 space-x-1 justify-center">
+                {stat.bars.map((h, i) => (
+                  <div key={i} className={`w-1.5 rounded bg-blue-200 ${i === 4 ? 'bg-blue-300' : ''}`} style={{ height: `${h * 2}px` }}></div>
+                ))}
+              </div>
+            )}
           </div>
-        ) : (
-        <>
-        {/* Main Grid: Stats + Calendar */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          {/* Total Users Card */}
-          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6 flex flex-col justify-between">
-            <div>
-              <div className="p-3 bg-blue-500/10 rounded-xl w-fit mb-3">
-                <Users size={24} className="text-blue-600" />
-              </div>
-              <h3 className="text-gray-500 font-medium mb-1">Total Users</h3>
-              <div className="text-3xl font-bold text-gray-800">{totalUsers}</div>
-            </div>
-            <div className="h-1 mt-4 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"></div>
-          </div>
-          {/* Patient Rate Card */}
-          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6 flex flex-col justify-between">
-            <div>
-              <div className="p-3 bg-green-500/10 rounded-xl w-fit mb-3">
-                <MessageSquare size={24} className="text-green-600" />
-              </div>
-              <h3 className="text-gray-500 font-medium mb-1">Patient Rate</h3>
-              <div className="text-3xl font-bold text-gray-800">{totalRatings > 0 ? totalRatings : "0"}</div>
-            </div>
-            <div className="h-1 mt-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full"></div>
-          </div>
-          {/* Total Advice Card */}
-          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6 flex flex-col justify-between">
-            <div>
-              <div className="p-3 bg-amber-500/10 rounded-xl w-fit mb-3">
-                <BookOpen size={24} className="text-amber-600" />
-              </div>
-              <h3 className="text-gray-500 font-medium mb-1">Total Advice</h3>
-              <div className="text-3xl font-bold text-gray-800">{adviceCount > 0 ? adviceCount : "0"}</div>
-            </div>
-            <div className="h-1 mt-4 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full"></div>
-          </div>
-        </div>
-
-        {/* Main Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Disease Admissions Chart */}
-          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center">
-                <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
-                  <BarChartIcon className="w-5 h-5" />
-                </div>
-                <h2 className="text-xl font-bold text-gray-800">Top 5 Most Common Diagnoses</h2>
-              </div>
-              <div className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-medium">Last 30 days</div>
-            </div>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={diseaseData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#f0f0f0" />
-                  <XAxis type="number" tick={{ fill: "#6B7280", fontSize: 12 }} axisLine={{ stroke: "#E5E7EB" }} />
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    tick={{ fill: "#6B7280", fontSize: 12 }}
-                    axisLine={{ stroke: "#E5E7EB" }}
-                    width={100}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar
-                    dataKey="value"
-                    radius={[0, 8, 8, 0]}
-                    animationDuration={1500}
-                    animationBegin={300}
-                    background={{ fill: "#f3f4f6", radius: [0, 8, 8, 0] }}
-                    label={{ position: "right", fill: "#6B7280", fontSize: 12 }}
-                  >
-                    {diseaseData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={entry.fill}
-                        fillOpacity={index === activeIndex ? 1 : 0.7}
-                        stroke={index === activeIndex ? "#fff" : "none"}
-                        strokeWidth={index === activeIndex ? 1 : 0}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Progress Tracking Chart */}
-          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center">
-                <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
-                  <TrendingUp className="w-5 h-5" />
-                </div>
-                <h2 className="text-xl font-bold text-gray-800">Progress Tracking</h2>
-              </div>
-              <div className="flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium">
-                <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M12 7a1 1 0 10-2 0v3H7a1 1 0 100 2h3v3a1 1 0 102 0v-3h3a1 1 0 100-2h-3V7z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span>12% from last week</span>
-              </div>
-            </div>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={progressData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#6366F1" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
-                    </linearGradient>
-                    <linearGradient id="colorAvg" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                  <XAxis dataKey="name" tick={{ fill: "#6B7280", fontSize: 12 }} axisLine={{ stroke: "#E5E7EB" }} />
-                  <YAxis tick={{ fill: "#6B7280", fontSize: 12 }} axisLine={{ stroke: "#E5E7EB" }} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Legend
-                    verticalAlign="top"
-                    height={36}
-                    formatter={(value) => (
-                      <span className="text-gray-700">{value === "value" ? "Current" : "Average"}</span>
-                    )}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="value"
-                    stroke="#6366F1"
-                    strokeWidth={3}
-                    fillOpacity={1}
-                    fill="url(#colorValue)"
-                    activeDot={{ r: 8, strokeWidth: 0, fill: "#6366F1" }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="avg"
-                    stroke="#8B5CF6"
-                    strokeWidth={3}
-                    fillOpacity={1}
-                    fill="url(#colorAvg)"
-                    activeDot={{ r: 8, strokeWidth: 0, fill: "#8B5CF6" }}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
+        ))}
+      </div>
+      {/* Modern 3-Card Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        {/* Gender Distribution Card */}
+        <div className="bg-gradient-to-br from-black via-blue-900 via-purple-800 to-gray-900 text-white rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center">
+          <div className="font-semibold mb-2">Gender Distribution</div>
+          <div className="h-40 w-full flex items-center justify-center">
+            <ResponsiveContainer width="100%" height={140}>
+              <PieChart>
+                <Pie
+                  data={genderData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={40}
+                  outerRadius={60}
+                  paddingAngle={2}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  labelLine={false}
+                >
+                  {genderData.map((entry, idx) => (
+                    <Cell key={entry.name} fill={entry.fill} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
-
-
-        {/* Secondary Charts Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Gender Distribution Chart */}
-          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6">
-            <div className="flex items-center mb-6">
-              <div className="p-2 rounded-lg bg-indigo-100 text-indigo-600 mr-3">
-                <PieChartIcon className="w-5 h-5" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-800">Gender Distribution</h2>
-            </div>
-            <div className="h-64 flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <defs>
-                    <linearGradient id="genderGradient1" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#6366F1" />
-                      <stop offset="100%" stopColor="#4F46E5" />
-                    </linearGradient>
-                    <linearGradient id="genderGradient2" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#F59E0B" />
-                      <stop offset="100%" stopColor="#D97706" />
-                    </linearGradient>
-                  </defs>
-                  <Pie
-                    data={genderData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    innerRadius={60}
-                    paddingAngle={5}
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                    labelLine={false}
-                    animationDuration={1000}
-                    animationBegin={200}
-                  >
-                    <Cell fill="url(#genderGradient1)" stroke="#fff" strokeWidth={2} />
-                    <Cell fill="url(#genderGradient2)" stroke="#fff" strokeWidth={2} />
-                  </Pie>
-                  <Tooltip content={<CustomTooltip />} />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="flex justify-center mt-4 space-x-8">
-              {genderData.map((entry, index) => (
-                <div key={`legend-${index}`} className="flex items-center">
-                  <div
-                    className="w-3 h-3 rounded-full mr-2"
-                    style={{ background: index === 0 ? "#6366F1" : "#F59E0B" }}
-                  ></div>
-                  <span className="text-sm text-gray-600">{`${entry.name}: ${entry.value}%`}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Readmission Chart */}
-          <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/40 p-6">
-            <ReadmissionChart />
+        {/* Readmission Status Card */}
+        <div className="bg-gradient-to-br from-black via-blue-900 via-purple-800 to-gray-900 text-white rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center">
+          <div className="font-semibold mb-2">Readmission Status</div>
+          <div className="h-40 w-full flex items-center justify-center">
+            <ResponsiveContainer width="100%" height={140}>
+              <PieChart>
+                <Pie
+                  data={readmissionData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={40}
+                  outerRadius={60}
+                  paddingAngle={2}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  labelLine={false}
+                >
+                  {readmissionData.map((entry, idx) => (
+                    <Cell key={entry.name} fill={entry.fill} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
-        </>
-        )}
-      </main>
+        {/* Age Group Distribution Card */}
+        <div className="bg-gradient-to-br from-black via-blue-900 via-purple-800 to-gray-900 text-white rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center">
+          <div className="font-semibold mb-2">Age Group Distribution</div>
+          <div className="h-40 w-full flex items-center justify-center">
+            <ResponsiveContainer width="100%" height={140}>
+              <BarChart data={ageGroupData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+                <XAxis dataKey="name" tick={{ fill: "#fff", fontSize: 13, fontWeight: 600 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: "#fff", fontSize: 12 }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                  {ageGroupData.map((entry, idx) => (
+                    <Cell key={entry.name} fill={entry.fill} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+      {/* Diagnosis Chart Section t */}
+      <div className="bg-gradient-to-br from-black via-blue-900 via-purple-800 to-gray-900 text-white rounded-2xl shadow-xl p-6 mb-8 flex flex-col items-center justify-center text-center">
+        <div className="flex items-center justify-between mb-4 w-full">
+          <div className="font-semibold">Diagnosis Performance</div>
+          <div className="flex gap-2">
+            {timeFilters.map(f => (
+              <button
+                key={f.value}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${diagnosisFilter === f.value ? 'bg-white text-blue-600' : 'bg-blue-400 text-white hover:bg-white hover:text-blue-600'}`}
+                onClick={() => setDiagnosisFilter(f.value)}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="h-72 w-full flex items-center justify-center">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={diagnosisData} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#fff" />
+              <XAxis
+                dataKey="name"
+                tick={{ fill: "#fff", fontSize: 14, fontWeight: 600 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                tick={{ fill: "#fff", fontSize: 13, fontWeight: 500 }}
+                axisLine={false}
+                tickLine={false}
+                allowDecimals={false}
+              />
+              <Tooltip content={<DiagnosisTooltip />} cursor={{ stroke: '#fff', strokeWidth: 0.2, fill: '#fff', fillOpacity: 0.1 }} />
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#fff"
+                strokeWidth={4}
+                dot={{ r: 6, fill: '#fff', stroke: '#fff', strokeWidth: 2 }}
+                activeDot={{ r: 8, fill: '#F59E0B', stroke: '#fff', strokeWidth: 2 }}
+                animationDuration={1200}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+     
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Guide Performance Line Chart & Guide List */}
+        <div className="lg:col-span-2 flex flex-col gap-8">
+          {/* Guide List Table */}
+          <div className="bg-gradient-to-br from-black via-blue-900 via-purple-800 to-gray-900 text-white rounded-2xl shadow p-6 flex flex-col items-center justify-center text-center">
+            <div className="font-semibold mb-4">Recent Patients</div>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-white text-xs">
+                  <th className="text-left py-2">Name</th>
+                  <th className="text-left py-2">Age</th>
+                  <th className="text-left py-2">Gender</th>
+                  <th className="text-left py-2">Diagnosis</th>
+                  <th className="text-left py-2">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {patientHistory.slice(0, 3).map((p, idx) => (
+                  <tr key={idx} className="border-t border-blue-200">
+                    <td className="py-2 font-semibold text-white">{p.name || "-"}</td>
+                    <td className="py-2">{p.age}</td>
+                    <td className="py-2">{p.gender}</td>
+                    <td className="py-2">{p.primary_diagnosis}</td>
+                    <td className="py-2 text-blue-100">{p.date ? new Date(p.date).toLocaleDateString() : "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {/* Right Side: Donut Chart Card & Team */}
+        <div className="flex flex-col gap-8">
+          {/* Donut Chart Card */}
+
+
+        </div>
+      </div>
     </div>
   )
 }

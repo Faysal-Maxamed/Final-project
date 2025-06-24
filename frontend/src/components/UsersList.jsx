@@ -19,7 +19,7 @@ const UsersList = ({ users, handleDelete }) => {
   }
 
   return (
-    <div className="p-6 min-h-screen bg-blue-50">
+    <div className="">
       {/* Add Button + Summary */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex space-x-4">
