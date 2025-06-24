@@ -47,49 +47,6 @@ const PredictionSection = () => {
     "Left Ankle Joint"
   ];
 
-  const adviceMap = {
-    0: {
-      yes: "➤ Ku daawee isbitaalka si degdeg ah – dhaawac maskaxeed ayaa ka dhalan kara haddii aan la daaweyn.\nKa fogow dhaqdhaqaaqyada culus ama madaxa saameyn kara – u ogolow dhaawaca inuu bogsado.\nRaac dhammaan talooyinka dhakhtarka ee ku saabsan raajada (CT/MRI) iyo baaritaanka maskaxda.",
-      no: "➤ \nXidho koofiyad ama qalab ilaalin marka aad fuushan tahay mooto ama ciyaar halis ah.\nKa fogow shilalka madaxa adigoo taxaddar u leh deegaankaaga.\nCun cunto nafaqo leh oo kor u qaada caafimaadka lafaha (kalsiyum & vitamin D)."
-    },
-    1: {
-      yes: "➤ Iska ilaali cunista cunto culus ama bararin karta caloosha – u raac cunto jilicsan.\nQabow ama baraf mari meelaha bararsan si loo yareeyo bararka.\nHaddii uu dhiigbax jiro ama caloosha laga dareemayo culays, u tag dhakhtar si degdeg ah.",
-      no: "➤ Cunto caafimaad leh ku dadaal: khudaar, miraha iyo biyo badan.\nJimicsi fudud si caloosha u shaqeyso si fiican (yoga ama socod).\nKa fogow cabitaanka badan ee sonkorta leh ama keena calool-xanuunka."
-    },
-    2: {
-      yes: "➤ Waa xaalad degdeg ah – u baahan qalliin iyo dawooyin ka hortaga caabuqa (antibiotics).\nKa ilaali meesha dhaawaca in lagu cadaadiyo ama la dhaqaajiyo si khaldan.\nKu dadaal inaad ilaaliso nadaafadda meesha dhaawaca si caabuq uga hortagto.",
-      no: "➤ Xooji lafahaaga adoo cunaya cunto leh kalsiyum iyo fitamiin D (caano, kalluun).\nKa fogow dhacdooyinka sababi kara jabka lafaha sida siibasho ama shil.\nSamee jimicsi kor u qaada xoogga lafaha iyo murqaha lugaha."
-    },
-    3: {
-      yes: "➤ Qiimeyn guud (full assessment) baa loo baahan yahay – dhaawac kasta si gooni ah ayaa loo eegaa.\nSug xasilloonida qofka (neefsashada, dhiig-karka, garaaca wadnaha) ka hor inta aan la daweyn.\nU gudub isbitaalka si degdeg ah oo u ogolow koox caafimaad inay la wareegaan xaaladda.",
-      no: "➤ Ka fogow meelaha khatarta leh iyo dhacdooyinka dhaawaca keeni kara (shilal, dagaal).\nXidho qalabka badbaadada (helmet, suunka baabuurka, iwm).\nBaro badbaadada xaaladaha degdega ah si aad u samatabbixiso naftaada iyo dadka kale."
-    },
-    4: {
-      yes: "➤ Isla markiiba hel daryeel caafimaad si loo joojiyo faafidda caabuqa ama dhaawaca.\nKa fogow cadaadiska lugta – isticmaal kabo gaar ah ama sariiro gaar ah.\nIska hubi sonkorta dhiigga si joogto ah – sonkorta aan xakameysneyn waa sababta ugu weyn.",
-      no: "➤ Haddii aad leedahay sonkorow, hubi cagahaaga maalin kasta si aad u ogaato dhaawacyo.\nXidho kabo raaxo leh oo aan cidhibta ka cadaadin.\nIska jar cidiyaha si sax ah, una tag daryeelka cagaha haddii aad la tacaaleyso cillado."
-    },
-    5: {
-      yes: "➤ Qabow mari si bararka u yaraado, kadibna ku duub si aan dhaqaaq lahayn.\nU tag xarun caafimaad si loo hubiyo in aysan jirin jab ama dhaawac neerfaha.\nIsticmaal daawo xanuunka yareysa haddii ay jirto xanuun daran.",
-      no: "➤ Ka taxaddar markaad isticmaaleyso qalabka goynta ama garaacista.\nKu shaqee gacmahaaga xaalad fayo qab leh (gloves haddii loo baahdo).\nSamee jimicsi fudud oo faraha ah si murqaha faraha u xoogeeyaan."
-    },
-    6: {
-      yes: "➤ Dhig baraf 15 daqiiqo kasta 2 saacadood gudahood si bararka loo yareeyo.\nXiro garab-gacneed (wrist brace) si aad u ilaaliso booska.\nHaddii xanuunku socdo ama dhaqaaq la'aan jirto, tag dhakhtar si loo baaro xanuunka.",
-      no: "➤ Ha culayn curcurka markaad shaqo adag qabaneyso.\nSamee xoogsi curcurka ah si aad u ilaaliso xoogga muruqyada iyo kala-goysyada.\nKa fogow dhicitaanka ama istaagista khaldan ee dhaawac keeni karta."
-    },
-    7: {
-      yes: "➤ Nadiifi dhaawaca maalin kasta adigoo isticmaalaya biyo nadiif ah iyo antiseptic.\nXidho kabaha furan ama ku habboon si aysan dhaawaca u cadaadin.\nHaddii caabuq uu sii bato ama guduud uu faafayo – hel antibiyootiko degdeg ah.",
-      no: "➤ Ka ilaali cagaha dhaawac – ka fogow kabaha cidhiidhi ah ama wax gooya.\nHaddii aad is gooyso, si fiican u nadiifi una duub.\nCagaha si joogto ah u daryeel – jar cidiyaha, nadiifi, una isticmaal saabuun nadiif ah."
-    },
-    8: {
-      yes: "➤ Ka naso lugta dhaawacan, dhigo meel sare si bararka loo yareeyo.\nKu duub kabaha ama isbuunyada si aad u yarayso dhaqdhaqa.\nU tag dhakhtar si loo baaro jabka iyo murqaha ku hareeraysan.",
-      no: "➤ Samee jimicsi dabacsan si adigoo istaagsan ugu xoogeeyo canqowga.\nHa qaadin culays aad u badan – gaar ahaan hadduu canqowga daciif yahay.\nKa taxaddar meelaha siibashada leh (dhoobo, baraf, roob)."
-    },
-    9: {
-      yes: "➤ Dhig baraf si loo yareeyo bararka; u daa si degdeg ah haddii dhaqdhaqaaq xanuun badan keeno.\nKu duub canqowga si uu u nasto – ha socon badan inta uu dhaawaca jiro.\nTag xarun caafimaad haddii dhaawacu socdo muddo dheer ama dabcisnimo dareento.",
-      no: "➤ Samee jimicsi canqowga xoojinaya sida wareejin, istaag hal lug ah, iwm.\nXidho kabaha taageera canqowga, gaar ahaan markaad ordayso ama soconayso.\nHa fadhiisan muddo dheer – socodku wuu wanaagsan yahay haddii aadan dhaawac qabin."
-    },
-  };
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -116,17 +73,31 @@ const PredictionSection = () => {
       setResult(result);
       setShowModal(true);
 
-      const diagnosisIndex = Number(formData.primary_diagnosis);
-      const selectedAdvice = result.readmission === 1 ? adviceMap[diagnosisIndex].yes : adviceMap[diagnosisIndex].no;
-      setAdvice(selectedAdvice);
+      // Fetch advice from backend (fetch all, then match by diagnosis)
+      let fetchedAdvice = '';
+      try {
+        const adviceRes = await fetch('http://localhost:5000/api/advice/all');
+        if (adviceRes.ok) {
+          const adviceList = await adviceRes.json();
+          const foundAdvice = adviceList.find(a => a.diagnosis === primaryDiagnoses[formData.primary_diagnosis]);
+          if (foundAdvice) {
+            fetchedAdvice = result.readmission === 1 ? foundAdvice.positive : foundAdvice.negative;
+          } else {
+            fetchedAdvice = 'This diagnosis does not have advice.';
+          }
+        } else {
+          fetchedAdvice = 'Failed to fetch advice.';
+        }
+      } catch (err) {
+        fetchedAdvice = 'Failed to fetch advice.';
+      }
+      setAdvice(fetchedAdvice);
 
       if (result && !result.error) {
-        const diagnosisText = primaryDiagnoses[formData.primary_diagnosis];
-        
         const historyEntry = {
           age: formData.age,
           gender: formData.gender,
-          primary_diagnosis: diagnosisText,
+          primary_diagnosis: primaryDiagnoses[formData.primary_diagnosis],
           discharge_to: "Home",
           num_procedures: formData.num_procedures,
           days_in_hospital: formData.days_in_hospital,

@@ -205,6 +205,18 @@ const Dashboard = () => {
         </div>
         {/* Light/Dark Toggle */}
         <h1>Version 1.0.0</h1>
+        <div className="w-full flex flex-col items-center mt-8 mb-4">
+      <div className="text-xs text-gray-400 mb-2">v1.0.0</div>
+      <button
+        onClick={() => {
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+        }}
+        className="px-6 py-2 rounded-lg bg-red-500 text-white font-semibold shadow hover:bg-red-600 transition-all"
+      >
+        Logout
+      </button>
+    </div>
       </aside>
       {/* Main Content */}
       <main className="flex-1 ml-64 bg-[#f6f8fb] dark:bg-gray-900 transition-colors min-h-screen">

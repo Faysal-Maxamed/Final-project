@@ -14,6 +14,10 @@ const Advice = () => {
   const [showModal, setShowModal] = useState(false)
   const [activeTab, setActiveTab] = useState("advice")
   const [expandedCards, setExpandedCards] = useState({})
+  const [diagnosis, setDiagnosis] = useState("")
+  const [positive, setPositive] = useState("")
+  const [negative, setNegative] = useState("")
+  const [pendingDeleteId, setPendingDeleteId] = useState(null)
 
   // Fetch all advice on component mount
   useEffect(() => {
@@ -30,52 +34,74 @@ const Advice = () => {
 
   // Create new advice
   const handleCreateAdvice = async () => {
+    if (!diagnosis || !positive || !negative) {
+      alert("All fields are required.");
+      return;
+    }
     try {
-      const newAdvice = { title, description, writtenBy }
-      const response = await axios.post(`${API_URL}/create`, newAdvice)
-      setAdviceList([...adviceList, response.data])
-      setTitle("")
-      setDescription("")
-      setWrittenBy("")
-      setShowModal(false)
+      const newAdvice = { diagnosis, positive, negative };
+      const response = await axios.post(`${API_URL}/create`, newAdvice);
+      setAdviceList([...adviceList, response.data]);
+      setDiagnosis("");
+      setPositive("");
+      setNegative("");
+      setShowModal(false);
     } catch (error) {
-      console.error("Error creating advice", error)
+      alert("Error creating advice: " + (error.response?.data?.error || error.message));
+      console.error("Error creating advice", error);
     }
   }
 
   // Update existing advice
   const handleUpdateAdvice = async () => {
-    if (!updateId) return
-
+    if (!updateId) return;
+    if (!diagnosis || !positive || !negative) {
+      alert("All fields are required.");
+      return;
+    }
     try {
-      const updatedAdvice = { title, description, writtenBy }
-      const response = await axios.put(`${API_URL}/advice/${updateId}`, updatedAdvice)
-      setAdviceList(adviceList.map((advice) => (advice._id === updateId ? response.data : advice)))
-      setTitle("")
-      setDescription("")
-      setWrittenBy("")
-      setUpdateId(null)
-      setShowModal(false)
+      const updatedAdvice = { diagnosis, positive, negative };
+      const response = await axios.patch(`${API_URL}/`, updatedAdvice);
+      setAdviceList(adviceList.map((advice) =>
+        advice._id === updateId ? response.data : advice
+      ));
+      setDiagnosis("");
+      setPositive("");
+      setNegative("");
+      setUpdateId(null);
+      setShowModal(false);
     } catch (error) {
-      console.error("Error updating advice", error)
+      alert("Error updating advice: " + (error.response?.data?.error || error.message));
+      console.error("Error updating advice", error);
     }
   }
 
   // Delete advice
   const handleDeleteAdvice = async (id) => {
+    setPendingDeleteId(id);
+  }
+
+  const confirmDeleteAdvice = async () => {
+    if (!pendingDeleteId) return;
     try {
-      await axios.delete(`${API_URL}/advice/${id}`)
-      setAdviceList(adviceList.filter((advice) => advice._id !== id))
+      await axios.delete(`${API_URL}/${pendingDeleteId}`)
+      setAdviceList(adviceList.filter((advice) => advice._id !== pendingDeleteId))
+      setPendingDeleteId(null);
     } catch (error) {
-      console.error("Error deleting advice", error)
+      alert("Error deleting advice: " + (error.response?.data?.error || error.message));
+      setPendingDeleteId(null);
     }
+  }
+
+  const cancelDeleteAdvice = () => {
+    setPendingDeleteId(null);
   }
 
   // Set input fields for updating an advice
   const handleEditAdvice = (advice) => {
-    setTitle(advice.title)
-    setDescription(advice.description)
-    setWrittenBy(advice.writtenBy)
+    setDiagnosis(advice.diagnosis)
+    setPositive(advice.positive)
+    setNegative(advice.negative)
     setUpdateId(advice._id)
     setShowModal(true)
   }
@@ -160,61 +186,62 @@ const Advice = () => {
 
         {/* Modal Form for Create or Update Advice */}
         {showModal && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4"
-            style={{ animation: "fadeIn 0.3s ease-out" }}
-          >
-            <div
-              className="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full mx-auto border border-gray-100"
-              style={{ animation: "fadeIn 0.3s ease-out" }}
-            >
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+            <div className="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full mx-auto border border-gray-100">
               <h2 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">
                 {updateId ? "Edit Advice" : "Create New Advice"}
               </h2>
               <div className="space-y-5">
                 <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                    Title
+                  <label htmlFor="diagnosis" className="block text-sm font-medium text-gray-700 mb-1">
+                    Diagnosis
                   </label>
                   <input
-                    id="title"
+                    id="diagnosis"
                     type="text"
-                    placeholder="Enter title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Enter diagnosis name"
+                    value={diagnosis}
+                    onChange={(e) => setDiagnosis(e.target.value)}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    disabled={!!updateId} // Don't allow changing diagnosis on edit
                   />
                 </div>
                 <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
+                  <label htmlFor="positive" className="block text-sm font-medium text-gray-700 mb-1">
+                    Positive Advice
                   </label>
                   <textarea
-                    id="description"
-                    placeholder="Enter description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows={5}
+                    id="positive"
+                    placeholder="Enter positive advice"
+                    value={positive}
+                    onChange={(e) => setPositive(e.target.value)}
+                    rows={3}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   ></textarea>
                 </div>
                 <div>
-                  <label htmlFor="author" className="block text-sm font-medium text-gray-700 mb-1">
-                    Author
+                  <label htmlFor="negative" className="block text-sm font-medium text-gray-700 mb-1">
+                    Negative Advice
                   </label>
-                  <input
-                    id="author"
-                    type="text"
-                    placeholder="Enter author's name"
-                    value={writtenBy}
-                    onChange={(e) => setWrittenBy(e.target.value)}
+                  <textarea
+                    id="negative"
+                    placeholder="Enter negative advice"
+                    value={negative}
+                    onChange={(e) => setNegative(e.target.value)}
+                    rows={3}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+                  ></textarea>
                 </div>
               </div>
               <div className="flex justify-end mt-8 space-x-4">
                 <button
-                  onClick={() => setShowModal(false)}
+                  onClick={() => {
+                    setShowModal(false);
+                    setDiagnosis("");
+                    setPositive("");
+                    setNegative("");
+                    setUpdateId(null);
+                  }}
                   className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
                 >
                   Cancel
@@ -224,6 +251,29 @@ const Advice = () => {
                   className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-teal-500 text-white rounded-lg hover:shadow-lg transition-all duration-300"
                 >
                   {updateId ? "Update Advice" : "Create Advice"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Custom Delete Confirmation Modal */}
+        {pendingDeleteId && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+            <div className="bg-white p-8 rounded-2xl shadow-xl max-w-sm w-full mx-auto border border-gray-100 text-center">
+              <h2 className="text-xl font-bold mb-4 text-gray-800">Are you sure you want to delete this advice?</h2>
+              <div className="flex justify-center gap-4 mt-6">
+                <button
+                  onClick={cancelDeleteAdvice}
+                  className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteAdvice}
+                  className="px-6 py-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300"
+                >
+                  Delete
                 </button>
               </div>
             </div>
@@ -242,62 +292,62 @@ const Advice = () => {
                 >
                   <div className="h-2 bg-gradient-to-r from-blue-600 to-teal-500"></div>
                   <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="font-bold text-lg text-gray-800 mb-3">{advice.title}</h3>
-                    <div className="flex-grow cursor-pointer" onClick={() => toggleCardExpansion(advice._id)}>
-                      <p className="text-gray-600">{truncateText(advice.description, advice._id)}</p>
+                    <h3 className="font-bold text-lg text-gray-800 mb-3">{advice.diagnosis}</h3>
+                    <div className="mb-2">
+                      <span className="font-semibold text-green-700">Positive:</span>
+                      <p className="text-gray-600 whitespace-pre-line">{advice.positive}</p>
                     </div>
-                    <div className="mt-4 pt-4 border-t border-gray-100">
-                      <p className="text-sm text-gray-500 mb-4">
-                        Written by: <span className="font-medium">{advice.writtenBy}</span>
-                      </p>
-                      <div className="flex justify-between">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleEditAdvice(advice)
-                          }}
-                          className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                    <div>
+                      <span className="font-semibold text-red-700">Negative:</span>
+                      <p className="text-gray-600 whitespace-pre-line">{advice.negative}</p>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleEditAdvice(advice)
+                        }}
+                        className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 mr-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 mr-1"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            />
-                          </svg>
-                          Edit
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleDeleteAdvice(advice._id)
-                          }}
-                          className="flex items-center text-sm font-medium text-red-500 hover:text-red-700 transition-colors"
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                          />
+                        </svg>
+                        Edit
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDeleteAdvice(advice._id)
+                        }}
+                        className="flex items-center text-sm font-medium text-red-500 hover:text-red-700 transition-colors ml-4"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 mr-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 mr-1"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                          Delete
-                        </button>
-                      </div>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                        Delete
+                      </button>
                     </div>
                   </div>
                 </div>
