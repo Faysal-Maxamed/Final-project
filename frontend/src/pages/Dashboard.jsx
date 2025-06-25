@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { FaTachometerAlt, FaUsers, FaStethoscope, FaHistory, FaSignOutAlt, FaComments, FaBell, FaChartLine, FaHeartbeat, FaRegStar, FaChartBar, FaCube, FaRegEnvelope, FaSun, FaMoon } from "react-icons/fa"
+import { FaTachometerAlt, FaUsers, FaStethoscope, FaHistory, FaSignOutAlt, FaComments, FaBell, FaChartLine, FaHeartbeat, FaRegStar, FaChartBar, FaCube, FaRegEnvelope, FaSun, FaMoon, FaUserInjured, FaUserShield } from "react-icons/fa"
 import axios from "axios"
 import DashboardSection from "../components/DashboardSection"
 import RegisterAdmin from "../components/RegisterAdmin"
@@ -10,6 +10,8 @@ import History from "./History"
 import Advice from "./Advice"
 import Feedback from "../pages/feedback"
 import React from "react"
+import PatientsList from "../components/PatientsList"
+import AdminsList from "../components/AdminsList"
 
 const Dashboard = () => {
   const [users, setUsers] = useState([])
@@ -26,7 +28,8 @@ const Dashboard = () => {
   // Navigation items data
   const navItems = [
     { icon: <FaTachometerAlt />, label: "Dashboard", section: "dashboard" },
-    { icon: <FaUsers />, label: "Users", section: "users" },
+    { icon: <FaUserInjured />, label: "Patients", section: "patients" },
+    { icon: <FaUserShield />, label: "Admins", section: "admins" },
     { icon: <FaStethoscope />, label: "Advice", section: "Advice" },
     { icon: <FaHistory />, label: "History", section: "history" },
     { icon: <FaComments />, label: "Feedback", section: "Feedback" },
@@ -227,7 +230,8 @@ const Dashboard = () => {
           <div className={`w-full max-w-7xl transition-opacity duration-300 ease-in-out ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
             {activeSection === "dashboard" && <DashboardSection theme={theme} />}
             {activeSection === "admin-register" && <RegisterAdmin theme={theme} />}
-            {activeSection === "users" && <UsersList users={users} handleDelete={handleDelete} theme={theme} />}
+            {activeSection === "patients" && <PatientsList />}
+            {activeSection === "admins" && <AdminsList />}
             {activeSection === "Advice" && <Advice theme={theme} />}
             {activeSection === "history" && <History theme={theme} />}
             {activeSection === "Feedback" && <Feedback theme={theme} />}
