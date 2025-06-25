@@ -98,10 +98,8 @@ const PredictionSection = () => {
           age: formData.age,
           gender: formData.gender,
           primary_diagnosis: primaryDiagnoses[formData.primary_diagnosis],
-          discharge_to: "Home",
           num_procedures: formData.num_procedures,
           days_in_hospital: formData.days_in_hospital,
-          comorbidity_score: "0",
           readmission: result.readmission === 1 ? "Yes" : "No",
           probability: `${(result.probability * 100).toFixed(2)}%`,
         };
