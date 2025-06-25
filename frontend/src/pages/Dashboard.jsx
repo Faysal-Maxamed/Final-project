@@ -31,7 +31,7 @@ const Dashboard = () => {
     { icon: <FaUserInjured />, label: "Patients", section: "patients" },
     { icon: <FaUserShield />, label: "Admins", section: "admins" },
     { icon: <FaStethoscope />, label: "Advice", section: "Advice" },
-    { icon: <FaHistory />, label: "History", section: "history" },
+    { icon: <FaHistory />, label: "Patient History", section: "history" },
     { icon: <FaComments />, label: "Feedback", section: "Feedback" },
   ]
 
