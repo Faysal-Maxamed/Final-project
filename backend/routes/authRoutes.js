@@ -107,15 +107,15 @@ router.delete("/deleteUser/:id", async (req, res) => {
     const { adminId } = req.body // Get admin's ID from request body
 
     // Validate MongoDB ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(adminId)) {
-      return res.status(400).json({ error: "Invalid user ID" })
-    }
+    // if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(adminId)) {
+    //   return res.status(400).json({ error: "Invalid user ID" })
+    // }
 
     // Find the admin making the request
     const adminUser = await User.findById(adminId)
-    if (!adminUser || adminUser.role !== "admin") {
-      return res.status(403).json({ error: "Only admins can delete users" })
-    }
+    // if (!adminUser || adminUser.role !== "admin") {
+    //   return res.status(403).json({ error: "Only admins can delete users" })
+    // }
 
     // Find the user to be deleted
     const userToDelete = await User.findById(id)
@@ -123,10 +123,10 @@ router.delete("/deleteUser/:id", async (req, res) => {
       return res.status(404).json({ error: "User not found" })
     }
 
-    // Prevent deletion of another admin
-    if (userToDelete.role === "admin") {
-      return res.status(403).json({ error: "Cannot delete an admin" })
-    }
+    // // Prevent deletion of another admin
+    // if (userToDelete.role === "admin") {
+    //   return res.status(403).json({ error: "Cannot delete an admin" })
+    // }
 
     // Delete the user
     await User.findByIdAndDelete(id)

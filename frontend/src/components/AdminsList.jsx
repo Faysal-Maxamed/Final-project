@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import RegisterAdmin from "./RegisterAdmin";
+import { FaExclamationTriangle } from "react-icons/fa";
 
 const AdminsList = () => {
   const [admins, setAdmins] = useState([]);
@@ -8,6 +9,15 @@ const AdminsList = () => {
   const [showRegister, setShowRegister] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(1);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
+  const [showMessage, setShowMessage] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  // Get current user info from localStorage
+  const currentUserId = localStorage.getItem("userId");
+  const currentUserRole = localStorage.getItem("role");
 
   useEffect(() => {
     fetchAdmins();
@@ -22,9 +32,40 @@ const AdminsList = () => {
     }
   };
 
+  const showMsg = (msg, type = "success") => {
+    setMessage(msg);
+    setMessageType(type);
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 2500);
+  };
+
   const handleRegisterSuccess = () => {
     setShowRegister(false);
     fetchAdmins();
+  };
+
+  const handleDeleteClick = (id) => {
+    if (currentUserRole !== "admin") {
+      showMsg("Only admins can delete admins.", "error");
+      return;
+    }
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:5000/api/auth/deleteUser/${deleteId}`, {
+        data: { adminId: currentUserId },
+      });
+      setAdmins(admins.filter((user) => user._id !== deleteId));
+      showMsg("Admin deleted successfully.", "success");
+    } catch (err) {
+      showMsg(err.response?.data?.error || "Failed to delete admin.", "error");
+    } finally {
+      setShowDeleteModal(false);
+      setDeleteId(null);
+    }
   };
 
   const filtered = admins.filter(
@@ -45,6 +86,42 @@ const AdminsList = () => {
 
   return (
     <div className="py-8 px-4">
+      {/* Message Box */}
+      {showMessage && (
+        <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white font-semibold transition-all duration-300 ${messageType === "success" ? "bg-green-500" : "bg-red-500"}`}>
+          {message}
+        </div>
+      )}
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="p-6 rounded-2xl shadow-2xl max-w-md w-full mx-4 bg-white">
+            <div className="text-center">
+              <FaExclamationTriangle className="text-4xl text-red-500 mx-auto mb-4" />
+              <h3 className="text-lg font-bold mb-2 text-gray-900">
+                Delete Admin
+              </h3>
+              <p className="mb-6 text-gray-600">
+                Are you sure you want to delete this admin? This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="flex-1 py-2 px-4 rounded-lg font-medium transition-all bg-gray-200 text-gray-800 hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 py-2 px-4 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-all"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
         <h2 className="text-2xl font-bold text-blue-700">Admins</h2>
         <div className="flex gap-2 items-center">
@@ -98,8 +175,10 @@ const AdminsList = () => {
                   <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Admin</span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
-                  <button className="bg-indigo-500 text-white px-3 py-1 rounded-lg mr-2">Edit</button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
+                  {/* Only show delete for admins, and not for self */}
+                  {currentUserRole === "admin" && user._id !== currentUserId && (
+                    <button onClick={() => handleDeleteClick(user._id)} className="bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
+                  )}
                 </td>
               </tr>
             ))}
