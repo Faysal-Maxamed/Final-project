@@ -1,71 +1,162 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { MdFeedback } from "react-icons/md";
+import { FaStar, FaTrash, FaExclamationTriangle } from "react-icons/fa";
 
-const Feedback = () => {
-    const [feedbacks, setFeedbacks] = useState([]);
-    const [feedback, setFeedback] = useState("");
-    const [rating, setRating] = useState(5);
-    const [message, setMessage] = useState("");
+const Feedback = ({ darkMode }) => {
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [expandedIds, setExpandedIds] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
-    // Fetch feedbacks
-    useEffect(() => {
-        const fetchFeedbacks = async () => {
-            try {
-                const res = await axios.get("http://localhost:5000/api/feedback"); // adjust URL if needed
-                setFeedbacks(res.data);
-            } catch (error) {
-                console.error("Failed to fetch feedback:", error);
-            }
-        };
-
-        fetchFeedbacks();
-    }, []);
-
-    // Submit feedback
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await axios.post("/api/feedback", { feedback, rating });
-            setMessage(res.data.message);
-            setFeedback("");
-            setRating(5);
-            setFeedbacks([res.data.feedback, ...feedbacks]);
-        } catch (error) {
-            setMessage(error.response?.data?.error || "Submission failed!");
-        }
+  // Fetch feedbacks from backend
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/feedback");
+        setFeedbacks(res.data);
+      } catch (error) {
+        console.error("Failed to fetch feedback:", error);
+      }
     };
+    fetchFeedbacks();
+  }, []);
 
-    return (
-        <div className="max-h-screen bg-gradient-to-br from-blue-100 to-teal-100 py-10 px-4">
-
-            <h2 className="text-xl font-semibold text-gray-700 mb-3">Recent Feedback</h2>
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-                {feedbacks.length === 0 ? (
-                    <p className="text-gray-500">No feedback yet.</p>
-                ) : (
-                    feedbacks.map((fb) => (
-                        <div
-                            key={fb._id}
-                            className="flex items-start gap-3 bg-white shadow-sm border border-gray-200 rounded-lg p-4"
-                        >
-                            <div className="flex-shrink-0 w-10 h-10 bg-teal-500 text-white rounded-full flex items-center justify-center font-bold text-lg">
-                                {fb.feedback.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                                <p className="text-gray-800 mb-1">{fb.feedback}</p>
-                                <p className="text-sm text-gray-500">
-                                    ⭐ {fb.rating} stars &middot; {new Date(fb.timestamp).toLocaleString()}
-                                </p>
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
-
-
-        </div>
+  // Toggle Read More
+  const handleReadMore = (id) => {
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
     );
+  };
+
+  // Delete handling
+  const handleDelete = (id) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:5000/api/feedback/${deleteId}`);
+      setFeedbacks((prev) => prev.filter((f) => f._id !== deleteId));
+    } catch (err) {
+      console.error("Failed to delete feedback:", err);
+    } finally {
+      setShowDeleteModal(false);
+      setDeleteId(null);
+    }
+  };
+
+  const getInitial = (text) => text.charAt(0).toUpperCase();
+
+  return (
+    <div
+      className={`min-h-screen py-10 px-4 ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-800"
+      }`}
+    >
+      <h2 className="text-3xl font-bold text-center mb-6">Customer Feedback</h2>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div
+            className={`p-6 rounded-xl shadow-xl max-w-sm w-full ${
+              darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+            }`}
+          >
+            <div className="text-center">
+              <FaExclamationTriangle className="text-4xl text-red-500 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Delete Feedback</h3>
+              <p className="mb-6">
+                Are you sure you want to delete this feedback? This cannot be
+                undone.
+              </p>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="flex-1 py-2 rounded-lg bg-gray-500 hover:bg-gray-600 text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Feedback Cards */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+        {feedbacks.length === 0 ? (
+          <p className="text-center col-span-full">No feedback available.</p>
+        ) : (
+          feedbacks.map((fb) => {
+            const isExpanded = expandedIds.includes(fb._id);
+            const feedbackText = isExpanded
+              ? fb.feedback
+              : fb.feedback.slice(0, 120);
+            return (
+              <div
+                key={fb._id}
+                className={`relative bg-white rounded-xl shadow-md p-5 flex flex-col justify-between border ${
+                  darkMode
+                    ? "bg-gray-800 text-white border-gray-700"
+                    : "border-gray-200"
+                }`}
+              >
+                {/* Avatar + Meta */}
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold">
+                    {getInitial(fb.feedback)}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Anonymous</h4>
+                    <p className="text-sm text-gray-400">
+                      {new Date(fb.timestamp).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Feedback Text */}
+                <p className="mb-4">
+                  "{feedbackText}"
+                  {fb.feedback.length > 120 && (
+                    <button
+                      className="ml-2 text-blue-400 hover:underline text-sm"
+                      onClick={() => handleReadMore(fb._id)}
+                    >
+                      {isExpanded ? "Show Less" : "Read More"}
+                    </button>
+                  )}
+                </p>
+
+                {/* Rating + Delete Button */}
+                <div className="flex justify-between items-center">
+                  <div className="flex gap-1 text-yellow-400">
+                    {Array.from({ length: fb.rating }, (_, i) => (
+                      <FaStar key={i} />
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => handleDelete(fb._id)}
+                    className="text-red-500 hover:text-red-600"
+                    title="Delete Feedback"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Feedback;

@@ -38,6 +38,7 @@ const About = () => {
   const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark")
   const [activeTab, setActiveTab] = useState("mission")
   const [activeFeature, setActiveFeature] = useState(0)
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   useEffect(() => {
     const theme = localStorage.getItem("theme")
@@ -105,7 +106,7 @@ const About = () => {
   ]
 
   const stats = [
-    { number: "95%", label: "Prediction Accuracy", icon: <FaChartBar /> },
+    { number: "94%", label: "Prediction Accuracy", icon: <FaChartBar /> },
     { number: "40%", label: "Reduction in Readmissions", icon: <FaHeartbeat /> },
     { number: "24/7", label: "Monitoring System", icon: <FaShieldAlt /> },
     { number: "500+", label: "Hospitals Served", icon: <FaHospital /> }
@@ -151,7 +152,7 @@ const About = () => {
                     transition={{ delay: 0.2 }}
                   >
                     <FaRobot className="mr-2" />
-                    AI-Powered Healthcare Solutions
+                    System-Powered Healthcare Solutions
                   </motion.div>
                   <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight">
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-teal-500">
@@ -172,6 +173,7 @@ const About = () => {
                     className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={() => setIsVideoModalOpen(true)}
                   >
                     <FaPlay className="mr-2" />
                     Watch Demo
@@ -639,6 +641,28 @@ const About = () => {
         {/* Footer Component */}
         <Footer darkMode={darkMode} />
       </div>
+      {/* Video Modal */}
+      {isVideoModalOpen && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" onClick={() => setIsVideoModalOpen(false)}>
+          <div className="relative w-full max-w-4xl bg-black rounded-xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <button 
+              className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-all z-10"
+              onClick={() => setIsVideoModalOpen(false)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <div className="aspect-video">
+              <video controls autoPlay className="w-full h-full rounded-xl">
+                <source src="/introduction.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

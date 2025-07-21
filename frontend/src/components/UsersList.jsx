@@ -4,7 +4,7 @@ import { useState } from "react"
 import { FaTrash } from "react-icons/fa"
 import RegisterAdmin from "./RegisterAdmin" // Import the RegisterAdmin component
 
-const UsersList = ({ users, handleDelete }) => {
+const UsersList = ({ users, handleDelete, darkMode }) => {
   const [activeTab, setActiveTab] = useState("patient")
   const [showModal, setShowModal] = useState(false) // State to control modal visibility
 
@@ -27,7 +27,7 @@ const UsersList = ({ users, handleDelete }) => {
             className={`px-4 py-2 rounded-md text-sm font-medium ${
               activeTab === "patient"
                 ? "bg-gradient-to-r from-blue-600 to-teal-500 text-white"
-                : "bg-gray-200 text-gray-700"
+                : darkMode ? "bg-gray-800 text-gray-200" : "bg-gray-200 text-gray-700"
             }`}
             onClick={() => setActiveTab("patient")}
           >
@@ -37,7 +37,7 @@ const UsersList = ({ users, handleDelete }) => {
             className={`px-4 py-2 rounded-md text-sm font-medium ${
               activeTab === "admin"
                 ? "bg-gradient-to-r from-blue-600 to-teal-500 text-white"
-                : "bg-gray-200 text-gray-700"
+                : darkMode ? "bg-gray-800 text-gray-200" : "bg-gray-200 text-gray-700"
             }`}
             onClick={() => setActiveTab("admin")}
           >
@@ -51,7 +51,7 @@ const UsersList = ({ users, handleDelete }) => {
           >
             Add New
           </button>
-          <div className="text-sm text-gray-600">
+          <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             <p>
               Total Patients: <span className="font-semibold">{totalPatients}</span>
             </p>
@@ -63,10 +63,10 @@ const UsersList = ({ users, handleDelete }) => {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+      <div className={`${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'} p-6 rounded-xl shadow-md border`}>
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="text-gray-700 bg-gray-100">
+            <tr className={`${darkMode ? 'text-gray-200 bg-gray-800' : 'text-gray-700 bg-gray-100'}`}>
               <th className="p-3 border-b">No</th>
               <th className="p-3 border-b">Name</th>
               <th className="p-3 border-b">Email</th>
@@ -76,10 +76,10 @@ const UsersList = ({ users, handleDelete }) => {
           <tbody>
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user, index) => (
-                <tr key={user._id} className="hover:bg-gray-50 transition duration-200">
+                <tr key={user._id} className={`${darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-50'} transition duration-200`}>
                   <td className="p-3 border-b">{index + 1}</td>
-                  <td className="p-3 border-b font-medium text-gray-800">{user.name}</td>
-                  <td className="p-3 border-b text-gray-600">{user.email}</td>
+                  <td className={`p-3 border-b font-medium ${darkMode ? 'text-gray-100' : 'text-gray-800'}`}>{user.name}</td>
+                  <td className={`p-3 border-b ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{user.email}</td>
                   <td className="p-3 border-b text-right">
                     <button
                       onClick={() => handleDelete(user._id)}
@@ -93,7 +93,7 @@ const UsersList = ({ users, handleDelete }) => {
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="text-center py-6 text-gray-500">
+                <td colSpan="4" className={`text-center py-6 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   No users found
                 </td>
               </tr>
@@ -103,7 +103,7 @@ const UsersList = ({ users, handleDelete }) => {
       </div>
 
       {/* Modal for RegisterAdmin Component */}
-      {showModal && <RegisterAdmin closePopup={handleCloseModal} />}
+      {showModal && <RegisterAdmin closePopup={handleCloseModal} darkMode={darkMode} />}
     </div>
   )
 }

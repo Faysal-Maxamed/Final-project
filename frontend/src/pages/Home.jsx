@@ -9,6 +9,7 @@ import Header from "../components/header"
 import Footer from "../components/footer"
 import HealthTips from "../components/HealthTips"
 import axios from "axios"
+import { useNavigate } from "react-router-dom";
 
 
 const images = [doctor1, doctor2, doctor3]
@@ -20,6 +21,7 @@ const Homepage = () => {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false)
   const [feedbacks, setFeedbacks] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -221,12 +223,12 @@ const Homepage = () => {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="flex flex-wrap gap-4"
               >
-                <a 
-                  href="/predict" 
+                <button
+                  onClick={() => navigate("/PredictorForm")}
                   className="px-6 py-3 text-lg font-medium bg-gradient-to-r from-blue-600 to-indigo-500 text-white rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition duration-300 flex items-center"
                 >
                   Try Prediction <FaArrowRight className="ml-2" />
-                </a>
+                </button>
                 
                 <button
                   className={`px-6 py-3 text-lg font-medium rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-1 transition duration-300 flex items-center ${
@@ -313,7 +315,7 @@ const Homepage = () => {
                         <span className="text-xs font-medium uppercase tracking-wider text-green-300">Live Prediction</span>
                       </div>
                       <h3 className="text-xl font-bold mb-1">Readmission Risk Analysis</h3>
-                      <p className="text-sm text-blue-100">AI-powered insights for better healthcare decisions</p>
+                      <p className="text-sm text-blue-100">HPR-powered insights for better healthcare decisions</p>
                       
                       {/* Progress bar */}
                       <div className="mt-4 h-1 w-full bg-white/30 rounded-full overflow-hidden">
@@ -341,10 +343,6 @@ const Homepage = () => {
                     <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
                       <FaCheckCircle className="text-green-600" />
                     </div>
-                    <div>
-                      <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Risk Score</p>
-                      <p className={`font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>Low Risk (12%)</p>
-                    </div>
                   </div>
                 </motion.div>
                 
@@ -361,7 +359,7 @@ const Homepage = () => {
                       <FaUserMd className="text-blue-600" />
                     </div>
                     <div>
-                      <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>AI Analysis</p>
+                      <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>System Analysis</p>
                       <p className={`font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>Processing...</p>
                     </div>
                   </div>
@@ -396,9 +394,10 @@ const Homepage = () => {
               </svg>
             </button>
             <div className="aspect-video">
-              <div className="w-full h-full flex items-center justify-center">
-                <p className="text-white text-xl">Your video would play here</p>
-              </div>
+              <video controls autoPlay className="w-full h-full rounded-xl">
+                <source src="/introduction.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
           </div>
         </div>

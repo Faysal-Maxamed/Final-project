@@ -4,7 +4,7 @@ import { useState } from "react"
 import axios from "axios"
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react"
 
-const RegisterAdmin = ({ closePopup }) => {
+const RegisterAdmin = ({ closePopup, darkMode }) => {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -56,63 +56,59 @@ const RegisterAdmin = ({ closePopup }) => {
   console.log("closePopup is:", typeof closePopup)
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-xl shadow-xl w-96">
+    <div className=" fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className={`${darkMode ? 'bg-gray-900' : 'bg-white'} p-6 rounded-xl shadow-xl w-96 relative`}>
         {/* Close Button */}
-        <button type="button" onClick={handleCancel} className="absolute top-2 right-2 text-gray-500 text-xl">
+        <button type="button" onClick={handleCancel} className={`absolute top-2 right-2 ${darkMode ? 'text-gray-300' : 'text-gray-500'} text-xl`}>
           &times;
         </button>
-
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-500">
             Register New Admin
           </h2>
-          <p className="text-gray-600 mt-1 text-sm">Create a new administrator account</p>
+          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mt-1 text-sm`}>Create a new administrator account</p>
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-gray-400" />
+                <User className={`h-5 w-5 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
               </div>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={`w-full pl-10 pr-3 py-3 border ${darkMode ? 'border-gray-700 bg-gray-800 text-gray-100' : 'border-gray-300 bg-white text-gray-900'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                 placeholder="Enter full name"
                 required
               />
             </div>
           </div>
-
           <div className="space-y-2">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" />
+                <Mail className={`h-5 w-5 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
               </div>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={`w-full pl-10 pr-3 py-3 border ${darkMode ? 'border-gray-700 bg-gray-800 text-gray-100' : 'border-gray-300 bg-white text-gray-900'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                 placeholder="Enter email address"
                 required
               />
             </div>
           </div>
-
           <div className="space-y-2">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-gray-400" />
+                <Lock className={`h-5 w-5 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
               </div>
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={`w-full pl-10 pr-10 py-3 border ${darkMode ? 'border-gray-700 bg-gray-800 text-gray-100' : 'border-gray-300 bg-white text-gray-900'} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
                 placeholder="••••••••"
                 required
               />
@@ -122,19 +118,18 @@ const RegisterAdmin = ({ closePopup }) => {
                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
               >
                 {showPassword ? (
-                  <EyeOff className="h-5 w-5 text-gray-400" />
+                  <EyeOff className={`h-5 w-5 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
                 ) : (
-                  <Eye className="h-5 w-5 text-gray-400" />
+                  <Eye className={`h-5 w-5 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
                 )}
               </button>
             </div>
           </div>
-
           <div className="flex gap-4 pt-2">
             <button
               type="button"
               onClick={handleCancel}
-              className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+              className={`px-6 py-2.5 border ${darkMode ? 'border-gray-700 text-gray-200 hover:bg-gray-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'} rounded-lg transition-colors`}
             >
               Cancel
             </button>
@@ -145,9 +140,8 @@ const RegisterAdmin = ({ closePopup }) => {
               Register
             </button>
           </div>
-
           {message && (
-            <div className="text-center mt-2 text-sm text-gray-600 bg-gray-100 p-2 rounded-md">{message}</div>
+            <div className={`text-center mt-2 text-sm ${darkMode ? 'text-gray-300 bg-gray-800' : 'text-gray-600 bg-gray-100'} p-2 rounded-md`}>{message}</div>
           )}
         </form>
       </div>

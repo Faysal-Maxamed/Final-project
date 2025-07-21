@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { FaTachometerAlt, FaUsers, FaStethoscope, FaHistory, FaSignOutAlt, FaComments, FaBell, FaChartLine, FaHeartbeat, FaRegStar, FaChartBar, FaCube, FaRegEnvelope, FaSun, FaMoon, FaUserInjured, FaUserShield } from "react-icons/fa"
+import { FaTachometerAlt, FaUsers, FaStethoscope, FaHistory, FaSignOutAlt, FaComments, FaBell, FaChartLine, FaHeartbeat, FaRegStar, FaChartBar, FaCube, FaRegEnvelope, FaSun, FaMoon, FaUserInjured, FaUserShield, FaBars, FaChevronLeft } from "react-icons/fa"
 import axios from "axios"
 import DashboardSection from "../components/DashboardSection"
 import RegisterAdmin from "../components/RegisterAdmin"
@@ -24,6 +24,11 @@ const Dashboard = () => {
   const [fadeIn, setFadeIn] = useState(true)
   const [theme, setTheme] = useState("light")
   const [userAvatar, setUserAvatar] = useState("")
+  const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark")
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
+
+  // Add logo/app name
+  const appName = "MediAdmin";
 
   // Navigation items data
   const navItems = [
@@ -45,6 +50,9 @@ const Dashboard = () => {
       }, 200)
     }
   }
+
+  // Add sidebarCollapsed toggle handler
+  const toggleSidebar = () => setSidebarCollapsed((prev) => !prev);
 
   // Component for nav items with enhanced hover effects
   function NavItem({ icon, label, active, section, index }) {
@@ -126,9 +134,11 @@ const Dashboard = () => {
     // Set theme from localStorage or default to light
     if (storedTheme === "dark") {
       setTheme("dark")
+      setDarkMode(true)
       document.documentElement.classList.add("dark")
     } else {
       setTheme("light")
+      setDarkMode(false)
       document.documentElement.classList.remove("dark")
     }
 
@@ -156,6 +166,10 @@ const Dashboard = () => {
   }
 
   const handleLogout = () => {
+    setShowLogoutModal(true)
+  }
+
+  const confirmLogout = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("userName")
     localStorage.removeItem("userEmail")
@@ -165,6 +179,7 @@ const Dashboard = () => {
   // Theme toggle handler
   const handleThemeChange = (newTheme) => {
     setTheme(newTheme)
+    setDarkMode(newTheme === "dark")
     localStorage.setItem("theme", newTheme)
     if (newTheme === "dark") {
       document.documentElement.classList.add("dark")
@@ -174,67 +189,129 @@ const Dashboard = () => {
   }
 
   return (
-    <div className={`flex min-h-screen bg-[#f6f8fb] dark:bg-gray-900`}>
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 w-64 h-screen bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 flex flex-col justify-between py-6 px-4 shadow-sm z-20 transition-colors">
-        {/* User Info */}
-        <div>
-          <div className="flex flex-col items-center mb-8">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgzCPZeVAjxjYRr3U4EDJmFwrUW45HpPF5G8tHsLAvGYHkuJyWhwczl6tHctWHLdIBFYo&usqp=CAU"
-              alt="User Avatar"
-              className="w-32 h-32 rounded-full mb-2 object-cover"
-            />
-            <div className="font-semibold text-gray-900 dark:text-white">{userName || "User"}</div>
-            <div className="text-xs text-gray-400 dark:text-gray-300">{userEmail || "user@email.com"}</div>
-          </div>
-          {/* Navigation */}
-          <nav className="flex flex-col gap-2">
-            {navItems.map((item, idx) => (
+    <div className={`flex min-h-screen ${darkMode ? "bg-gray-900" : "bg-[#f6f8fb]"}`}>
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 max-w-sm w-full border border-gray-200 dark:border-gray-700 text-center">
+            <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Confirm Logout</h2>
+            <p className="mb-6 text-gray-600 dark:text-gray-300">Are you sure you want to logout?</p>
+            <div className="flex justify-center gap-4">
               <button
-                key={item.label}
-                className={`flex items-center gap-3 px-4 py-2 rounded-lg text-base font-medium transition
+                onClick={confirmLogout}
+                className="bg-gradient-to-r from-blue-600 to-teal-500 hover:shadow-lg text-white px-6 py-2 rounded-md font-semibold transition-all duration-200"
+              >
+                Yes, Logout
+              </button>
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-6 py-2 rounded-md font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Sidebar */}
+      <aside className={`fixed left-0 top-0 ${sidebarCollapsed ? "w-20" : "w-64"} h-screen bg-white/80 dark:bg-gray-800/80 border-r border-gray-100 dark:border-gray-700 flex flex-col justify-between py-6 px-2 shadow-xl z-20 transition-all duration-300 backdrop-blur-lg`}>
+        {/* Logo & Collapse Button */}
+        <div className="flex items-center justify-between mb-8 px-2">
+          <div className="flex items-center gap-2">
+            <img src="https://ui-avatars.com/api/?name=M+A&background=4f8cff&color=fff&size=40&rounded=true&bold=true" alt="Logo" className="w-10 h-10" />
+            {!sidebarCollapsed && <span className="text-xl font-bold text-blue-700 dark:text-white tracking-wide">{appName}</span>}
+          </div>
+          <button onClick={toggleSidebar} className="p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition-all">
+            {sidebarCollapsed ? <FaBars className="text-blue-700 dark:text-white" /> : <FaChevronLeft className="text-blue-700 dark:text-white" />}
+          </button>
+        </div>
+        {/* User Info */}
+        <div className={`flex flex-col items-center mb-8 transition-all duration-300 ${sidebarCollapsed ? "scale-0 h-0 mb-0" : "scale-100 h-auto mb-8"}`} style={{overflow: 'hidden'}}>
+          <img
+            src={userAvatar}
+            alt="User Avatar"
+            className="w-20 h-20 rounded-full mb-2 object-cover border-4 border-blue-200 shadow"
+          />
+          <div className="font-semibold text-gray-900 dark:text-white">{userName || "User"}</div>
+          <div className="text-xs text-gray-400 dark:text-gray-300">{userEmail || "user@email.com"}</div>
+        </div>
+        {/* Navigation */}
+        <nav className="flex flex-col gap-2">
+          {navItems.map((item, idx) => (
+            <div key={item.label} className="relative group">
+              <button
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-300 w-full overflow-hidden
                   ${activeSection === item.section
-                    ? "bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 text-white"
-                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"}
+                    ? "bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 text-white shadow-lg"
+                    : "text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700"}
+                  ${sidebarCollapsed ? "justify-center px-2" : ""}
                 `}
                 onClick={() => handleSectionChange(item.section)}
+                onMouseEnter={() => setHoverIndex(idx)}
+                onMouseLeave={() => setHoverIndex(null)}
               >
-                <span className="text-lg">{item.icon}</span>
-                {item.label}
+                <span className={`text-lg ${activeSection === item.section ? "text-white" : "text-blue-700 dark:text-blue-300 group-hover:text-blue-700 dark:group-hover:text-white"}`}>{item.icon}</span>
+                {!sidebarCollapsed && <span className="text-sm ml-2">{item.label}</span>}
               </button>
-            ))}
-          </nav>
+              {/* Tooltip for collapsed state */}
+              {sidebarCollapsed && (
+                <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap">
+                  {item.label}
+                </span>
+              )}
+            </div>
+          ))}
+        </nav>
+        {/* Bottom Section: Version & Logout */}
+        <div className="flex flex-col items-center mt-8 mb-2">
+          {!sidebarCollapsed && <div className="text-xs text-gray-400 mb-2">v1.0.0</div>}
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold shadow hover:bg-red-600 transition-all w-full"
+            title="Logout"
+          >
+            <span className="flex items-center justify-center gap-2">
+              <FaSignOutAlt />
+              {!sidebarCollapsed && "Logout"}
+            </span>
+          </button>
         </div>
-        {/* Light/Dark Toggle */}
-        <h1>Version 1.0.0</h1>
-        <div className="w-full flex flex-col items-center mt-8 mb-4">
-      <div className="text-xs text-gray-400 mb-2">v1.0.0</div>
-      <button
-        onClick={() => {
-          localStorage.removeItem('token');
-          window.location.href = '/login';
-        }}
-        className="px-6 py-2 rounded-lg bg-red-500 text-white font-semibold shadow hover:bg-red-600 transition-all"
-      >
-        Logout
-      </button>
-    </div>
       </aside>
       {/* Main Content */}
-      <main className="flex-1 ml-64 bg-[#f6f8fb] dark:bg-gray-900 transition-colors min-h-screen">
-
-    
+      <main className={`flex-1 ${sidebarCollapsed ? "ml-20" : "ml-64"} ${darkMode ? "bg-gray-900" : "bg-[#f6f8fb]"} transition-all duration-300 min-h-screen`}>
+        {/* Top Header Bar */}
+        <div className="flex items-center justify-between px-8 py-4 bg-white/70 dark:bg-gray-800/70 shadow-sm mb-4 backdrop-blur-lg rounded-b-xl">
+          <div className="text-2xl font-bold text-blue-700 dark:text-white tracking-wide">
+            {`Hi Admin${userName ? ", " + userName : ""}`}
+          </div>
+          <div className="flex items-center gap-4">
+            {/* Theme Toggle */}
+            <button
+              onClick={() => handleThemeChange(theme === "dark" ? "light" : "dark")}
+              className="p-2 rounded-full bg-blue-100 dark:bg-gray-700 hover:bg-blue-200 dark:hover:bg-gray-600 transition-all"
+              title="Toggle theme"
+            >
+              {theme === "dark" ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-blue-700" />}
+            </button>
+            {/* User Avatar */}
+            <img
+              src={userAvatar}
+              alt="User Avatar"
+              className="w-10 h-10 rounded-full border-2 border-blue-200 shadow"
+            />
+          </div>
+        </div>
         {/* Page Content - Centered with Fade Animation */}
         <div className="p-6 flex justify-center">
           <div className={`w-full max-w-7xl transition-opacity duration-300 ease-in-out ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-            {activeSection === "dashboard" && <DashboardSection theme={theme} />}
-            {activeSection === "admin-register" && <RegisterAdmin theme={theme} />}
-            {activeSection === "patients" && <PatientsList />}
-            {activeSection === "admins" && <AdminsList />}
-            {activeSection === "Advice" && <Advice theme={theme} />}
-            {activeSection === "history" && <History theme={theme} />}
-            {activeSection === "Feedback" && <Feedback theme={theme} />}
+            {activeSection === "dashboard" && <DashboardSection theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
+            {activeSection === "admin-register" && <RegisterAdmin theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
+            {activeSection === "patients" && <PatientsList darkMode={darkMode} setDarkMode={setDarkMode} />}
+            {activeSection === "admins" && <AdminsList darkMode={darkMode} setDarkMode={setDarkMode} />}
+            {activeSection === "Advice" && <Advice theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
+            {activeSection === "history" && <History theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
+            {activeSection === "Feedback" && <Feedback theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
+            {activeSection === "ViewPatients" && <ViewPatients darkMode={darkMode} setDarkMode={setDarkMode} />}
           </div>
         </div>
       </main>

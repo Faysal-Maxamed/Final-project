@@ -143,7 +143,7 @@ function getAgeGroupData(history) {
   ];
 }
 
-const Dashboard = () => {
+const Dashboard = ({ darkMode }) => {
   const [mounted, setMounted] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [patientHistory, setPatientHistory] = useState([])
@@ -229,47 +229,47 @@ const Dashboard = () => {
   if (!mounted) return null
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className={`w-full max-w-7xl mx-auto ${darkMode ? 'text-white' : 'text-gray-900'}`}>
    
        {/* Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
         {[
           {
-            color: 'border-orange-400',
+            color: darkMode ? 'border-indigo-400' : 'border-orange-400',
             stat: userCount,
             label: 'Users',
             icon: (
-              <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              <svg className={`w-6 h-6 ${darkMode ? 'text-indigo-400' : 'text-orange-400'}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
             ),
-            bottom: 'bg-orange-100 text-orange-600',
+            bottom: darkMode ? 'bg-indigo-900 text-indigo-300' : 'bg-orange-100 text-orange-600',
             percent: '% change',
           },
           {
-            color: 'border-green-400',
+            color: darkMode ? 'border-emerald-400' : 'border-green-400',
             stat: feedbackCount,
             label: 'Patient Feedback',
             icon: (
-              <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
+              <svg className={`w-6 h-6 ${darkMode ? 'text-emerald-400' : 'text-green-400'}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
             ),
-            bottom: 'bg-green-100 text-green-600',
+            bottom: darkMode ? 'bg-emerald-900 text-emerald-300' : 'bg-green-100 text-green-600',
             percent: '% change',
           },
           {
-            color: 'border-blue-400',
+            color: darkMode ? 'border-blue-400' : 'border-blue-400',
             stat: adviceCount,
             label: 'Total patient Advice',
             icon: (
-              <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              <svg className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             ),
-            bottom: 'bg-blue-100 text-blue-600',
+            bottom: darkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-600',
             percent: '% change',
           },
         ].map((card) => (
-          <div key={card.label} className={`relative flex flex-col justify-between bg-white rounded-xl shadow border-l-8 ${card.color} p-5 min-h-[120px]`}>
+          <div key={card.label} className={`relative flex flex-col justify-between rounded-xl shadow border-l-8 ${card.color} p-5 min-h-[120px] ${darkMode ? 'bg-gray-900' : 'bg-white'} transition-colors`}>
             <div className="flex items-center justify-between">
               <div>
                 <div className={`text-2xl font-bold ${card.bottom.split(' ')[1]}`}>{card.stat}</div>
-                <div className="text-gray-500 text-xs mt-1">{card.label}</div>
+                <div className="text-gray-400 text-xs mt-1">{card.label}</div>
               </div>
               <div className="ml-2">{card.icon}</div>
             </div>
@@ -277,15 +277,15 @@ const Dashboard = () => {
           </div>
         ))}
       </div>
-       {/* Diagnosis Chart Section t */}
-       <div className="bg-white text-black rounded-sm shadow-xl p-6 mb-8 flex flex-col items-center justify-center text-center">
+       {/* Diagnosis Chart Section */}
+       <div className={`rounded-sm shadow-xl p-6 mb-8 flex flex-col items-center justify-center text-center ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
         <div className="flex items-center justify-between mb-4 w-full">
           <div className="font-semibold">Diagnosis Performance</div>
           <div className="flex gap-2">
             {timeFilters.map(f => (
               <button
                 key={f.value}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${diagnosisFilter === f.value ? 'bg-white text-blue-600' : 'bg-blue-400 text-white hover:bg-white hover:text-blue-600'}`}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${diagnosisFilter === f.value ? (darkMode ? 'bg-gray-900 text-blue-400 border border-blue-400' : 'bg-white text-blue-600 border border-blue-400') : (darkMode ? 'bg-blue-900 text-white hover:bg-white hover:text-blue-600' : 'bg-blue-400 text-white hover:bg-white hover:text-blue-600')}`}
                 onClick={() => setDiagnosisFilter(f.value)}
               >
                 {f.label}
@@ -296,21 +296,21 @@ const Dashboard = () => {
         <div className="h-72 w-full flex items-center justify-center">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={diagnosisData} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#374151' : '#e5e7eb'} />
               <XAxis
                 dataKey="name"
-                tick={{ fill: "#000", fontSize: 14, fontWeight: 600 }}
+                tick={{ fill: darkMode ? '#fff' : '#000', fontSize: 14, fontWeight: 600 }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fill: "#888", fontSize: 13, fontWeight: 500 }}
+                tick={{ fill: darkMode ? '#aaa' : '#888', fontSize: 13, fontWeight: 500 }}
                 axisLine={false}
                 tickLine={false}
                 allowDecimals={false}
               />
-              <Tooltip content={<DiagnosisTooltip />} cursor={{ fill: '#fff', fillOpacity: 0.1 }} />
-              <Bar dataKey="value" radius={[8, 8, 0, 0]} label={{ position: 'top', fill: '#111', fontWeight: 700, fontSize: 14 }}>
+              <Tooltip content={<DiagnosisTooltip />} cursor={{ fill: darkMode ? '#222' : '#fff', fillOpacity: 0.1 }} />
+              <Bar dataKey="value" radius={[8, 8, 0, 0]} label={{ position: 'top', fill: darkMode ? '#fff' : '#111', fontWeight: 700, fontSize: 14 }}>
                 {diagnosisData.map((entry, idx) => (
                   <Cell key={entry.name} fill={entry.fill} />
                 ))}
@@ -322,7 +322,7 @@ const Dashboard = () => {
       {/* Modern 3-Card Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
         {/* Gender Distribution Card */}
-        <div className="bg-gradient-to-br from-black via-blue-900 via-purple-800 to-gray-900 text-white rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center">
+        <div className={`rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center ${darkMode ? 'bg-gradient-to-br from-gray-900 via-blue-900 via-purple-800 to-gray-900 text-white' : 'bg-gradient-to-br from-white via-blue-100 via-purple-100 to-gray-100 text-gray-900'}`}>
           <div className="font-semibold mb-2">Gender Distribution</div>
           <div className="h-40 w-full flex items-center justify-center">
             <ResponsiveContainer width="100%" height={140}>
@@ -349,7 +349,7 @@ const Dashboard = () => {
           </div>
         </div>
         {/* Readmission Status Card */}
-        <div className="bg-gradient-to-br from-black via-blue-900 via-purple-800 to-gray-900 text-white rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center">
+        <div className={`rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center ${darkMode ? 'bg-gradient-to-br from-gray-900 via-blue-900 via-purple-800 to-gray-900 text-white' : 'bg-gradient-to-br from-white via-blue-100 via-purple-100 to-gray-100 text-gray-900'}`}>
           <div className="font-semibold mb-2">Readmission Status</div>
           <div className="h-40 w-full flex items-center justify-center">
             <ResponsiveContainer width="100%" height={140}>
@@ -376,14 +376,14 @@ const Dashboard = () => {
           </div>
         </div>
         {/* Age Group Distribution Card */}
-        <div className="bg-gradient-to-br from-black via-blue-900 via-purple-800 to-gray-900 text-white rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center">
+        <div className={`rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center ${darkMode ? 'bg-gradient-to-br from-gray-900 via-blue-900 via-purple-800 to-gray-900 text-white' : 'bg-gradient-to-br from-white via-blue-100 via-purple-100 to-gray-100 text-gray-900'}`}>
           <div className="font-semibold mb-2">Age Group Distribution</div>
           <div className="h-40 w-full flex items-center justify-center">
             <ResponsiveContainer width="100%" height={140}>
               <BarChart data={ageGroupData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-                <XAxis dataKey="name" tick={{ fill: "#fff", fontSize: 13, fontWeight: 600 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "#fff", fontSize: 12 }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#374151' : '#f3f4f6'} />
+                <XAxis dataKey="name" tick={{ fill: darkMode ? '#fff' : '#000', fontSize: 13, fontWeight: 600 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: darkMode ? '#fff' : '#000', fontSize: 12 }} axisLine={false} tickLine={false} allowDecimals={false} />
                 <Tooltip />
                 <Bar dataKey="value" radius={[8, 8, 0, 0]}>
                   {ageGroupData.map((entry, idx) => (
