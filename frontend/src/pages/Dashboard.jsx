@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { FaTachometerAlt, FaUsers, FaStethoscope, FaHistory, FaSignOutAlt, FaComments, FaBell, FaChartLine, FaHeartbeat, FaRegStar, FaChartBar, FaCube, FaRegEnvelope, FaSun, FaMoon, FaUserInjured, FaUserShield, FaBars, FaChevronLeft } from "react-icons/fa"
+import { FaTachometerAlt, FaUsers, FaStethoscope, FaHistory, FaSignOutAlt, FaComments, FaBell, FaChartLine, FaHeartbeat, FaRegStar, FaChartBar, FaCube, FaRegEnvelope, FaSun, FaMoon, FaUserInjured, FaUserShield, FaBars, FaChevronLeft, FaChartPie, FaTable, FaCog, FaSearch } from "react-icons/fa"
 import axios from "axios"
 import DashboardSection from "../components/DashboardSection"
 import RegisterAdmin from "../components/RegisterAdmin"
@@ -12,6 +12,8 @@ import Feedback from "../pages/feedback"
 import React from "react"
 import PatientsList from "../components/PatientsList"
 import AdminsList from "../components/AdminsList"
+import Contact from "./contact"
+import AdminContacts from "./AdminContacts"
 
 const Dashboard = () => {
   const [users, setUsers] = useState([])
@@ -38,6 +40,8 @@ const Dashboard = () => {
     { icon: <FaStethoscope />, label: "Advice", section: "Advice" },
     { icon: <FaHistory />, label: "Patient History", section: "history" },
     { icon: <FaComments />, label: "Feedback", section: "Feedback" },
+    { icon: <FaRegEnvelope />, label: "Contact", section: "contact" },
+    { icon: <FaRegEnvelope />, label: "Admin Contact", section: "admincontacts" },
   ]
 
   // Handle section change with animation
@@ -189,130 +193,99 @@ const Dashboard = () => {
   }
 
   return (
-    <div className={`flex min-h-screen ${darkMode ? "bg-gray-900" : "bg-[#f6f8fb]"}`}>
-      {/* Logout Confirmation Modal */}
-      {showLogoutModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-8 max-w-sm w-full border border-gray-200 dark:border-gray-700 text-center">
-            <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Confirm Logout</h2>
-            <p className="mb-6 text-gray-600 dark:text-gray-300">Are you sure you want to logout?</p>
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={confirmLogout}
-                className="bg-gradient-to-r from-blue-600 to-teal-500 hover:shadow-lg text-white px-6 py-2 rounded-md font-semibold transition-all duration-200"
-              >
-                Yes, Logout
-              </button>
-              <button
-                onClick={() => setShowLogoutModal(false)}
-                className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-6 py-2 rounded-md font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
       {/* Sidebar */}
-      <aside className={`fixed left-0 top-0 ${sidebarCollapsed ? "w-20" : "w-64"} h-screen bg-white/80 dark:bg-gray-800/80 border-r border-gray-100 dark:border-gray-700 flex flex-col justify-between py-6 px-2 shadow-xl z-20 transition-all duration-300 backdrop-blur-lg`}>
-        {/* Logo & Collapse Button */}
-        <div className="flex items-center justify-between mb-8 px-2">
-          <div className="flex items-center gap-2">
-            <img src="https://ui-avatars.com/api/?name=M+A&background=4f8cff&color=fff&size=40&rounded=true&bold=true" alt="Logo" className="w-10 h-10" />
-            {!sidebarCollapsed && <span className="text-xl font-bold text-blue-700 dark:text-white tracking-wide">{appName}</span>}
+      <aside className="fixed left-0 top-0 w-64 h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col shadow-2xl z-30">
+        {/* Logo and Menu */}
+        <div>
+          <div className="flex items-center gap-3 px-6 py-6">
+            <FaChartPie className="text-3xl text-blue-400" />
+            <span className="text-2xl font-bold tracking-wide">HPR System</span>
           </div>
-          <button onClick={toggleSidebar} className="p-2 rounded-lg hover:bg-blue-100 dark:hover:bg-gray-700 transition-all">
-            {sidebarCollapsed ? <FaBars className="text-blue-700 dark:text-white" /> : <FaChevronLeft className="text-blue-700 dark:text-white" />}
-          </button>
-        </div>
-        {/* User Info */}
-        <div className={`flex flex-col items-center mb-8 transition-all duration-300 ${sidebarCollapsed ? "scale-0 h-0 mb-0" : "scale-100 h-auto mb-8"}`} style={{overflow: 'hidden'}}>
-          <img
-            src={userAvatar}
-            alt="User Avatar"
-            className="w-20 h-20 rounded-full mb-2 object-cover border-4 border-blue-200 shadow"
-          />
-          <div className="font-semibold text-gray-900 dark:text-white">{userName || "User"}</div>
-          <div className="text-xs text-gray-400 dark:text-gray-300">{userEmail || "user@email.com"}</div>
-        </div>
-        {/* Navigation */}
-        <nav className="flex flex-col gap-2">
-          {navItems.map((item, idx) => (
-            <div key={item.label} className="relative group">
+          <nav className="mt-6 flex flex-col gap-1">
+            {[
+              { icon: <FaTachometerAlt />, label: "Dashboard", section: "dashboard" },
+              { icon: <FaUserInjured />, label: "Patients", section: "patients" },
+              { icon: <FaUserShield />, label: "Admins", section: "admins" },
+              { icon: <FaStethoscope />, label: "Advice", section: "Advice" },
+              { icon: <FaHistory />, label: "History", section: "history" },
+              { icon: <FaComments />, label: "Feedback", section: "Feedback" },
+              { icon: <FaComments />, label: "Contact", section: "admincontacts" },
+            ].map((item, idx) => (
               <button
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-300 w-full overflow-hidden
-                  ${activeSection === item.section
-                    ? "bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 text-white shadow-lg"
-                    : "text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-gray-700"}
-                  ${sidebarCollapsed ? "justify-center px-2" : ""}
-                `}
+                key={item.label}
+                className={`flex items-center gap-3 px-6 py-3 text-lg font-medium rounded-lg transition-all duration-200 ${activeSection === item.section ? "bg-gradient-to-r from-blue-600 to-indigo-500 shadow text-white" : "hover:bg-gray-800 text-gray-300"}`}
                 onClick={() => handleSectionChange(item.section)}
-                onMouseEnter={() => setHoverIndex(idx)}
-                onMouseLeave={() => setHoverIndex(null)}
               >
-                <span className={`text-lg ${activeSection === item.section ? "text-white" : "text-blue-700 dark:text-blue-300 group-hover:text-blue-700 dark:group-hover:text-white"}`}>{item.icon}</span>
-                {!sidebarCollapsed && <span className="text-sm ml-2">{item.label}</span>}
+                <span className="text-xl">{item.icon}</span>
+                <span>{item.label}</span>
               </button>
-              {/* Tooltip for collapsed state */}
-              {sidebarCollapsed && (
-                <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap">
-                  {item.label}
-                </span>
-              )}
+            ))}
+          </nav>
+        </div>
+        {/* User Info and Logout */}
+        <div className="px-6 py-6 border-t border-gray-800 flex flex-col gap-3 mt-auto">
+          <div className="flex items-center gap-3 mb-2">
+            <img src={userAvatar} alt="User Avatar" className="w-12 h-12 rounded-full border-2 border-blue-400" />
+            <div>
+              <div className="font-semibold text-white">{userName || "User"}</div>
+              <div className="text-xs text-gray-400">{userEmail || "user@email.com"}</div>
             </div>
-          ))}
-        </nav>
-        {/* Bottom Section: Version & Logout */}
-        <div className="flex flex-col items-center mt-8 mb-2">
-          {!sidebarCollapsed && <div className="text-xs text-gray-400 mb-2">v1.0.0</div>}
+          </div>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold shadow hover:bg-red-600 transition-all w-full"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500 text-white font-semibold shadow hover:bg-red-600 transition-all w-full justify-center"
             title="Logout"
           >
-            <span className="flex items-center justify-center gap-2">
-              <FaSignOutAlt />
-              {!sidebarCollapsed && "Logout"}
-            </span>
+            <FaSignOutAlt /> Logout
           </button>
         </div>
       </aside>
       {/* Main Content */}
-      <main className={`flex-1 ${sidebarCollapsed ? "ml-20" : "ml-64"} ${darkMode ? "bg-gray-900" : "bg-[#f6f8fb]"} transition-all duration-300 min-h-screen`}>
-        {/* Top Header Bar */}
-        <div className="flex items-center justify-between px-8 py-4 bg-white/70 dark:bg-gray-800/70 shadow-sm mb-4 backdrop-blur-lg rounded-b-xl">
-          <div className="text-2xl font-bold text-blue-700 dark:text-white tracking-wide">
-            {`Hi Admin${userName ? ", " + userName : ""}`}
+      <main className="flex-1 min-h-screen bg-gray-50 dark:bg-gray-900 ml-64">
+        {/* Header */}
+        <div className="flex items-center justify-between px-10 py-8 dark:bg-gray-900 shadow mb-8 sticky top-0 z-20">
+          <div className="text-2xl italic font-bold text-gray-700 dark:text-white tracking-wide">
+            Welcome Back, {userName || "Admin"} <span className="inline-block">!</span>
           </div>
           <div className="flex items-center gap-4">
+            {/* Search Input */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 transition-all bg-white border-gray-300 text-gray-900 placeholder-gray-500 min-w-[180px]"
+              />
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            </div>
+            {/* Notification Icon */}
+            <button className="relative p-2 rounded-full bg-white border border-gray-200 hover:bg-blue-50 transition-all">
+              <FaBell className="text-blue-500 text-xl" />
+              {notificationCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold">{notificationCount}</span>
+              )}
+            </button>
             {/* Theme Toggle */}
             <button
               onClick={() => handleThemeChange(theme === "dark" ? "light" : "dark")}
               className="p-2 rounded-full bg-blue-100 dark:bg-gray-700 hover:bg-blue-200 dark:hover:bg-gray-600 transition-all"
               title="Toggle theme"
             >
-              {theme === "dark" ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-blue-700" />}
+              {theme === "dark" ? <FaMoon className="text-yellow-400" /> : <FaSun className="text-blue-700" />}
             </button>
-            {/* User Avatar */}
-            <img
-              src={userAvatar}
-              alt="User Avatar"
-              className="w-10 h-10 rounded-full border-2 border-blue-200 shadow"
-            />
           </div>
         </div>
-        {/* Page Content - Centered with Fade Animation */}
-        <div className="p-6 flex justify-center">
-          <div className={`w-full max-w-7xl transition-opacity duration-300 ease-in-out ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-            {activeSection === "dashboard" && <DashboardSection theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
-            {activeSection === "admin-register" && <RegisterAdmin theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
-            {activeSection === "patients" && <PatientsList darkMode={darkMode} setDarkMode={setDarkMode} />}
-            {activeSection === "admins" && <AdminsList darkMode={darkMode} setDarkMode={setDarkMode} />}
-            {activeSection === "Advice" && <Advice theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
-            {activeSection === "history" && <History theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
-            {activeSection === "Feedback" && <Feedback theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
-            {activeSection === "ViewPatients" && <ViewPatients darkMode={darkMode} setDarkMode={setDarkMode} />}
-          </div>
+        {/* Main Dashboard Section */}
+        <div className="px-6 pb-10">
+          {activeSection === "dashboard" && <DashboardSection theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
+          {activeSection === "admin-register" && <RegisterAdmin theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
+          {activeSection === "patients" && <PatientsList darkMode={darkMode} setDarkMode={setDarkMode} />}
+          {activeSection === "admins" && <AdminsList darkMode={darkMode} setDarkMode={setDarkMode} />}
+          {activeSection === "Advice" && <Advice theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
+          {activeSection === "history" && <History theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
+          {activeSection === "Feedback" && <Feedback theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
+          {activeSection === "ViewPatients" && <ViewPatients darkMode={darkMode} setDarkMode={setDarkMode} />}
+          {activeSection === "admincontacts" && <AdminContacts darkMode={darkMode} setDarkMode={setDarkMode} />}
         </div>
       </main>
     </div>

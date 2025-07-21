@@ -24,9 +24,10 @@ import {
   Line,
 } from "recharts"
 
+import dayjs from "dayjs"
 
 
-import { FaArrowUp, FaArrowDown, FaUserCircle } from "react-icons/fa";
+import { FaArrowUp, FaArrowDown, FaUserCircle, FaUser, FaCommentDots, FaLightbulb, FaChartPie, FaUserInjured, FaExclamationTriangle, FaCheckCircle } from "react-icons/fa";
 
 // Modern color palette with gradients
 const COLORS = ["#6366F1", "#F59E0B", "#10B981", "#8B5CF6"]
@@ -154,6 +155,7 @@ const Dashboard = ({ darkMode }) => {
   const [diagnosisData, setDiagnosisData] = useState([]);
   const [diagnosisHistory, setDiagnosisHistory] = useState([]);
   const [diagnosisFilter, setDiagnosisFilter] = useState("today");
+  const [recentHistory, setRecentHistory] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -163,6 +165,7 @@ const Dashboard = ({ darkMode }) => {
         const historyResponse = await fetch("http://localhost:5000/api/patient/history")
         const historyData = await historyResponse.json()
         setPatientHistory(historyData)
+        setRecentHistory(historyData.slice(-5).reverse()) // Last 5 entries, newest first
 
         // Fetch user count for the first card
         fetch("http://localhost:5000/api/auth/users")
@@ -222,70 +225,186 @@ const Dashboard = ({ darkMode }) => {
     setDiagnosisData(chartData.length > 0 ? chartData : [{ name: "No Data", value: 0, fill: "#EF4444" }]);
   }, [diagnosisHistory, diagnosisFilter]);
 
-  const genderData = getGenderData(patientHistory);
-  const readmissionData = getReadmissionData(patientHistory);
-  const ageGroupData = getAgeGroupData(patientHistory);
+  // Calculate last 30 days date range
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - 30);
+  const dateRangeLabel = `${dayjs(startDate).format('MMM D')} - ${dayjs(endDate).format('MMM D, YYYY')}`;
+
+  // Filter patientHistory for last 30 days
+  const recentHistory30 = patientHistory.filter(item => {
+    if (!item.date) return false;
+    const d = new Date(item.date);
+    return d >= startDate && d <= endDate;
+  });
+
+  // Filtered data for charts
+  const genderData30 = getGenderData(recentHistory30);
+  const readmissionData30 = getReadmissionData(recentHistory30);
+  const ageGroupData30 = getAgeGroupData(recentHistory30).map(a => ({ ...a, value: recentHistory30.length ? Math.round((a.value / recentHistory30.length) * 100) : 0 }));
 
   if (!mounted) return null
 
   return (
-    <div className={`w-full max-w-7xl mx-auto ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-   
-       {/* Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
+    <div className={`w-full max-w-7xl mx-auto ${darkMode ? 'text-white' : 'text-gray-900'}`}> 
+      {/* Stats Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-8">
         {[
           {
-            color: darkMode ? 'border-indigo-400' : 'border-orange-400',
+            color: 'bg-blue-50',
+            icon: <FaUser className="text-blue-500 text-2xl" />, 
             stat: userCount,
             label: 'Users',
-            icon: (
-              <svg className={`w-6 h-6 ${darkMode ? 'text-indigo-400' : 'text-orange-400'}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A9 9 0 1112 21a9 9 0 01-6.879-3.196z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-            ),
-            bottom: darkMode ? 'bg-indigo-900 text-indigo-300' : 'bg-orange-100 text-orange-600',
-            percent: '% change',
           },
           {
-            color: darkMode ? 'border-emerald-400' : 'border-green-400',
+            color: 'bg-green-50',
+            icon: <FaCommentDots className="text-green-500 text-2xl" />, 
             stat: feedbackCount,
-            label: 'Patient Feedback',
-            icon: (
-              <svg className={`w-6 h-6 ${darkMode ? 'text-emerald-400' : 'text-green-400'}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
-            ),
-            bottom: darkMode ? 'bg-emerald-900 text-emerald-300' : 'bg-green-100 text-green-600',
-            percent: '% change',
+            label: 'Feedback',
           },
           {
-            color: darkMode ? 'border-blue-400' : 'border-blue-400',
+            color: 'bg-yellow-50',
+            icon: <FaLightbulb className="text-yellow-500 text-2xl" />, 
             stat: adviceCount,
-            label: 'Total patient Advice',
-            icon: (
-              <svg className={`w-6 h-6 ${darkMode ? 'text-blue-400' : 'text-blue-400'}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-            ),
-            bottom: darkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-100 text-blue-600',
-            percent: '% change',
+            label: 'Advice',
           },
-        ].map((card) => (
-          <div key={card.label} className={`relative flex flex-col justify-between rounded-xl shadow border-l-8 ${card.color} p-5 min-h-[120px] ${darkMode ? 'bg-gray-900' : 'bg-white'} transition-colors`}>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className={`text-2xl font-bold ${card.bottom.split(' ')[1]}`}>{card.stat}</div>
-                <div className="text-gray-400 text-xs mt-1">{card.label}</div>
-              </div>
-              <div className="ml-2">{card.icon}</div>
+          {
+            color: 'bg-purple-50',
+            icon: <FaUserInjured className="text-purple-500 text-2xl" />, 
+            stat: patientHistory.length,
+            label: 'Patients',
+          },
+        ].map((card, idx) => (
+          <div key={card.label} className={`flex items-center gap-4 p-6 rounded-2xl shadow bg-white ${card.color}`}>
+            <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-white shadow-md">{card.icon}</div>
+            <div>
+              <div className="text-2xl font-bold">{card.stat}</div>
+              <div className="text-gray-500 text-sm font-medium">{card.label}</div>
             </div>
-            <div className={`absolute left-0 bottom-0 w-full h-7 rounded-b-xl flex items-center px-4 text-xs font-semibold ${card.bottom}`}>{card.percent}</div>
           </div>
         ))}
       </div>
-       {/* Diagnosis Chart Section */}
-       <div className={`rounded-sm shadow-xl p-6 mb-8 flex flex-col items-center justify-center text-center ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-        <div className="flex items-center justify-between mb-4 w-full">
-          <div className="font-semibold">Diagnosis Performance</div>
+      {/* Gender, Age, and Readmission Charts Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        {/* Gender Donut Chart */}
+        <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
+          <div className="font-bold text-lg text-gray-700 mb-1">Gender</div>
+          <div className="text-xs text-gray-400 mb-4">{dateRangeLabel}</div>
+          <ResponsiveContainer width={220} height={220}>
+            <PieChart>
+              <Pie
+                data={genderData30}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius={70}
+                outerRadius={100}
+                startAngle={90}
+                endAngle={-270}
+                paddingAngle={2}
+                isAnimationActive={true}
+                label={({ name, percent }) => percent > 0 ? (
+                  <text
+                    x={0}
+                    y={0}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    style={{ fontSize: 16, fontWeight: 700, fill: '#222' }}
+                  >
+                    {`${(percent * 100).toFixed(1)}% ${name}`}
+                  </text>
+                ) : ''}
+                labelLine={false}
+              >
+                {genderData30.map((entry, idx) => (
+                  <Cell key={entry.name} fill={idx === 0 ? '#3B82F6' : '#10B981'} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        {/* Age Bar Chart */}
+        <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
+          <div className="font-bold text-lg text-gray-700 mb-1">Age</div>
+          <div className="text-xs text-gray-400 mb-4">{dateRangeLabel}</div>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={ageGroupData30} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+              <XAxis
+                dataKey="name"
+                tick={{ fill: '#888', fontSize: 14, fontWeight: 600 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                tickFormatter={v => `${v}%`}
+                tick={{ fill: '#bbb', fontSize: 13, fontWeight: 500 }}
+                axisLine={false}
+                tickLine={false}
+                allowDecimals={false}
+                domain={[0, 100]}
+              />
+              <Tooltip formatter={v => `${v}%`} />
+              <Bar dataKey="value" radius={[12, 12, 0, 0]} fill="#6366F1" maxBarSize={48}>
+                {ageGroupData30.map((entry, idx) => (
+                  <Cell key={entry.name} fill={entry.fill} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        {/* Readmission Donut Chart */}
+        <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
+          <div className="font-bold text-lg text-gray-700 mb-1">Readmission</div>
+          <div className="text-xs text-gray-400 mb-4">{dateRangeLabel}</div>
+          <ResponsiveContainer width={220} height={220}>
+            <PieChart>
+              <Pie
+                data={readmissionData30}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius={70}
+                outerRadius={100}
+                startAngle={90}
+                endAngle={-270}
+                paddingAngle={2}
+                isAnimationActive={true}
+                label={({ name, percent }) => percent > 0 ? (
+                  <text
+                    x={0}
+                    y={0}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    style={{ fontSize: 16, fontWeight: 700, fill: '#222' }}
+                  >
+                    {`${(percent * 100).toFixed(1)}% ${name}`}
+                  </text>
+                ) : ''}
+                labelLine={false}
+              >
+                {readmissionData30.map((entry, idx) => (
+                  <Cell key={entry.name} fill={idx === 0 ? '#6366F1' : '#F59E0B'} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+      {/* Diagnosis Bar Chart Section */}
+      <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-start mb-8">
+        <div className="flex items-center justify-between w-full mb-6">
+          <div>
+            <div className="font-bold text-lg text-gray-700 mb-1">Diagnosis Report</div>
+            <div className="text-3xl font-extrabold text-gray-900">{diagnosisData.reduce((sum, d) => sum + d.value, 0)} <span className="text-base font-medium text-gray-400">cases</span></div>
+          </div>
           <div className="flex gap-2">
             {timeFilters.map(f => (
               <button
                 key={f.value}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${diagnosisFilter === f.value ? (darkMode ? 'bg-gray-900 text-blue-400 border border-blue-400' : 'bg-white text-blue-600 border border-blue-400') : (darkMode ? 'bg-blue-900 text-white hover:bg-white hover:text-blue-600' : 'bg-blue-400 text-white hover:bg-white hover:text-blue-600')}`}
+                className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 border-2 focus:outline-none ${diagnosisFilter === f.value ? 'bg-blue-600 text-white border-blue-600 shadow' : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-blue-50 hover:text-blue-600'}`}
                 onClick={() => setDiagnosisFilter(f.value)}
               >
                 {f.label}
@@ -293,109 +412,76 @@ const Dashboard = ({ darkMode }) => {
             ))}
           </div>
         </div>
-        <div className="h-72 w-full flex items-center justify-center">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={diagnosisData} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#374151' : '#e5e7eb'} />
-              <XAxis
-                dataKey="name"
-                tick={{ fill: darkMode ? '#fff' : '#000', fontSize: 14, fontWeight: 600 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fill: darkMode ? '#aaa' : '#888', fontSize: 13, fontWeight: 500 }}
-                axisLine={false}
-                tickLine={false}
-                allowDecimals={false}
-              />
-              <Tooltip content={<DiagnosisTooltip />} cursor={{ fill: darkMode ? '#222' : '#fff', fillOpacity: 0.1 }} />
-              <Bar dataKey="value" radius={[8, 8, 0, 0]} label={{ position: 'top', fill: darkMode ? '#fff' : '#111', fontWeight: 700, fontSize: 14 }}>
-                {diagnosisData.map((entry, idx) => (
-                  <Cell key={entry.name} fill={entry.fill} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+        <ResponsiveContainer width="100%" height={260}>
+          <BarChart data={diagnosisData} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+            <XAxis
+              dataKey="name"
+              tick={{ fill: '#888', fontSize: 14, fontWeight: 600 }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <YAxis
+              tick={{ fill: '#bbb', fontSize: 13, fontWeight: 500 }}
+              axisLine={false}
+              tickLine={false}
+              allowDecimals={false}
+            />
+            <Tooltip content={<DiagnosisTooltip />} cursor={{ fill: '#6366F1', fillOpacity: 0.08 }} />
+            <Bar dataKey="value" radius={[12, 12, 0, 0]} fill="#6366F1" maxBarSize={48}>
+              {diagnosisData.map((entry, idx) => (
+                <Cell key={entry.name} fill={entry.fill} />
+              ))}
+            </Bar>
+            {/* Optional: Median/target line */}
+            {/* <ReferenceLine y={targetValue} stroke="#F59E0B" strokeDasharray="3 3" label="Median" /> */}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      {/* Recent Patient History Table */}
+      <div className="bg-white rounded-2xl shadow p-6">
+        <div className="font-semibold text-lg mb-4">Recent Patient History</div>
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-left border-collapse">
+            <thead>
+              <tr className="text-gray-700 bg-gray-100">
+                <th className="p-3 border-b">Date</th>
+                <th className="p-3 border-b">Patient Info</th>
+                <th className="p-3 border-b">Diagnosis</th>
+                <th className="p-3 border-b">Hospital Stay</th>
+                <th className="p-3 border-b">Risk Status</th>
+                <th className="p-3 border-b">Probability</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentHistory.length > 0 ? recentHistory.map((item, idx) => (
+                <tr key={idx} className="hover:bg-gray-50 transition duration-200">
+                  <td className="p-3 border-b">{item.date ? new Date(item.date).toLocaleDateString() : '-'}</td>
+                  <td className="p-3 border-b">{item.age} years, {item.gender}</td>
+                  <td className="p-3 border-b">{item.primary_diagnosis || '-'}</td>
+                  <td className="p-3 border-b">
+                    <div className="text-sm text-gray-900">{item.procedures ? `${item.procedures} procedures` : '-'}</div>
+                    <div className="text-xs text-gray-500">{item.days_in_hospital ? `${item.days_in_hospital} days` : ''}</div>
+                  </td>
+                  <td className="p-3 border-b">
+                    <span className={`inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium ${item.readmission === "Yes" ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}>
+                      {item.readmission === "Yes" ? <FaExclamationTriangle /> : <FaCheckCircle />}
+                      {item.readmission === "Yes" ? "High Risk" : "Low Risk"}
+                    </span>
+                  </td>
+                  <td className="p-3 border-b">
+                    <div className={`text-sm font-medium ${item.readmission === "Yes" ? "text-red-500" : "text-green-500"}`}>{item.probability || '-'}</div>
+                  </td>
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan="6" className="text-center py-6 text-gray-500">No recent history found</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
-      {/* Modern 3-Card Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-        {/* Gender Distribution Card */}
-        <div className={`rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center ${darkMode ? 'bg-gradient-to-br from-gray-900 via-blue-900 via-purple-800 to-gray-900 text-white' : 'bg-gradient-to-br from-white via-blue-100 via-purple-100 to-gray-100 text-gray-900'}`}>
-          <div className="font-semibold mb-2">Gender Distribution</div>
-          <div className="h-40 w-full flex items-center justify-center">
-            <ResponsiveContainer width="100%" height={140}>
-              <PieChart>
-                <Pie
-                  data={genderData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={40}
-                  outerRadius={60}
-                  paddingAngle={2}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  labelLine={false}
-                >
-                  {genderData.map((entry, idx) => (
-                    <Cell key={entry.name} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        {/* Readmission Status Card */}
-        <div className={`rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center ${darkMode ? 'bg-gradient-to-br from-gray-900 via-blue-900 via-purple-800 to-gray-900 text-white' : 'bg-gradient-to-br from-white via-blue-100 via-purple-100 to-gray-100 text-gray-900'}`}>
-          <div className="font-semibold mb-2">Readmission Status</div>
-          <div className="h-40 w-full flex items-center justify-center">
-            <ResponsiveContainer width="100%" height={140}>
-              <PieChart>
-                <Pie
-                  data={readmissionData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={40}
-                  outerRadius={60}
-                  paddingAngle={2}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  labelLine={false}
-                >
-                  {readmissionData.map((entry, idx) => (
-                    <Cell key={entry.name} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        {/* Age Group Distribution Card */}
-        <div className={`rounded-2xl shadow-xl p-6 flex flex-col items-center justify-center text-center ${darkMode ? 'bg-gradient-to-br from-gray-900 via-blue-900 via-purple-800 to-gray-900 text-white' : 'bg-gradient-to-br from-white via-blue-100 via-purple-100 to-gray-100 text-gray-900'}`}>
-          <div className="font-semibold mb-2">Age Group Distribution</div>
-          <div className="h-40 w-full flex items-center justify-center">
-            <ResponsiveContainer width="100%" height={140}>
-              <BarChart data={ageGroupData} margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? '#374151' : '#f3f4f6'} />
-                <XAxis dataKey="name" tick={{ fill: darkMode ? '#fff' : '#000', fontSize: 13, fontWeight: 600 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: darkMode ? '#fff' : '#000', fontSize: 12 }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                  {ageGroupData.map((entry, idx) => (
-                    <Cell key={entry.name} fill={entry.fill} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-     
     </div>
   )
 }
