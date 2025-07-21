@@ -703,6 +703,7 @@ const Homepage = () => {
                       {/* Content */}
                       <div className="flex flex-col h-full">
                         <p className={`text-lg italic mb-6 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+                          {testimonial.name ? `Hi ${testimonial.name}, ` : ""}
                           "{testimonial.feedback}"
                         </p>
 

@@ -56,7 +56,7 @@ const RegisterAdmin = ({ closePopup, darkMode }) => {
   console.log("closePopup is:", typeof closePopup)
 
   return (
-    <div className=" fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className={`${darkMode ? 'bg-gray-900' : 'bg-white'} p-6 rounded-xl shadow-xl w-96 relative`}>
         {/* Close Button */}
         <button type="button" onClick={handleCancel} className={`absolute top-2 right-2 ${darkMode ? 'text-gray-300' : 'text-gray-500'} text-xl`}>

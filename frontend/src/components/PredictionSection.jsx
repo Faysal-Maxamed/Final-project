@@ -155,7 +155,13 @@ const PredictionSection = () => {
       return;
     }
 
+    // Read name and email from localStorage
+    const name = localStorage.getItem("userName") || "";
+    const email = localStorage.getItem("userEmail") || "";
+
     const feedbackData = {
+      name,
+      email,
       feedback,
       rating: rating,
     };

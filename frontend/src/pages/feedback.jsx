@@ -7,6 +7,7 @@ const Feedback = ({ darkMode }) => {
   const [expandedIds, setExpandedIds] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [successMsg, setSuccessMsg] = useState("");
 
   // Fetch feedbacks from backend
   useEffect(() => {
@@ -38,6 +39,8 @@ const Feedback = ({ darkMode }) => {
     try {
       await axios.delete(`http://localhost:5000/api/feedback/${deleteId}`);
       setFeedbacks((prev) => prev.filter((f) => f._id !== deleteId));
+      setSuccessMsg("Feedback deleted successfully!");
+      setTimeout(() => setSuccessMsg(""), 2500);
     } catch (err) {
       console.error("Failed to delete feedback:", err);
     } finally {
@@ -55,6 +58,13 @@ const Feedback = ({ darkMode }) => {
       }`}
     >
       <h2 className="text-3xl font-bold text-center mb-6">Customer Feedback</h2>
+
+      {/* Success Message */}
+      {successMsg && (
+        <div className="max-w-md mx-auto mb-6 p-3 rounded-lg bg-green-500 text-white text-center font-semibold shadow-lg animate-fade-in">
+          {successMsg}
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
@@ -115,7 +125,8 @@ const Feedback = ({ darkMode }) => {
                     {getInitial(fb.feedback)}
                   </div>
                   <div>
-                    <h4 className="font-semibold">Anonymous</h4>
+                    <h4 className="font-semibold">{fb.name || "Anonymous"}</h4>
+                    <p className={`text-xs ${darkMode ? 'text-blue-300' : 'text-blue-600'} font-medium`}>{fb.email || "No email"}</p>
                     <p className="text-sm text-gray-400">
                       {new Date(fb.timestamp).toLocaleDateString()}
                     </p>
