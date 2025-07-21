@@ -76,4 +76,14 @@ router.post("/", async (req, res) => {
   }
 });
 
+// GET route to fetch all contacts
+router.get("/", async (req, res) => {
+  try {
+    const contacts = await Contact.find().sort({ createdAt: -1 });
+    res.status(200).json(contacts);
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to fetch contacts", error: error.message });
+  }
+});
+
 module.exports = router; 

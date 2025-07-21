@@ -259,7 +259,10 @@ const Dashboard = () => {
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
             {/* Notification Icon */}
-            <button className="relative p-2 rounded-full bg-white border border-gray-200 hover:bg-blue-50 transition-all">
+            <button
+              className="relative p-2 rounded-full bg-white border border-gray-200 hover:bg-blue-50 transition-all"
+              onClick={() => setActiveSection('admincontacts')}
+            >
               <FaBell className="text-blue-500 text-xl" />
               {notificationCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 font-bold">{notificationCount}</span>
