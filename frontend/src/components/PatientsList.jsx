@@ -141,6 +141,10 @@ const PatientsList = ({ darkMode }) => {
               <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Avatar</th>
               <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Name</th>
               <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Email</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Created At
+              </th>
+
               <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Role</th>
               <th className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>Actions</th>
             </tr>
@@ -153,6 +157,9 @@ const PatientsList = ({ darkMode }) => {
                 </td>
                 <td className={`px-6 py-4 whitespace-nowrap font-semibold ${darkMode ? 'text-gray-100' : ''}`}>{user.name}</td>
                 <td className={`px-6 py-4 whitespace-nowrap ${darkMode ? 'text-gray-300' : ''}`}>{user.email}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${darkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'}`}>Patient</span>
                 </td>

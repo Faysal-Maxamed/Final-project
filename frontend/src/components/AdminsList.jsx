@@ -148,7 +148,7 @@ const AdminsList = () => {
             className="bg-gradient-to-r from-blue-600 to-teal-500 text-white px-5 py-2 rounded-lg font-semibold shadow hover:from-blue-700 hover:to-teal-600 transition-all"
             onClick={() => setShowRegister(true)}
           >
-            + Create Admin
+            + Register Admin
           </button>
         </div>
       </div>
@@ -159,6 +159,10 @@ const AdminsList = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avatar</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Created At
+              </th>
+
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
@@ -171,11 +175,13 @@ const AdminsList = () => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap font-semibold">{user.name}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Admin</span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
-                  {/* Only show delete for admins, and not for self */}
                   {currentUserRole === "admin" && user._id !== currentUserId && (
                     <button onClick={() => handleDeleteClick(user._id)} className="bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
                   )}
@@ -183,6 +189,7 @@ const AdminsList = () => {
               </tr>
             ))}
           </tbody>
+
         </table>
         {paginated.length === 0 && (
           <div className="text-center text-gray-400 py-8">No admins found.</div>

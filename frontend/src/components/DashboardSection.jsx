@@ -272,7 +272,7 @@ const Dashboard = ({ darkMode }) => {
             color: 'bg-purple-50',
             icon: <FaUserInjured className="text-purple-500 text-2xl" />, 
             stat: patientHistory.length,
-            label: 'Patients',
+            label: 'Patients History',
           },
         ].map((card, idx) => (
           <div key={card.label} className={`flex items-center gap-4 p-6 rounded-2xl shadow bg-white ${card.color}`}>

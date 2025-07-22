@@ -21,7 +21,7 @@ const Dashboard = () => {
   const [userName, setUserName] = useState("")
   const [userEmail, setUserEmail] = useState("")
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const [notificationCount, setNotificationCount] = useState(3)
+  const [notificationCount, setNotificationCount] = useState()
   const [hoverIndex, setHoverIndex] = useState(null)
   const [fadeIn, setFadeIn] = useState(true)
   const [theme, setTheme] = useState("light")
@@ -171,6 +171,7 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     setShowLogoutModal(true)
+    confirmLogout()
   }
 
   const confirmLogout = () => {
@@ -200,7 +201,7 @@ const Dashboard = () => {
         <div>
           <div className="flex items-center gap-3 px-6 py-6">
             <FaChartPie className="text-3xl text-blue-400" />
-            <span className="text-2xl font-bold tracking-wide">HPR System</span>
+            <span className="text-2xl font-bold tracking-wide">HRP System</span>
           </div>
           <nav className="mt-6 flex flex-col gap-1">
             {[
