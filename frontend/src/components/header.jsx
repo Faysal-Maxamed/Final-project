@@ -113,8 +113,7 @@ const Header = ({ darkMode, setDarkMode }) => {
 
           {/* Right Side: Dark Mode Toggle & User Menu */}
           <div className="flex items-center gap-4">
-            {/* Dark Mode Toggle */}
-            <button
+            {/* Dark Mode Toggle */}<button
               onClick={() => setDarkMode(!darkMode)}
               className={`w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-800/60 shadow hover:scale-105 transition-all focus:outline-none`}
               aria-label="Toggle dark mode"
@@ -206,56 +205,55 @@ const Header = ({ darkMode, setDarkMode }) => {
       {/* Mobile Menu */}
       <div
         className={`md:hidden transition-all duration-300 overflow-hidden ${
-          mobileMenuOpen ? "max-h-96" : "max-h-0"
-        } bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border-b border-gray-100 dark:border-gray-800`}
-      >
-        <nav className="px-4 py-2 flex flex-col gap-2">
-          {navLinks.map((link, index) => (
-            <Link
-              key={index}
-              to={link.path}
-              className="block py-2 px-4 rounded font-semibold text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-800 transition"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              {link.name}
-            </Link>
-          ))}
-          <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
-          <div className="flex items-center justify-between px-4 py-2">
-            <span className="text-gray-500 dark:text-gray-300">Dark Mode</span>
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className={`w-10 h-5 rounded-full transition-colors duration-300 focus:outline-none border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-800/60 flex items-center`}
-            >
-              <span
-                className={`inline-block w-4 h-4 rounded-full bg-indigo-500 dark:bg-emerald-400 transition-transform duration-300 transform ${
-                  darkMode ? "translate-x-5" : "translate-x-0"
-                }`}
-              ></span>
-            </button>
+          mobileMenuOpen ? "max-h-96" : "max-h-0"} bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border-b border-gray-100 dark:border-gray-800`}
+          >
+            <nav className="px-4 py-2 flex flex-col gap-2">
+              {navLinks.map((link, index) => (
+                <Link
+                  key={index}
+                  to={link.path}
+                  className="block py-2 px-4 rounded font-semibold text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-800 transition"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+              <div className="flex items-center justify-between px-4 py-2">
+                <span className="text-gray-500 dark:text-gray-300">Dark Mode</span>
+                <button
+                  onClick={() => setDarkMode(!darkMode)}
+                  className={`w-10 h-5 rounded-full transition-colors duration-300 focus:outline-none border border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-800/60 flex items-center`}
+                >
+                  <span
+                    className={`inline-block w-4 h-4 rounded-full bg-indigo-500 dark:bg-emerald-400 transition-transform duration-300 transform ${
+                      darkMode ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  ></span>
+                </button>
+              </div>
+              <div className="flex flex-col gap-2 mt-2">
+                {localStorage.getItem("token") ? (
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left block py-2 px-4 rounded bg-red-500 text-white hover:bg-red-600"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="block py-2 px-4 rounded bg-indigo-500 text-white hover:bg-indigo-600"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                )}
+              </div>
+            </nav>
           </div>
-          <div className="flex flex-col gap-2 mt-2">
-            {localStorage.getItem("token") ? (
-              <button
-                onClick={handleLogout}
-                className="w-full text-left block py-2 px-4 rounded bg-red-500 text-white hover:bg-red-600"
-              >
-                Logout
-              </button>
-            ) : (
-              <Link
-                to="/login"
-                className="block py-2 px-4 rounded bg-indigo-500 text-white hover:bg-indigo-600"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Login
-              </Link>
-            )}
-          </div>
-        </nav>
-      </div>
-    </header>
-  )
-}
-
-export default Header
+        </header>
+      )
+    }
+    
+    export default Header
