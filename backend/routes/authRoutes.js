@@ -1,151 +1,123 @@
-const express = require("express")
-const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken")
-const User = require("../models/User")
-const mongoose = require("mongoose")
-const router = express.Router()
-const crypto = require("crypto")
-const auth = require("../middleware/authMiddleware")
+// backend/routes/authRoutes.js
 
-// Register Patient (Default Role)
+const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+const router = express.Router();
+const auth = require("../middleware/authMiddleware");
+
+// Register Patient
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password } = req.body
-    const hashedPassword = await bcrypt.hash(password, 10)
-    const user = new User({ name, email, password: hashedPassword, role: "patient" })
-    await user.save()
-    res.json({ message: "Patient registered successfully" })
+    const { name, email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hashedPassword, role: "patient" });
+    await user.save();
+    res.json({ message: "Patient registered successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    res.status(500).json({ error: err.message });
   }
-})
+});
 
-// Register Admin (Only by Existing Admin)
+// Register Admin (only from frontend for now)
 router.post("/register-admin", async (req, res) => {
   try {
-    const { name, email, password } = req.body
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    // Create a new admin user
-    const user = new User({ name, email, password: hashedPassword, role: "admin" })
-    await user.save()
-
-    res.json({ message: "Admin registered successfully" })
+    const { name, email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hashedPassword, role: "admin" });
+    await user.save();
+    res.json({ message: "Admin registered successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    res.status(500).json({ error: err.message });
   }
-})
+});
 
-// Fetch all users (Admins and Patients)
-router.get("/users", async (req, res) => {
-  try {
-    const users = await User.find({}, "-password") // Exclude passwords for security
-    res.json(users)
-  } catch (err) {
-    res.status(500).json({ error: err.message })
-  }
-})
-
+// Login route
 router.post("/login", async (req, res) => {
   try {
-    const { email, password, role } = req.body
-    const user = await User.findOne({ email, role })
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(400).json({ error: "Invalid credentials" })
-    }
-    const token = jwt.sign({ userId: user._id, role: user.role }, "your_jwt_secret_key", { expiresIn: "1h" })
+    const { email, password } = req.body;
 
-    // ✅ Just return token and role directly
-    res.json({ token, role: user.role })
+    const user = await User.findOne({ email });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(400).json({ error: "Invalid credentials" });
+    }
+
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      "your_jwt_secret_key",
+      { expiresIn: "1h" }
+    );
+
+    res.json({ token, role: user.role });
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    res.status(500).json({ error: err.message });
   }
-})
+});
+
+// Get current user info
+router.get("/me", auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select("-password");
+    res.json(user);
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+});
 
 // Check if email exists
 router.post("/check-email", async (req, res) => {
   try {
-    const { email } = req.body
-    const user = await User.findOne({ email })
-
-    // Simply return whether the email exists or not
-    res.json({ exists: !!user })
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    res.json({ exists: !!user });
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    res.status(500).json({ error: err.message });
   }
-})
+});
 
-// Reset password directly (without token)
+// Reset password without token
 router.post("/reset-password-direct", async (req, res) => {
   try {
-    const { email, password } = req.body
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
 
-    // Find user by email
-    const user = await User.findOne({ email })
+    if (!user) return res.status(404).json({ error: "User not found" });
 
-    if (!user) {
-      return res.status(404).json({ error: "User not found" })
-    }
+    user.password = await bcrypt.hash(password, 10);
+    await user.save();
 
-    // Update password
-    const hashedPassword = await bcrypt.hash(password, 10)
-    user.password = hashedPassword
-    await user.save()
-
-    res.json({ message: "Password has been reset successfully" })
+    res.json({ message: "Password has been reset successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    res.status(500).json({ error: err.message });
   }
-})
+});
 
-// DELETE USER (Only Admins Can Delete Patients)
+// Delete user (only if admin)
 router.delete("/deleteUser/:id", async (req, res) => {
   try {
-    const { id } = req.params
-    const { adminId } = req.body // Get admin's ID from request body
+    const { id } = req.params;
+    const { adminId } = req.body;
 
-    // Validate MongoDB ObjectId
-    // if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(adminId)) {
-    //   return res.status(400).json({ error: "Invalid user ID" })
-    // }
-
-    // Find the admin making the request
-    const adminUser = await User.findById(adminId)
-    // if (!adminUser || adminUser.role !== "admin") {
-    //   return res.status(403).json({ error: "Only admins can delete users" })
-    // }
-
-    // Find the user to be deleted
-    const userToDelete = await User.findById(id)
-    if (!userToDelete) {
-      return res.status(404).json({ error: "User not found" })
+    const adminUser = await User.findById(adminId);
+    if (!adminUser || adminUser.role !== "admin") {
+      return res.status(403).json({ error: "Only admins can delete users" });
     }
 
-    // // Prevent deletion of another admin
-    // if (userToDelete.role === "admin") {
-    //   return res.status(403).json({ error: "Cannot delete an admin" })
-    // }
+    const userToDelete = await User.findById(id);
+    if (!userToDelete) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-    // Delete the user
-    await User.findByIdAndDelete(id)
-    res.json({ message: "User deleted successfully" })
+    if (userToDelete.role === "admin") {
+      return res.status(403).json({ error: "Cannot delete an admin" });
+    }
+
+    await User.findByIdAndDelete(id);
+    res.json({ message: "User deleted successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    res.status(500).json({ error: err.message });
   }
-})
+});
 
-// Get current user data
-router.get("/me", auth, async (req, res) => {
-  try {
-    // req.user is set from the auth middleware
-    const user = await User.findById(req.user.userId).select("-password")
-    res.json(user)
-  } catch (err) {
-    console.error(err.message)
-    res.status(500).send("Server Error")
-  }
-})
-
-module.exports = router
+module.exports = router;
