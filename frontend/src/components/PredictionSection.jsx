@@ -278,10 +278,10 @@ const PredictionSection = () => {
                     />
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                       <span className="text-4xl font-bold text-gray-800">
-                        {readmissionProbability.toFixed(1)}%
+                        {result.readmission == 0 ? notReadmissionProbability.toFixed(1) : readmissionProbability.toFixed(1)}%
                       </span>
                       <span className="text-sm text-gray-500">Probability</span>
-                    </div>
+                    </div>
                   </div>
                   <div className={`mt-6 py-2 px-6 rounded-full text-lg font-semibold ${result.readmission === 1 ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}>
                     {result.readmission === 1 ? "Yes Readmitted" : "Not Readmitted"}
