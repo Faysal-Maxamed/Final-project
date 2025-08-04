@@ -49,11 +49,13 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({ token, role: user.role });
+    // Send _id along with token and role
+    res.json({ token, role: user.role, _id: user._id }); // Include _id here
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // Get current user info
 router.get("/me", auth, async (req, res) => {
