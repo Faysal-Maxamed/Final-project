@@ -3,22 +3,22 @@ const router = express.Router();
 const nodemailer = require("nodemailer");
 const Contact = require("../models/contact");
 
-// const transport = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     user: "mohaamiin15@gmail.com",
-//     pass: "qyom hnyv tasd lwcd",
-//   },
-// });
+const transport = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "mohaamiin15@gmail.com",
+    pass: "qrtq thad zabe vfon",
+  },
+});
 
-// // Verify transporter configuration
-// transport.verify(function(error, success) {
-//   if (error) {
-//     console.log("Transporter verification error:", error);
-//   } else {
-//     console.log("Server is ready to take our messages");
-//   }
-// });
+// Verify transporter configuration
+transport.verify(function(error, success) {
+  if (error) {
+    console.log("Transporter verification error:", error);
+  } else {
+    console.log("Server is ready to take our messages");
+  }
+});
 
 router.post("/", async (req, res) => {
   try {
@@ -73,16 +73,6 @@ router.post("/", async (req, res) => {
       message: "Failed to send message",
       error: error.message 
     });
-  }
-});
-
-// GET route to fetch all contacts
-router.get("/", async (req, res) => {
-  try {
-    const contacts = await Contact.find().sort({ createdAt: -1 });
-    res.status(200).json(contacts);
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Failed to fetch contacts", error: error.message });
   }
 });
 
