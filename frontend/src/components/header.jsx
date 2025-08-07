@@ -12,12 +12,14 @@ import {
   FaUserCircle,
   FaChevronDown,
 } from "react-icons/fa"
+import EditProfilePopup from "./EditProfile"
 
 const Header = ({ darkMode, setDarkMode }) => {
   const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [showEditProfile, setShowEditProfile] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -83,11 +85,12 @@ const Header = ({ darkMode, setDarkMode }) => {
   ]
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 shadow-lg ${
-        scrolled ? "shadow-2xl" : ""
-      }`}
-    >
+    <>
+      <header
+        className={`sticky top-0 z-50 w-full transition-all duration-300 backdrop-blur-lg bg-white/70 dark:bg-gray-900/70 shadow-lg ${
+          scrolled ? "shadow-2xl" : ""
+        }`}
+      >
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         <div className="flex justify-between items-center py-3 md:py-4">
           {/* Logo */}
@@ -146,17 +149,20 @@ const Header = ({ darkMode, setDarkMode }) => {
                 >
                   {localStorage.getItem("token") ? (
                     <>
-                      <Link
-                        to="/profile"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
+                      <button
+                        onClick={() => {
+                          setShowEditProfile(true)
+                          setUserMenuOpen(false)
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
                       >
                         Profile
-                      </Link>
+                      </button>
                       <Link
-                        to="/settings"
+                        to="/historyid"
                         className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
                       >
-                        Settings
+                        History
                       </Link>
                       <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                       <button
@@ -253,7 +259,15 @@ const Header = ({ darkMode, setDarkMode }) => {
             </nav>
           </div>
         </header>
-      )
-    }
-    
-    export default Header
+        
+        {/* EditProfile Popup */}
+        {showEditProfile && (
+          <EditProfilePopup 
+            onClose={() => setShowEditProfile(false)}
+          />
+        )}
+      </>
+    )
+  }
+  
+  export default Header

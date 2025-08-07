@@ -55,7 +55,7 @@ function App() {
         {/* Protected routes */}
         <Route path="/" element={<ProtectedRoute element={<Home />} />} />
         <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
-        <Route path="/profile" element={<ProtectedRoute element={<EditProfilePopup />} />} />
+        <Route path="/historyid" element={<ProtectedRoute element={<PatientHistory />} />} />
         <Route path="/about" element={<ProtectedRoute element={<About />} />} />
         <Route path="/PredictorForm" element={<ProtectedRoute element={<PredictorForm />} />} />
         <Route path="/contact" element={<ProtectedRoute element={<Contact />} />} />
@@ -82,4 +82,5 @@ function App() {
 
 export default App
 import React from "react"
-import EditProfilePopup from "./components/EditProfile"
+import PatientHistory from "./components/UserHistory"
+

@@ -14,7 +14,7 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ name, email, password: hashedPassword, role: "patient" });
     await user.save();
-    res.json({ message: "Patient registered successfully" });
+    res.status(201).json({ message: "Patient registered successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -27,7 +27,7 @@ router.post("/register-admin", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ name, email, password: hashedPassword, role: "admin" });
     await user.save();
-    res.json({ message: "Admin registered successfully" });
+    res.status(201).json({ message: "Admin registered successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -44,7 +44,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: user._id, role: user.role, name: user.name ,email: user.email,password: user.password},
       "your_jwt_secret_key",
       { expiresIn: "1h" }
     );
@@ -95,6 +95,43 @@ router.post("/reset-password-direct", async (req, res) => {
   }
 });
 
+
+
+// Update user profile
+router.put("/update-profile/:_id", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const userId = req.params._id;
+
+    // Check if the user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // Check if the password is being updated
+    let updatedFields = {
+      name,
+      email,
+    };
+
+    if (password) {
+      // Encrypt the password before saving it
+      const salt = await bcrypt.genSalt(10);
+      updatedFields.password = await bcrypt.hash(password, salt);
+    }
+
+    // Update the user
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedFields, {
+      new: true, // Return the updated user object
+    });
+
+    res.json(updatedUser);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
 // Delete user (only if admin)
 router.delete("/deleteUser/:id", async (req, res) => {
   try {

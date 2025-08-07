@@ -84,6 +84,7 @@ const PredictionSection = () => {
 
       if (result && !result.error) {
         const historyEntry = {
+          userId: localStorage.getItem("userId"),
           age: formData.age,
           gender: formData.gender,
           primary_diagnosis: primaryDiagnoses[formData.primary_diagnosis],

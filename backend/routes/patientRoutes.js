@@ -14,11 +14,24 @@ router.get("/history", async (req, res) => {
   }
 });
 
+// Fetch all patientByuserId history
+router.get("/history/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const history = await History.find({ userId }).sort({ date: -1 });
+    res.status(200).json(history);
+  } catch (error) {
+    console.error("Error fetching userhistory:", error);
+    res.status(500).json({ error: "Failed to fetch User history" });
+  }
+});
+
 // Save patient history
 router.post("/history", async (req, res) => {
   try {
     // Extract data from request body
     const { 
+      userId,
       age, 
       gender, 
       primary_diagnosis, 
@@ -33,6 +46,7 @@ router.post("/history", async (req, res) => {
     // Create new history entry with proper mapping
     const newHistory = new History({
       date: new Date().toISOString().split('T')[0],
+      userId,
       age: age.toString(),
       gender,
       primary_diagnosis: primary_diagnosis, // Already text from frontend
