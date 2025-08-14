@@ -28,13 +28,11 @@ const Login = () => {
         password,
       });
 
-      const { token, role,_id} = response.data;
+      const { token, role } = response.data;
 
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
       localStorage.setItem("userEmail", email);
-      localStorage.setItem("userId",_id); // Store _id here
-      console.log(_id)
 
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 

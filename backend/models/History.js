@@ -6,11 +6,6 @@ const HistorySchema = new mongoose.Schema({
     default: () => new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
     required: true
   },
-  userId:{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true
-  },
   age: {
     type: String,
     required: true
