@@ -17,7 +17,6 @@ const AdminsList = () => {
 
   // Get current user info from localStorage
   const currentUserId = localStorage.getItem("userId");
-  const currentUserRole = localStorage.getItem("role");
 
   useEffect(() => {
     fetchAdmins();
@@ -45,19 +44,13 @@ const AdminsList = () => {
   };
 
   const handleDeleteClick = (id) => {
-    if (currentUserRole !== "admin") {
-      showMsg("Only admins can delete admins.", "error");
-      return;
-    }
     setDeleteId(id);
     setShowDeleteModal(true);
   };
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://localhost:5000/api/auth/deleteUser/${deleteId}`, {
-        data: { adminId: currentUserId },
-      });
+      await axios.delete(`http://localhost:5000/api/auth/deleteUser/${deleteId}`);
       setAdmins(admins.filter((user) => user._id !== deleteId));
       showMsg("Admin deleted successfully.", "success");
     } catch (err) {
@@ -182,7 +175,7 @@ const AdminsList = () => {
                   <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Admin</span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right">
-                  {currentUserRole === "admin" && user._id !== currentUserId && (
+                  {user._id !== currentUserId && (
                     <button onClick={() => handleDeleteClick(user._id)} className="bg-red-500 text-white px-3 py-1 rounded-lg">Delete</button>
                   )}
                 </td>

@@ -167,31 +167,25 @@ router.put("/update-profile/:_id", auth, async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-// Delete user (only if admin)
-router.delete("/deleteUser/:id", async (req, res) => {
+// Delete user (no role validation per requirements)
+const deleteUserHandler = async (req, res) => {
   try {
     const { id } = req.params;
-    const { adminId } = req.body;
-
-    const adminUser = await User.findById(adminId);
-    if (!adminUser || adminUser.role !== "admin") {
-      return res.status(403).json({ error: "Only admins can delete users" });
-    }
 
     const userToDelete = await User.findById(id);
     if (!userToDelete) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    if (userToDelete.role === "admin") {
-      return res.status(403).json({ error: "Cannot delete an admin" });
-    }
-
     await User.findByIdAndDelete(id);
-    res.json({ message: "User deleted successfully" });
+    return res.json({ message: "User deleted successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
-});
+};
+
+// Support both route styles
+router.delete("/deleteUser/:id", deleteUserHandler);
+router.delete("/delete-user/:id", deleteUserHandler);
 
 module.exports = router;
