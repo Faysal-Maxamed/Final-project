@@ -76,4 +76,14 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Admin: list all contacts
+router.get("/", async (_req, res) => {
+  try {
+    const contacts = await Contact.find().sort({ createdAt: -1 });
+    res.json(contacts);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch contacts" });
+  }
+});
+
 module.exports = router; 

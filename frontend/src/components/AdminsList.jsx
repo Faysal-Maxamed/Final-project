@@ -130,13 +130,13 @@ const AdminsList = () => {
             placeholder="Search admins..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
+            className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400"
           />
           <label className="ml-2 text-sm text-gray-600">Show
             <select
               value={rowsPerPage}
               onChange={handleRowsPerPageChange}
-              className="mx-2 p-1 border border-gray-300 rounded"
+              className="mx-2 p-1 border border-gray-300 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
             >
               <option value={10}>10</option>
               <option value={25}>25</option>

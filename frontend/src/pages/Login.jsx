@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
 const Login = () => {
@@ -47,18 +48,18 @@ const Login = () => {
         localStorage.setItem("userName", fallbackName);
       }
 
-      alert("Login successful!");
+      toast.success("Login successful!");
 
       if (role === "admin") navigate("/dashboard");
       else if (role === "patient") navigate("/");
       else navigate("/not-authorized");
     } catch (err) {
       if (err.response) {
-        setError(err.response.data.error || "Authentication failed");
+        toast.error(err.response.data.error || "Authentication failed");
       } else if (err.request) {
-        setError("Server not responding. Please check your connection.");
+        toast.error("Server not responding. Please check your connection.");
       } else {
-        setError(err.message);
+        toast.error(err.message);
       }
     } finally {
       setLoading(false);
@@ -94,7 +95,7 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500"
+                className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400"
               />
             </div>
           </div>
@@ -112,7 +113,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-blue-500"
+                className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400"
               />
               <button
                 type="button"

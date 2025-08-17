@@ -275,11 +275,11 @@ const Dashboard = ({ darkMode }) => {
             label: 'Patients History',
           },
         ].map((card, idx) => (
-          <div key={card.label} className={`flex items-center gap-4 p-6 rounded-2xl shadow bg-white ${card.color}`}>
+          <div key={card.label} className={`flex items-center gap-4 p-6 rounded-2xl shadow bg-white dark:bg-gray-800 ${darkMode ? '' : card.color}`}>
             <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-white shadow-md">{card.icon}</div>
             <div>
               <div className="text-2xl font-bold">{card.stat}</div>
-              <div className="text-gray-500 text-sm font-medium">{card.label}</div>
+              <div className="text-gray-500 dark:text-gray-300 text-sm font-medium">{card.label}</div>
             </div>
           </div>
         ))}
@@ -287,9 +287,9 @@ const Dashboard = ({ darkMode }) => {
       {/* Gender, Age, and Readmission Charts Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
         {/* Gender Donut Chart */}
-        <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
-          <div className="font-bold text-lg text-gray-700 mb-1">Gender</div>
-          <div className="text-xs text-gray-400 mb-4">{dateRangeLabel}</div>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6 flex flex-col items-center">
+          <div className="font-bold text-lg text-gray-700 dark:text-gray-200 mb-1">Gender</div>
+          <div className="text-xs text-gray-400 dark:text-gray-300 mb-4">{dateRangeLabel}</div>
           <ResponsiveContainer width={220} height={220}>
             <PieChart>
               <Pie
@@ -325,21 +325,21 @@ const Dashboard = ({ darkMode }) => {
           </ResponsiveContainer>
         </div>
         {/* Age Bar Chart */}
-        <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
-          <div className="font-bold text-lg text-gray-700 mb-1">Age</div>
-          <div className="text-xs text-gray-400 mb-4">{dateRangeLabel}</div>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6 flex flex-col items-center">
+          <div className="font-bold text-lg text-gray-700 dark:text-gray-200 mb-1">Age</div>
+          <div className="text-xs text-gray-400 dark:text-gray-300 mb-4">{dateRangeLabel}</div>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={ageGroupData30} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? "#374151" : "#f3f4f6"} />
               <XAxis
                 dataKey="name"
-                tick={{ fill: '#888', fontSize: 14, fontWeight: 600 }}
+                tick={{ fill: darkMode ? '#d1d5db' : '#888', fontSize: 14, fontWeight: 600 }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
                 tickFormatter={v => `${v}%`}
-                tick={{ fill: '#bbb', fontSize: 13, fontWeight: 500 }}
+                tick={{ fill: darkMode ? '#9ca3af' : '#bbb', fontSize: 13, fontWeight: 500 }}
                 axisLine={false}
                 tickLine={false}
                 allowDecimals={false}
@@ -355,9 +355,9 @@ const Dashboard = ({ darkMode }) => {
           </ResponsiveContainer>
         </div>
         {/* Readmission Donut Chart */}
-        <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-center">
-          <div className="font-bold text-lg text-gray-700 mb-1">Readmission</div>
-          <div className="text-xs text-gray-400 mb-4">{dateRangeLabel}</div>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6 flex flex-col items-center">
+          <div className="font-bold text-lg text-gray-700 dark:text-gray-200 mb-1">Readmission</div>
+          <div className="text-xs text-gray-400 dark:text-gray-300 mb-4">{dateRangeLabel}</div>
           <ResponsiveContainer width={220} height={220}>
             <PieChart>
               <Pie
@@ -394,17 +394,17 @@ const Dashboard = ({ darkMode }) => {
         </div>
       </div>
       {/* Diagnosis Bar Chart Section */}
-      <div className="bg-white rounded-2xl shadow p-6 flex flex-col items-start mb-8">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6 flex flex-col items-start mb-8">
         <div className="flex items-center justify-between w-full mb-6">
           <div>
-            <div className="font-bold text-lg text-gray-700 mb-1">Diagnosis Report</div>
-            <div className="text-3xl font-extrabold text-gray-900">{diagnosisData.reduce((sum, d) => sum + d.value, 0)} <span className="text-base font-medium text-gray-400">cases</span></div>
+            <div className="font-bold text-lg text-gray-700 dark:text-gray-200 mb-1">Diagnosis Report</div>
+            <div className="text-3xl font-extrabold text-gray-900 dark:text-white">{diagnosisData.reduce((sum, d) => sum + d.value, 0)} <span className="text-base font-medium text-gray-400 dark:text-gray-300">cases</span></div>
           </div>
           <div className="flex gap-2">
             {timeFilters.map(f => (
               <button
                 key={f.value}
-                className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 border-2 focus:outline-none ${diagnosisFilter === f.value ? 'bg-blue-600 text-white border-blue-600 shadow' : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-blue-50 hover:text-blue-600'}`}
+                className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 border-2 focus:outline-none ${diagnosisFilter === f.value ? 'bg-blue-600 text-white border-blue-600 shadow' : (darkMode ? 'bg-gray-700 text-gray-200 border-gray-600 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-blue-50 hover:text-blue-600')}`}
                 onClick={() => setDiagnosisFilter(f.value)}
               >
                 {f.label}
@@ -414,15 +414,15 @@ const Dashboard = ({ darkMode }) => {
         </div>
         <ResponsiveContainer width="100%" height={260}>
           <BarChart data={diagnosisData} margin={{ top: 10, right: 30, left: 10, bottom: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={darkMode ? "#374151" : "#f3f4f6"} />
             <XAxis
               dataKey="name"
-              tick={{ fill: '#888', fontSize: 14, fontWeight: 600 }}
+              tick={{ fill: darkMode ? '#d1d5db' : '#888', fontSize: 14, fontWeight: 600 }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fill: '#bbb', fontSize: 13, fontWeight: 500 }}
+              tick={{ fill: darkMode ? '#9ca3af' : '#bbb', fontSize: 13, fontWeight: 500 }}
               axisLine={false}
               tickLine={false}
               allowDecimals={false}
@@ -439,43 +439,43 @@ const Dashboard = ({ darkMode }) => {
         </ResponsiveContainer>
       </div>
       {/* Recent Patient History Table */}
-      <div className="bg-white rounded-2xl shadow p-6">
-        <div className="font-semibold text-lg mb-4">Recent Patient History</div>
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6">
+        <div className="font-semibold text-lg mb-4 text-gray-900 dark:text-gray-100">Recent Patient History</div>
         <div className="overflow-x-auto">
           <table className="min-w-full text-left border-collapse">
             <thead>
-              <tr className="text-gray-700 bg-gray-100">
-                <th className="p-3 border-b">Date</th>
-                <th className="p-3 border-b">Patient Info</th>
-                <th className="p-3 border-b">Diagnosis</th>
-                <th className="p-3 border-b">Hospital Stay</th>
-                <th className="p-3 border-b">Risk Status</th>
-                <th className="p-3 border-b">Probability</th>
+              <tr className="text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700">
+                <th className="p-3 border-b border-gray-200 dark:border-gray-600">Date</th>
+                <th className="p-3 border-b border-gray-200 dark:border-gray-600">Patient Info</th>
+                <th className="p-3 border-b border-gray-200 dark:border-gray-600">Diagnosis</th>
+                <th className="p-3 border-b border-gray-200 dark:border-gray-600">Hospital Stay</th>
+                <th className="p-3 border-b border-gray-200 dark:border-gray-600">Risk Status</th>
+                <th className="p-3 border-b border-gray-200 dark:border-gray-600">Probability</th>
               </tr>
             </thead>
             <tbody>
               {recentHistory.length > 0 ? recentHistory.map((item, idx) => (
-                <tr key={idx} className="hover:bg-gray-50 transition duration-200">
-                  <td className="p-3 border-b">{item.date ? new Date(item.date).toLocaleDateString() : '-'}</td>
-                  <td className="p-3 border-b">{item.age} years, {item.gender}</td>
-                  <td className="p-3 border-b">{item.primary_diagnosis || '-'}</td>
-                  <td className="p-3 border-b">
-                    <div className="text-sm text-gray-900">{item.procedures ? `${item.procedures} procedures` : '-'}</div>
-                    <div className="text-xs text-gray-500">{item.days_in_hospital ? `${item.days_in_hospital} days` : ''}</div>
+                <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-200">
+                  <td className="p-3 border-b border-gray-200 dark:border-gray-700">{item.date ? new Date(item.date).toLocaleDateString() : '-'}</td>
+                  <td className="p-3 border-b border-gray-200 dark:border-gray-700">{item.age} years, {item.gender}</td>
+                  <td className="p-3 border-b border-gray-200 dark:border-gray-700">{item.primary_diagnosis || '-'}</td>
+                  <td className="p-3 border-b border-gray-200 dark:border-gray-700">
+                    <div className="text-sm text-gray-900 dark:text-gray-100">{item.procedures ? `${item.procedures} procedures` : '-'}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-300">{item.days_in_hospital ? `${item.days_in_hospital} days` : ''}</div>
                   </td>
-                  <td className="p-3 border-b">
-                    <span className={`inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium ${item.readmission === "Yes" ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}>
+                  <td className="p-3 border-b border-gray-200 dark:border-gray-700">
+                    <span className={`inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs font-medium ${item.readmission === "Yes" ? (darkMode ? 'bg-red-900 text-red-300' : 'bg-red-100 text-red-800') : (darkMode ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-800')}`}>
                       {item.readmission === "Yes" ? <FaExclamationTriangle /> : <FaCheckCircle />}
                       {item.readmission === "Yes" ? "High Risk" : "Low Risk"}
                     </span>
                   </td>
-                  <td className="p-3 border-b">
+                  <td className="p-3 border-b border-gray-200 dark:border-gray-700">
                     <div className={`text-sm font-medium ${item.readmission === "Yes" ? "text-red-500" : "text-green-500"}`}>{item.probability || '-'}</div>
                   </td>
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan="6" className="text-center py-6 text-gray-500">No recent history found</td>
+                  <td colSpan="6" className="text-center py-6 text-gray-500 dark:text-gray-300">No recent history found</td>
                 </tr>
               )}
             </tbody>

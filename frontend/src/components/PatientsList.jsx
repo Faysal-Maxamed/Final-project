@@ -118,7 +118,7 @@ const PatientsList = ({ darkMode }) => {
             placeholder="Search patients..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className={`p-2 border rounded-lg focus:ring-2 focus:ring-blue-400 ${darkMode ? 'border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-400' : 'border-gray-300 bg-white text-gray-900'}`}
+            className={`p-2 border rounded-lg focus:ring-2 focus:ring-blue-400 ${darkMode ? 'border-gray-700 bg-gray-800 text-gray-100 placeholder-gray-400' : 'border-gray-300 bg-white text-gray-900 placeholder-gray-400'}`}
           />
           <label className={`ml-2 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Show
             <select

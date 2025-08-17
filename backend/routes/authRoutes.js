@@ -44,8 +44,8 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userId: user._id, role: user.role, name: user.name ,email: user.email,password: user.password},
-      "your_jwt_secret_key",
+      { userId: user._id, role: user.role, name: user.name, email: user.email },
+      process.env.JWT_SECRET || "your_jwt_secret_key",
       { expiresIn: "1h" }
     );
 
@@ -64,6 +64,16 @@ router.get("/me", auth, async (req, res) => {
     res.json(user);
   } catch (err) {
     res.status(500).send("Server Error");
+  }
+});
+
+// Get all users (used by dashboard/admin & patient lists)
+router.get("/users", async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -97,10 +107,10 @@ router.post("/reset-password-direct", async (req, res) => {
 
 
 
-// Update user profile
-router.put("/update-profile/:_id", async (req, res) => {
+// Update user profile (patients and admins use the same endpoint)
+router.put("/update-profile/:_id", auth, async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, fullName, email, password, role } = req.body;
     const userId = req.params._id;
 
     // Check if the user exists
@@ -109,11 +119,29 @@ router.put("/update-profile/:_id", async (req, res) => {
       return res.status(404).json({ msg: "User not found" });
     }
 
+    // Only allow self-update or admin to update others
+    const isSelf = req.user?.userId?.toString() === userId.toString();
+    const isAdmin = req.user?.role === "admin";
+    if (!isSelf && !isAdmin) {
+      return res.status(403).json({ error: "Not authorized to update this user" });
+    }
+
     // Check if the password is being updated
-    let updatedFields = {
-      name,
-      email,
-    };
+    const updatedFields = {};
+
+    if (typeof email === "string" && email.trim() !== "") {
+      updatedFields.email = email.trim();
+    }
+    const resolvedName = (typeof fullName === "string" && fullName.trim() !== "")
+      ? fullName.trim()
+      : (typeof name === "string" && name.trim() !== "" ? name.trim() : undefined);
+    if (resolvedName) {
+      updatedFields.name = resolvedName;
+    }
+    // Only admins can change roles
+    if (typeof role === "string" && role.trim() !== "" && isAdmin) {
+      updatedFields.role = role.trim();
+    }
 
     if (password) {
       // Encrypt the password before saving it
@@ -126,7 +154,14 @@ router.put("/update-profile/:_id", async (req, res) => {
       new: true, // Return the updated user object
     });
 
-    res.json(updatedUser);
+    // Return sanitized user
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      createdAt: updatedUser.createdAt,
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");

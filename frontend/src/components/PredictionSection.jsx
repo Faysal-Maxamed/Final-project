@@ -5,6 +5,7 @@ import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import { predictReadmission } from "../api";
 import Header from "./header";
+import toast from "react-hot-toast";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -114,7 +115,7 @@ const PredictionSection = () => {
       }
     } catch (error) {
       console.error("Error making prediction:", error);
-      alert("Prediction failed. Please try again.");
+      toast.error("Prediction failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -132,12 +133,12 @@ const PredictionSection = () => {
 
   const handleFeedbackSubmit = async () => {
     if (!feedback || !rating) {
-      alert("Please provide both feedback and a rating.");
+      toast.error("Please provide both feedback and a rating.");
       return;
     }
 
     if (!ratingMap.includes(rating)) {
-      alert("Invalid rating selected.");
+      toast.error("Invalid rating selected.");
       return;
     }
 
@@ -162,12 +163,14 @@ const PredictionSection = () => {
         throw new Error(errorData.error || "Failed to submit feedback.");
       }
 
-      alert("Feedback submitted successfully. Thank you!");
+      toast.success("Feedback submitted successfully. Thank you!");
       setFeedback("");
       setRating("");
+      setShowModal(false);
+      setResult(null);
     } catch (err) {
       console.error("Error submitting feedback:", err);
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -200,13 +203,13 @@ const PredictionSection = () => {
             <div className="flex flex-col w-full">
               <label className="text-xs font-semibold text-gray-700 mb-1">Age</label>
               <input type="number" name="age" value={formData.age} onChange={handleChange} required min="1"
-                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition text-base" placeholder="Age" />
+                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 transition text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400" placeholder="Age" />
             </div>
             {/* Gender */}
             <div className="flex flex-col w-full">
               <label className="text-xs font-semibold text-gray-700 mb-1">Gender</label>
               <select name="gender" value={formData.gender} onChange={handleChange} required
-                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-200 focus:border-pink-400 transition text-base">
+                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-pink-200 focus:border-pink-400 transition text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                 <option value="">Gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -216,7 +219,7 @@ const PredictionSection = () => {
             <div className="flex flex-col w-full">
               <label className="text-xs font-semibold text-gray-700 mb-1">Primary Diagnosis</label>
               <select name="primary_diagnosis" value={formData.primary_diagnosis} onChange={handleChange} required
-                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 transition text-base">
+                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 transition text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                 <option value="">Diagnosis</option>
                 {primaryDiagnoses.map((diag, i) => (
                   <option key={i} value={i}>{diag}</option>
@@ -227,13 +230,13 @@ const PredictionSection = () => {
             <div className="flex flex-col w-full">
               <label className="text-xs font-semibold text-gray-700 mb-1">Procedures</label>
               <input type="number" name="num_procedures" value={formData.num_procedures} onChange={handleChange} required min="1"
-                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-200 focus:border-yellow-400 transition text-base" placeholder="#" />
+                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-yellow-200 focus:border-yellow-400 transition text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400" placeholder="#" />
             </div>
             {/* Days */}
             <div className="flex flex-col w-full">
               <label className="text-xs font-semibold text-gray-700 mb-1">Days in Hospital</label>
               <input type="number" name="days_in_hospital" value={formData.days_in_hospital} onChange={handleChange} required min="1"
-                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition text-base" placeholder="Days" />
+                className="p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition text-base bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400" placeholder="Days" />
             </div>
             {/* Submit */}
             <button type="submit" disabled={isLoading}
@@ -336,8 +339,8 @@ const PredictionSection = () => {
                     className="mt-3 w-full bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg disabled:bg-gray-400">
                     Submit Feedback
                   </button>
-                </motion.div>
-              )}
+                </motion.div>)
+              }
             </div>
           </motion.div>
         </div>

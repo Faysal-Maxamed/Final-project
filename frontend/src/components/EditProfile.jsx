@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 function EditProfilePopup({ onClose }) {
   const [fullName, setFullName] = useState("");
@@ -24,13 +25,13 @@ function EditProfilePopup({ onClose }) {
 
     // Validate password confirmation
     if (password && password !== confirmPassword) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
 
     // Validate password length if provided
     if (password && password.length < 6) {
-      alert("Password must be at least 6 characters long!");
+      toast.error("Password must be at least 6 characters long!");
       return;
     }
 
@@ -40,8 +41,7 @@ function EditProfilePopup({ onClose }) {
 
       const updateData = {
         fullName,
-        email,
-        role
+        email
       };
 
       // Only include password if it's being changed
@@ -66,17 +66,17 @@ function EditProfilePopup({ onClose }) {
          localStorage.setItem("userEmail", updatedUser.email || email);
          localStorage.setItem("role", updatedUser.role || role);
          
-         alert("Profile updated successfully!");
+         toast.success("Profile updated successfully!");
          setIsEditing(false);
          setPassword("");
          setConfirmPassword("");
        } else {
         const errorData = await response.json();
-        alert(errorData.message || "Failed to update profile");
+        toast.error(errorData.message || "Failed to update profile");
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Error updating profile. Please try again.");
+      toast.error("Error updating profile. Please try again.");
     }
   };
 
@@ -92,7 +92,7 @@ function EditProfilePopup({ onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+      <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-96 relative">
         <button
           className="absolute top-0 right-0 p-2"
           onClick={onClose}
@@ -112,26 +112,26 @@ function EditProfilePopup({ onClose }) {
             />
           </svg>
         </button>
-        <h3 className="text-lg font-semibold mb-4">Profile Information</h3>
+        <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Profile Information</h3>
         
                  {!isEditing ? (
            // Display mode - show as text
            <div className="space-y-4">
              <div>
-               <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-               <div className="p-3 bg-gray-50 rounded border text-gray-900">
+               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
+               <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded border text-gray-900 dark:text-gray-100">
                  {fullName || "Not provided"}
                </div>
              </div>
              <div>
-               <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-               <div className="p-3 bg-gray-50 rounded border text-gray-900">
+               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+               <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded border text-gray-900 dark:text-gray-100">
                  {email || "Not provided"}
                </div>
              </div>
              <div>
-               <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-               <div className="p-3 bg-gray-50 rounded border text-gray-900">
+               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
+               <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded border text-gray-900 dark:text-gray-100">
                  {role || "Not provided"}
                </div>
              </div>
@@ -149,54 +149,50 @@ function EditProfilePopup({ onClose }) {
                      // Edit mode - show input fields
            <form onSubmit={handleSubmit}>
              <div className="mb-4">
-               <label className="block text-sm font-medium text-gray-700">Full Name</label>
+               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
                <input
                  type="text"
                  value={fullName}
                  onChange={(e) => setFullName(e.target.value)}
-                 className="mt-1 p-2 w-full border border-gray-300 rounded"
+                 className="mt-1 p-2 w-full border border-gray-300 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                  placeholder="Enter your full name"
                />
              </div>
              <div className="mb-4">
-               <label className="block text-sm font-medium text-gray-700">Email Address</label>
+               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
                <input
                  type="email"
                  value={email}
                  onChange={(e) => setEmail(e.target.value)}
-                 className="mt-1 p-2 w-full border border-gray-300 rounded"
+                 className="mt-1 p-2 w-full border border-gray-300 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                  placeholder="Enter your email"
                />
              </div>
              <div className="mb-4">
-               <label className="block text-sm font-medium text-gray-700">Role</label>
-               <input
-                 type="text"
-                 value={role}
-                 onChange={(e) => setrole(e.target.value)}
-                 className="mt-1 p-2 w-full border border-gray-300 rounded"
-                 placeholder="Enter your role"
-               />
+               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Role</label>
+               <div className="mt-1 p-2 w-full border border-gray-300 rounded bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                 {role || "Not provided"}
+               </div>
              </div>
              <div className="mb-4">
-               <label className="block text-sm font-medium text-gray-700">New Password (optional)</label>
+               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">New Password (optional)</label>
                <input
                  type="password"
                  value={password}
                  onChange={(e) => setPassword(e.target.value)}
-                 className="mt-1 p-2 w-full border border-gray-300 rounded"
+                 className="mt-1 p-2 w-full border border-gray-300 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                  placeholder="Enter new password"
                />
              </div>
                            <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Confirm New Password {password && <span className="text-red-500">*</span>}
                 </label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="mt-1 p-2 w-full border border-gray-300 rounded"
+                  className="mt-1 p-2 w-full border border-gray-300 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   placeholder="Confirm new password"
                   required={!!password}
                 />
@@ -205,7 +201,7 @@ function EditProfilePopup({ onClose }) {
                <button
                  type="button"
                  onClick={handleCancel}
-                 className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition-colors"
+                 className="px-4 py-2 border border-gray-300 rounded text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                >
                  Cancel
                </button>

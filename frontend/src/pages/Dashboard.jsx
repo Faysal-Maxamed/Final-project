@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { FaTachometerAlt, FaUsers, FaStethoscope, FaHistory, FaSignOutAlt, FaComments, FaBell, FaChartLine, FaHeartbeat, FaRegStar, FaChartBar, FaCube, FaRegEnvelope, FaSun, FaMoon, FaUserInjured, FaUserShield, FaBars, FaChevronLeft, FaChartPie, FaTable, FaCog, FaSearch } from "react-icons/fa"
+import { FaTachometerAlt, FaUsers, FaStethoscope, FaHistory, FaSignOutAlt, FaComments, FaBell, FaChartLine, FaHeartbeat, FaRegStar, FaChartBar, FaCube, FaRegEnvelope, FaSun, FaMoon, FaUserInjured, FaUserShield, FaBars, FaChevronLeft, FaChartPie, FaTable, FaCog, FaSearch, FaUserCircle } from "react-icons/fa"
 import axios from "axios"
 import DashboardSection from "../components/DashboardSection"
+import AdminProfile from "./AdminProfile"
 import RegisterAdmin from "../components/RegisterAdmin"
 import UsersList from "../components/UsersList"
 import History from "./History"
@@ -204,10 +205,11 @@ const Dashboard = () => {
             <span className="text-2xl font-bold tracking-wide">HRP System</span>
           </div>
           <nav className="mt-6 flex flex-col gap-1">
-            {[
+            {[ 
               { icon: <FaTachometerAlt />, label: "Dashboard", section: "dashboard" },
               { icon: <FaUserInjured />, label: "Patients", section: "patients" },
               { icon: <FaUserShield />, label: "Admins", section: "admins" },
+              { icon: <FaUserCircle />, label: "Profile", section: "profile" },
               { icon: <FaStethoscope />, label: "Advice", section: "Advice" },
               { icon: <FaHistory />, label: "History", section: "history" },
               { icon: <FaComments />, label: "Feedback", section: "Feedback" },
@@ -243,7 +245,7 @@ const Dashboard = () => {
         </div>
       </aside>
       {/* Main Content */}
-      <main className="flex-1 min-h-screen bg-gray-50 dark:bg-gray-900 ml-64">
+      <main className="flex-1 min-h-screen bg-gray-50 dark:bg-gray-900 ml-64 text-gray-900 dark:text-gray-100">
         {/* Header */}
         <div className="flex items-center justify-between px-10 py-8 dark:bg-gray-900 shadow mb-8 sticky top-0 z-20">
           <div className="text-2xl italic font-bold text-gray-700 dark:text-white tracking-wide">
@@ -255,13 +257,13 @@ const Dashboard = () => {
               <input
                 type="text"
                 placeholder="Search..."
-                className="pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 transition-all bg-white border-gray-300 text-gray-900 placeholder-gray-500 min-w-[180px]"
+                className="pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 min-w-[180px]"
               />
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-300" />
             </div>
             {/* Notification Icon */}
             <button
-              className="relative p-2 rounded-full bg-white border border-gray-200 hover:bg-blue-50 transition-all"
+              className="relative p-2 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all"
               onClick={() => setActiveSection('admincontacts')}
             >
               <FaBell className="text-blue-500 text-xl" />
@@ -285,6 +287,7 @@ const Dashboard = () => {
           {activeSection === "admin-register" && <RegisterAdmin theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
           {activeSection === "patients" && <PatientsList darkMode={darkMode} setDarkMode={setDarkMode} />}
           {activeSection === "admins" && <AdminsList darkMode={darkMode} setDarkMode={setDarkMode} />}
+          {activeSection === "profile" && <AdminProfile onClose={() => setActiveSection('dashboard')} />}
           {activeSection === "Advice" && <Advice theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
           {activeSection === "history" && <History theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
           {activeSection === "Feedback" && <Feedback theme={theme} darkMode={darkMode} setDarkMode={setDarkMode} />}
