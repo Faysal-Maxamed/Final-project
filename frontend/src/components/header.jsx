@@ -12,7 +12,7 @@ import {
   FaUserCircle,
   FaChevronDown,
 } from "react-icons/fa"
-import EditProfilePopup from "./EditProfile"
+import EditProfilePopup from "./edit"
 
 const Header = ({ darkMode, setDarkMode }) => {
   const navigate = useNavigate()
