@@ -245,6 +245,26 @@ const Dashboard = ({ darkMode }) => {
 
   if (!mounted) return null
 
+  const RADIAN = Math.PI / 180;
+  const renderDonutLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+    if (!percent || percent <= 0) return null;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.6;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    return (
+      <text
+        x={x}
+        y={y}
+        fill={darkMode ? '#e5e7eb' : '#111827'}
+        textAnchor={x > cx ? 'start' : 'end'}
+        dominantBaseline="central"
+        style={{ fontSize: 12, fontWeight: 700 }}
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
   return (
     <div className={`w-full max-w-7xl mx-auto ${darkMode ? 'text-white' : 'text-gray-900'}`}> 
       {/* Stats Row */}
@@ -290,8 +310,8 @@ const Dashboard = ({ darkMode }) => {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6 flex flex-col items-center">
           <div className="font-bold text-lg text-gray-700 dark:text-gray-200 mb-1">Gender</div>
           <div className="text-xs text-gray-400 dark:text-gray-300 mb-4">{dateRangeLabel}</div>
-          <ResponsiveContainer width={220} height={220}>
-            <PieChart>
+          <ResponsiveContainer width={260} height={240}>
+            <PieChart margin={{ top: 0, right: 12, left: 12, bottom: 24 }}>
               <Pie
                 data={genderData30}
                 dataKey="value"
@@ -304,23 +324,14 @@ const Dashboard = ({ darkMode }) => {
                 endAngle={-270}
                 paddingAngle={2}
                 isAnimationActive={true}
-                label={({ name, percent }) => percent > 0 ? (
-                  <text
-                    x={0}
-                    y={0}
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    style={{ fontSize: 16, fontWeight: 700, fill: '#222' }}
-                  >
-                    {`${(percent * 100).toFixed(1)}% ${name}`}
-                  </text>
-                ) : ''}
+                label={renderDonutLabel}
                 labelLine={false}
               >
                 {genderData30.map((entry, idx) => (
                   <Cell key={entry.name} fill={idx === 0 ? '#3B82F6' : '#10B981'} />
                 ))}
               </Pie>
+              <Legend verticalAlign="bottom" align="center" iconType="circle" wrapperStyle={{ color: darkMode ? '#e5e7eb' : '#374151', fontSize: 12 }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -358,8 +369,8 @@ const Dashboard = ({ darkMode }) => {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-6 flex flex-col items-center">
           <div className="font-bold text-lg text-gray-700 dark:text-gray-200 mb-1">Readmission</div>
           <div className="text-xs text-gray-400 dark:text-gray-300 mb-4">{dateRangeLabel}</div>
-          <ResponsiveContainer width={220} height={220}>
-            <PieChart>
+          <ResponsiveContainer width={260} height={240}>
+            <PieChart margin={{ top: 0, right: 12, left: 12, bottom: 24 }}>
               <Pie
                 data={readmissionData30}
                 dataKey="value"
@@ -372,23 +383,14 @@ const Dashboard = ({ darkMode }) => {
                 endAngle={-270}
                 paddingAngle={2}
                 isAnimationActive={true}
-                label={({ name, percent }) => percent > 0 ? (
-                  <text
-                    x={0}
-                    y={0}
-                    textAnchor="middle"
-                    dominantBaseline="central"
-                    style={{ fontSize: 16, fontWeight: 700, fill: '#222' }}
-                  >
-                    {`${(percent * 100).toFixed(1)}% ${name}`}
-                  </text>
-                ) : ''}
+                label={renderDonutLabel}
                 labelLine={false}
               >
                 {readmissionData30.map((entry, idx) => (
                   <Cell key={entry.name} fill={idx === 0 ? '#6366F1' : '#F59E0B'} />
                 ))}
               </Pie>
+              <Legend verticalAlign="bottom" align="center" iconType="circle" wrapperStyle={{ color: darkMode ? '#e5e7eb' : '#374151', fontSize: 12 }} />
             </PieChart>
           </ResponsiveContainer>
         </div>

@@ -149,21 +149,6 @@ const Header = ({ darkMode, setDarkMode }) => {
                 >
                   {localStorage.getItem("token") ? (
                     <>
-                      <button
-                        onClick={() => {
-                          setShowEditProfile(true)
-                          setUserMenuOpen(false)
-                        }}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
-                      >
-                        Profile
-                      </button>
-                      <Link
-                        to="/historyid"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
-                      >
-                        History
-                      </Link>
                       <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
                       <button
                         onClick={handleLogout}
