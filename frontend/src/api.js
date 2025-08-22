@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:5000/predict";  // This is the Flask app endpoint
+const API_URL = "http://127.0.0.1:5000/predict";  
 
 export const predictReadmission = async (data) => {
     try {
