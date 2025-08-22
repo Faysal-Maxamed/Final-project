@@ -14,7 +14,7 @@ const isAuthenticated = () => {
   return localStorage.getItem("token") !== null
 }
 
-// Function to get user role
+
 const getUserRole = () => {
   return localStorage.getItem("role")
 }
@@ -39,7 +39,7 @@ const ProtectedRoute = ({ element }) => {
     return <Navigate to="/" />
   }
 
-  // If passes all checks, render the requested component
+
   return element
 }
 
